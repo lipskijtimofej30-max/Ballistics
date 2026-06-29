@@ -7,12 +7,12 @@ namespace Game.Scripts.Core
     public class ProjectileFactory : IInitializable
     {
         private Dictionary<ShapeType, Projectile> _prefabs = new(2);
-        private GameSettings _gameSettings;
+        private ProjectileSettings _settings;
 
         [Inject]
-        private void Construct(GameSettings gameSettings)
+        private void Construct(ProjectileSettings gameSettings)
         {
-            _gameSettings = gameSettings;
+            _settings = gameSettings;
         }
 
         public void Initialize()
@@ -26,8 +26,8 @@ namespace Game.Scripts.Core
 
         public Projectile Create()
         {
-            var prefab = GameObject.Instantiate(_prefabs[_gameSettings.ShapeType]);
-            prefab.Initialize(_gameSettings);
+            var prefab = GameObject.Instantiate(_prefabs[_settings.ShapeType]);
+            prefab.Initialize(_settings);
             return prefab;
         }
     }

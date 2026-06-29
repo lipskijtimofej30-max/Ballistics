@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Game.Scripts.Core
 {
-    [RequireComponent(typeof(Rigidbody))]
     public class Projectile : MonoBehaviour
     {
         [Tooltip("Для куба размер грани, для шара радиус")]
@@ -10,26 +9,28 @@ namespace Game.Scripts.Core
         [SerializeField] private float _density = 1f;
         
         [field: SerializeField] public ShapeType ShapeType { get; private set; }
+        
         public float Mass { get; private set; }
         public float CrossSectionalArea { get; private set;}
-        public Rigidbody Rigidbody { get; private set; }
-        
-        private GameSettings _gameSettings;
+        public float DragCoefficient { get; private set; }
 
-        private void Awake()
-        {
-            Rigidbody = GetComponent<Rigidbody>();
-        }
+        public Vector3 Position { get; set; }
+        public Vector3 Velocity { get; set; }
+        private ProjectileSettings _settings;
         
-        public void Initialize(GameSettings gameSettings)
+        public void Initialize(ProjectileSettings gameSettings)
         {
-            _gameSettings = gameSettings;
+            _settings = gameSettings;
             
-            Rigidbody.velocity = _gameSettings.StartVelocity;
-            transform.position = _gameSettings.StartPosition;
+            Velocity = _settings.StartVelocity;
+            Position = _settings.StartPosition;
+            transform.position = Position;
             
             Mass = GetMass();
             CrossSectionalArea = GetCrossSectionalArea();
+            DragCoefficient = GetDragCoefficient();
+            
+            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea}");
         }
         
         private float GetMass()
@@ -38,7 +39,7 @@ namespace Game.Scripts.Core
             if (ShapeType == ShapeType.Cube)
                 mass = _density * (_size * _size * _size); //m=p*a^3
             else if (ShapeType == ShapeType.Sphere)
-                mass = _density * (4/3 * Mathf.PI * (_size * _size * _size)); //m=p(4/3пR^3)
+                mass = _density * (4f/3f * Mathf.PI * (_size * _size * _size)); //m=p(4/3пR^3)
             return mass;
         }
 
@@ -50,6 +51,16 @@ namespace Game.Scripts.Core
             else if (ShapeType == ShapeType.Sphere)
                 area = Mathf.PI * (_size * _size);
             return area;
+        }
+
+        private float GetDragCoefficient()
+        {
+            float cd = 0f;
+            if (ShapeType == ShapeType.Cube)
+                cd = 1.05f;
+            else if (ShapeType == ShapeType.Sphere)
+                cd = 0.47f;
+            return cd;
         }
     }
     
