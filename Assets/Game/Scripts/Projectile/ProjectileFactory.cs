@@ -8,11 +8,13 @@ namespace Game.Scripts.Core
     {
         private Dictionary<ShapeType, Projectile> _prefabs = new(2);
         private ProjectileSettings _settings;
+        private LaunchVelocityCalculator _velocityCalculator;
 
         [Inject]
-        private void Construct(ProjectileSettings gameSettings)
+        private void Construct(ProjectileSettings gameSettings, LaunchVelocityCalculator velocityCalculator)
         {
             _settings = gameSettings;
+            _velocityCalculator = velocityCalculator;
         }
 
         public void Initialize()
@@ -27,7 +29,7 @@ namespace Game.Scripts.Core
         public Projectile Create()
         {
             var prefab = GameObject.Instantiate(_prefabs[_settings.ShapeType]);
-            prefab.Initialize(_settings);
+            prefab.Initialize(_settings,  _velocityCalculator);
             return prefab;
         }
     }

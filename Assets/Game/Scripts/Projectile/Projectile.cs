@@ -18,11 +18,11 @@ namespace Game.Scripts.Core
         public Vector3 Velocity { get; set; }
         private ProjectileSettings _settings;
         
-        public void Initialize(ProjectileSettings gameSettings)
+        public void Initialize(ProjectileSettings gameSettings, LaunchVelocityCalculator velocityCalculator)
         {
             _settings = gameSettings;
             
-            Velocity = _settings.StartVelocity;
+            Velocity = velocityCalculator.GetVelocity();
             Position = _settings.StartPosition;
             transform.position = Position;
             
@@ -30,7 +30,7 @@ namespace Game.Scripts.Core
             CrossSectionalArea = GetCrossSectionalArea();
             DragCoefficient = GetDragCoefficient();
             
-            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea}");
+            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {_settings.StartSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
         }
         
         private float GetMass()

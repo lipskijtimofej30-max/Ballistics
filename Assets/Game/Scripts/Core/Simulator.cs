@@ -11,19 +11,18 @@ namespace Game.Scripts.Core
         private SimulationRecorder _recorder;
         private CsvExporter _csvExporter;
         private SimulationPrinter _printer;
-        private PhysicsIntegrator _physicsIntegrator;
+        private IPhysicsIntegrator _integrator;
         private ProjectileFactory _projectileFactory;
-        
         
         private Projectile _currentProjectile;
 
         [field:SerializeField] public bool IsActive { get; private set; } = false;
         
         [Inject]
-        private void Construct(PhysicsIntegrator physicsIntegrator, ProjectileFactory projectileFactory,
+        private void Construct(IPhysicsIntegrator integrator, ProjectileFactory projectileFactory,
             SimulationRecorder recorder, SimulationPrinter printer, CsvExporter csvExporter)
         {
-            _physicsIntegrator = physicsIntegrator;
+            _integrator = integrator;
             _projectileFactory = projectileFactory;
             _recorder = recorder;
             _printer = printer;
@@ -65,7 +64,7 @@ namespace Game.Scripts.Core
             if (!IsActive) return;
             if(_currentProjectile == null) return;
             
-            _physicsIntegrator.Step(_currentProjectile, StopSimulation);
+            _integrator.Step(_currentProjectile, StopSimulation);
         }
     }
 }

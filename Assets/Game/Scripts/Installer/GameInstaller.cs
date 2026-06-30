@@ -1,6 +1,9 @@
+using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Force;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.Infrastructure.GameStateMachine;
+using Game.Scripts.Infrastructure.GameStateMachine.GameState;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
@@ -8,14 +11,17 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         BindSettings();
+        BindSignal();
         Container.BindInterfacesAndSelfTo<ProjectileFactory>().AsSingle().NonLazy();
         BindForce();
         Container.Bind<ForceCalculator>().AsSingle().NonLazy();
-        Container.Bind<PhysicsIntegrator>().AsSingle().NonLazy();
+        Container.Bind<IPhysicsIntegrator>().To<SemiImplicitEulerIntegrator>().AsSingle().NonLazy();
+        Container.Bind<LaunchVelocityCalculator>().AsSingle();
         
         Container.Bind<SimulationRecorder>().AsSingle();
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
+        BindGameStateMachine();
     }
 
     private void BindSettings()
@@ -28,5 +34,21 @@ public class GameInstaller : MonoInstaller
     {
         Container.Bind<IForce>().To<GravityForce>().AsSingle().NonLazy();
         Container.Bind<IForce>().To<DragForce>().AsSingle().NonLazy();
+    }
+
+    private void BindGameStateMachine()
+    {
+        Container.Bind<GameStateMachine>().AsSingle().NonLazy();
+        Container.Bind<SetupSimulationState>().AsSingle();
+        Container.Bind<SimulationState>().AsSingle();
+        Container.Bind<FinishedSimulationState>().AsSingle();
+        Container.Bind<PausedSimulationState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+    }
+
+    private void BindSignal()
+    {
+        SignalBusInstaller.Install(Container);
+        Container.DeclareSignal<ChangeStateSignal>().OptionalSubscriber();
     }
 }
