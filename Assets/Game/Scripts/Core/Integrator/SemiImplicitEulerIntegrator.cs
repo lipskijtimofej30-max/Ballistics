@@ -6,7 +6,6 @@ using Zenject;
 namespace Game.Scripts.Core
 {
     public class SemiImplicitEulerIntegrator : IPhysicsIntegrator
-
     {
     private ForceCalculator _forceCalculator;
     private SimulationRecorder _recorder;

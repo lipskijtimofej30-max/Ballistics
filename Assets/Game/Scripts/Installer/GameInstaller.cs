@@ -14,14 +14,20 @@ public class GameInstaller : MonoInstaller
         BindSignal();
         Container.BindInterfacesAndSelfTo<ProjectileFactory>().AsSingle().NonLazy();
         BindForce();
-        Container.Bind<ForceCalculator>().AsSingle().NonLazy();
+        BindCalculator();
         Container.Bind<IPhysicsIntegrator>().To<SemiImplicitEulerIntegrator>().AsSingle().NonLazy();
-        Container.Bind<LaunchVelocityCalculator>().AsSingle();
-        
+
         Container.Bind<SimulationRecorder>().AsSingle();
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
         BindGameStateMachine();
+    }
+
+    private void BindCalculator()
+    {
+        Container.Bind<LaunchVelocityCalculator>().AsSingle();
+        Container.Bind<MassCalculator>().AsSingle();
+        Container.Bind<ForceCalculator>().AsSingle().NonLazy();
     }
 
     private void BindSettings()
@@ -50,5 +56,6 @@ public class GameInstaller : MonoInstaller
     {
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<ChangeStateSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ConfirmButtonClickSignal>().OptionalSubscriber();
     }
 }
