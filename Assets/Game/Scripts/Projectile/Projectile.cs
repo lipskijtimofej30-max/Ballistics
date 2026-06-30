@@ -4,9 +4,8 @@ namespace Game.Scripts.Core
 {
     public class Projectile : MonoBehaviour
     {
-        [Tooltip("Для куба размер грани, для шара радиус")]
-        [SerializeField] private float _size = 0.5f;
-        [SerializeField] private float _density = 1f;
+        private float _size;
+        private float _density;
         
         [field: SerializeField] public ShapeType ShapeType { get; private set; }
         
@@ -23,14 +22,16 @@ namespace Game.Scripts.Core
             _settings = gameSettings;
             
             Velocity = velocityCalculator.GetVelocity();
-            Position = _settings.StartPosition;
+            Position = _settings.InitialPosition;
             transform.position = Position;
             
             Mass = GetMass();
             CrossSectionalArea = GetCrossSectionalArea();
             DragCoefficient = GetDragCoefficient();
+            _size = _settings.Size;
+            _density = _settings.Density;
             
-            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {_settings.StartSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
+            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {_settings.InitialSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
         }
         
         private float GetMass()
@@ -55,12 +56,12 @@ namespace Game.Scripts.Core
 
         private float GetDragCoefficient()
         {
-            float cd = 0f;
+            float dragCoefficient = 0f;
             if (ShapeType == ShapeType.Cube)
-                cd = 1.05f;
+                dragCoefficient = 1.05f;
             else if (ShapeType == ShapeType.Sphere)
-                cd = 0.47f;
-            return cd;
+                dragCoefficient = 0.47f;
+            return dragCoefficient;
         }
     }
     

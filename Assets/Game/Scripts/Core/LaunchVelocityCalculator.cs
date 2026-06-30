@@ -15,8 +15,8 @@ namespace Game.Scripts.Core
         {
             float angle = Mathf.Deg2Rad * _projectileSettings.LaunchAngle;
             var velocity = new Vector3(
-                _projectileSettings.StartSpeed * Mathf.Cos(angle),
-                _projectileSettings.StartSpeed * Mathf.Sin(angle),
+                _projectileSettings.InitialSpeed * Mathf.Cos(angle),
+                _projectileSettings.InitialSpeed * Mathf.Sin(angle),
                 0f);
             return velocity;
         }
