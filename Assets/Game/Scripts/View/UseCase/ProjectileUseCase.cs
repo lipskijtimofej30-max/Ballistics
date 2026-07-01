@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using UnityEngine;
@@ -8,55 +9,60 @@ namespace Game.Scripts.View.UseCase
 {
     public class ProjectileUseCase : IDisposable
     {
-        private ProjectileView _projectileView;
-        private SignalBus _signalBus;
-        private ProjectileSettings _projectileSettings;
-        private MassCalculator _massCalculator;
+        private readonly FloatParameterBinder _sizeBinder;
+        private readonly FloatParameterBinder _densityBinder;
+
+        private readonly SignalBus _signalBus;
+        private readonly ProjectileSettings _settings;
+        private readonly ProjectileView _view;
+        private readonly MassCalculator _calculator;
 
         [Inject]
-        private void Construct(ProjectileView projectileView, ProjectileSettings projectileSettings, MassCalculator massCalculator, SignalBus signalBus)
+        public ProjectileUseCase(
+            ProjectileView view,
+            ProjectileSettings settings,
+            MassCalculator calculator,
+            SignalBus signalBus)
         {
-            _projectileView = projectileView;
-            _projectileSettings = projectileSettings;
-            _massCalculator = massCalculator;
+            _view = view;
+            _settings = settings;
+            _calculator = calculator;
             _signalBus = signalBus;
-            
-            _projectileView.SizeSlider.onValueChanged.AddListener(ChangeSizeValue);
-            _projectileView.DensitySlider.onValueChanged.AddListener(ChangeDensityValue);
-            
-            ChangeSizeValue(_projectileView.SizeSlider.value);
-            ChangeDensityValue(_projectileView.DensitySlider.value);
-            
-            _signalBus.Subscribe<ProjectileSettingsChangedSignal>(Refresh);
+
+            _sizeBinder = new FloatParameterBinder(
+                _view.SizeParameter,
+                0.05f,
+                1f,
+                "F2",
+                () => _settings.Size,
+                x => _settings.Size = x,
+                Refresh);
+
+            _densityBinder = new FloatParameterBinder(
+                _view.DensityParameter,
+                100,
+                22650,
+                "F2",
+                () => _settings.Density,
+                x => _settings.Density = x,
+                Refresh);
+
             Refresh();
         }
 
-        private void ChangeDensityValue(float value)
-        {
-            _projectileSettings.Density = (int)value;
-            _signalBus.Fire<ProjectileSettingsChangedSignal>();
-        }
-
-        private void ChangeSizeValue(float value)
-        {
-            _projectileSettings.Size = value;
-            _signalBus.Fire<ProjectileSettingsChangedSignal>();
-        }
         private void Refresh()
         {
-            _projectileView.SetSizeText(_projectileSettings.Size.ToString("F2"));
-            _projectileView.SetDensityText(_projectileSettings.Density.ToString());
+            float mass = _calculator.GetMass(_settings.ShapeType);
 
-            float mass = _massCalculator.GetMass(_projectileSettings.ShapeType);
+            _view.SetMassText(mass.ToString("F2"));
 
-            _projectileView.SetMassText(mass.ToString("F2"));
+            _signalBus.Fire<ProjectileSettingsChangedSignal>();
         }
+
         public void Dispose()
         {
-            _projectileView.SizeSlider.onValueChanged.RemoveListener(ChangeSizeValue);
-            _projectileView.DensitySlider.onValueChanged.RemoveListener(ChangeDensityValue);
-            
-            _signalBus.Unsubscribe<ProjectileSettingsChangedSignal>(Refresh);
+            _sizeBinder.Dispose();
+            _densityBinder.Dispose();
         }
     }
 }

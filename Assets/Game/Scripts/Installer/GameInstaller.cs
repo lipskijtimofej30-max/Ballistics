@@ -1,9 +1,13 @@
+using Assets.Game.Scripts.Core.Calculator;
+using Assets.Game.Scripts.Infrastructure.Signals;
+using Assets.Game.Scripts.Settings;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Force;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
+using Game.Scripts.Infrastructure.Signals;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
@@ -28,12 +32,14 @@ public class GameInstaller : MonoInstaller
         Container.Bind<LaunchVelocityCalculator>().AsSingle();
         Container.Bind<MassCalculator>().AsSingle();
         Container.Bind<ForceCalculator>().AsSingle().NonLazy();
+        Container.Bind<CrossSectionalAreaCalculator>().AsSingle();
     }
 
     private void BindSettings()
     {
         Container.Bind<EnvironmentSettings>().AsSingle().NonLazy();
         Container.Bind<ProjectileSettings>().AsSingle().NonLazy();
+        Container.Bind<SimulationSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
@@ -58,5 +64,7 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<ChangeStateSignal>().OptionalSubscriber();
         Container.DeclareSignal<ConfirmButtonClickSignal>().OptionalSubscriber();
         Container.DeclareSignal<ProjectileSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<SimulationSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<EnvironmentSettingsChangedSignal>().OptionalSubscriber();
     }
 }

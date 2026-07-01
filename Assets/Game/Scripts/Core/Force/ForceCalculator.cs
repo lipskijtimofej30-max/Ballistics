@@ -23,9 +23,12 @@ namespace Game.Scripts.Core
             Vector3 total =  Vector3.zero;
             foreach (var force in _forces)
             {
-                if (!_environmentSettings.AirResistance)
-                    if(force is DragForce df)
+                if (!_environmentSettings.AirResistanceEnabled)
+                    if (force is DragForce df)
+                    {
+                        Debug.Log($"Drag force dont calculate");
                         continue;
+                    }
                 
                 total +=  force.Calculate(projectile);
             }

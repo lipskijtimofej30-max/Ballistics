@@ -1,3 +1,5 @@
+using Assets.Game.Scripts.Core.Calculator;
+using Assets.Game.Scripts.Settings;
 using UnityEngine;
 
 namespace Game.Scripts.Core
@@ -12,33 +14,25 @@ namespace Game.Scripts.Core
 
         public Vector3 Position { get; set; }
         public Vector3 Velocity { get; set; }
+
         private ProjectileSettings _settings;
         
-        public void Initialize(ProjectileSettings gameSettings, LaunchVelocityCalculator velocityCalculator, MassCalculator massCalculator)
+        public void Initialize(ProjectileSettings projectileSettings,SimulationSettings simulationSettings,
+            LaunchVelocityCalculator velocityCalculator, MassCalculator massCalculator, CrossSectionalAreaCalculator areaCalculator)
         {
-            _settings = gameSettings;
+            _settings = projectileSettings;
             
             Velocity = velocityCalculator.GetVelocity();
-            Position = _settings.InitialPosition;
+            Position = simulationSettings.InitialPosition;
             transform.position = Position;
             
             Mass = massCalculator.GetMass(ShapeType);
-            CrossSectionalArea = GetCrossSectionalArea();
+            CrossSectionalArea = areaCalculator.GetCrossSectionalArea(_settings.ShapeType, _settings.Size);
             DragCoefficient = GetDragCoefficient();
             
-            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {_settings.InitialSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
+            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {simulationSettings.InitialSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
         }
         
-        private float GetCrossSectionalArea()
-        {
-            float area = 0f;
-            if (ShapeType == ShapeType.Cube)
-                area =_settings.Size * _settings.Size;
-            else if (ShapeType == ShapeType.Sphere)
-                area = Mathf.PI * (_settings.Size * _settings.Size);
-            return area;
-        }
-
         private float GetDragCoefficient()
         {
             float dragCoefficient = 0f;
