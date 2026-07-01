@@ -1,6 +1,6 @@
 ﻿namespace DefaultNamespace
 {
-    public class SimulationSettingsChangedSignal
+    public class ProjectileSettingsChangedSignal
     {
         
     }

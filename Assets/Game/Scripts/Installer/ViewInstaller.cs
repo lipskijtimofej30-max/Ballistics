@@ -7,7 +7,7 @@ namespace Game.Scripts.Installer
 {
     public class ViewInstaller : MonoInstaller
     {
-        [SerializeField] private BaseProjectileView baseProjectileView;
+        [SerializeField] private ProjectileView projectileView;
         override public void InstallBindings()
         {
             BindSizeAndDensity();
@@ -15,8 +15,8 @@ namespace Game.Scripts.Installer
 
         private void BindSizeAndDensity()
         {
-            Container.Bind<BaseProjectileView>().FromInstance(baseProjectileView).AsSingle();
-            Container.BindInterfacesAndSelfTo<BaseProjectileUseCase>().AsSingle();
+            Container.Bind<ProjectileView>().FromInstance(projectileView).AsSingle();
+            Container.BindInterfacesAndSelfTo<ProjectileUseCase>().AsSingle();
         }
     }
 }

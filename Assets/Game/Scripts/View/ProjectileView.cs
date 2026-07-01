@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Game.Scripts.View
 {
-    public class BaseProjectileView : MonoBehaviour
+    public class ProjectileView : MonoBehaviour
     {
         [SerializeField] private Slider _sizeSlider;
         [SerializeField] private Slider _densitySlider;

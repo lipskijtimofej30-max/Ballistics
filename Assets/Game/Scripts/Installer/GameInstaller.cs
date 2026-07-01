@@ -57,6 +57,6 @@ public class GameInstaller : MonoInstaller
         SignalBusInstaller.Install(Container);
         Container.DeclareSignal<ChangeStateSignal>().OptionalSubscriber();
         Container.DeclareSignal<ConfirmButtonClickSignal>().OptionalSubscriber();
-        Container.DeclareSignal<SimulationSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ProjectileSettingsChangedSignal>().OptionalSubscriber();
     }
 }

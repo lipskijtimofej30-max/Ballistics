@@ -36,7 +36,7 @@ namespace Game.Scripts.View
         private void OnDropdownValueChanged(int value)
         {
             _projectileSettings.ShapeType = (ShapeType)value;
-            _signalBus.Fire<SimulationSettingsChangedSignal>();
+            _signalBus.Fire<ProjectileSettingsChangedSignal>();
             Debug.Log("Shape Type: " + _projectileSettings.ShapeType);
         }
 
