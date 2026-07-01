@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DefaultNamespace;
 using Game.Scripts.Core;
 using TMPro;
 using UnityEngine;
@@ -12,11 +13,13 @@ namespace Game.Scripts.View
         [SerializeField] private TMP_Dropdown _dropdown;
         
         private ProjectileSettings _projectileSettings;
+        private SignalBus _signalBus;
 
         [Inject]
-        private void Construct(ProjectileSettings projectileSettings)
+        private void Construct(ProjectileSettings projectileSettings, SignalBus signalBus)
         {
             _projectileSettings = projectileSettings;
+            _signalBus = signalBus;
         }
 
         private void Start()
@@ -33,6 +36,7 @@ namespace Game.Scripts.View
         private void OnDropdownValueChanged(int value)
         {
             _projectileSettings.ShapeType = (ShapeType)value;
+            _signalBus.Fire<SimulationSettingsChangedSignal>();
             Debug.Log("Shape Type: " + _projectileSettings.ShapeType);
         }
 
