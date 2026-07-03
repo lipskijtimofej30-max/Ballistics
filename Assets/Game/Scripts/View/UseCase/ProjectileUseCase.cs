@@ -1,8 +1,6 @@
 using System;
-using System.Globalization;
 using DefaultNamespace;
 using Game.Scripts.Core;
-using UnityEngine;
 using Zenject;
 
 namespace Game.Scripts.View.UseCase
@@ -36,7 +34,7 @@ namespace Game.Scripts.View.UseCase
                 "F2",
                 () => _settings.Size,
                 x => _settings.Size = x,
-                Refresh);
+                () => _signalBus.Fire<ProjectileSettingsChangedSignal>());
 
             _densityBinder = new FloatParameterBinder(
                 _view.DensityParameter,
@@ -45,24 +43,24 @@ namespace Game.Scripts.View.UseCase
                 "F2",
                 () => _settings.Density,
                 x => _settings.Density = x,
-                Refresh);
+                () => _signalBus.Fire<ProjectileSettingsChangedSignal>());
 
             Refresh();
+            _signalBus.Subscribe<ProjectileSettingsChangedSignal>(Refresh);
         }
 
         private void Refresh()
         {
-            float mass = _calculator.GetMass(_settings.ShapeType);
+            float mass = _calculator.GetMass(_settings.ShapeType, _settings.Density, _settings.Size);
 
             _view.SetMassText(mass.ToString("F2"));
-
-            _signalBus.Fire<ProjectileSettingsChangedSignal>();
         }
 
         public void Dispose()
         {
             _sizeBinder.Dispose();
             _densityBinder.Dispose();
+            _signalBus.Unsubscribe<ProjectileSettingsChangedSignal>(Refresh);
         }
     }
 }

@@ -35,9 +35,28 @@ namespace Game.Scripts.Core
 
         public Projectile Create()
         {
-            var prefab = GameObject.Instantiate(_prefabs[_projectileSettings.ShapeType]);
-            prefab.Initialize(_projectileSettings, _simulationSettings, _velocityCalculator, _massCalculator, _crossSectionalAreaCalculator);
+            var shapeType = _projectileSettings.ShapeType;
+            var prefab = GameObject.Instantiate(_prefabs[shapeType]);
+
+            float mass = _massCalculator.GetMass(shapeType, _projectileSettings.Density, _projectileSettings.Size);
+            float area = _crossSectionalAreaCalculator.GetCrossSectionalArea(shapeType, _projectileSettings.Size);
+            float dragCoefficient = GetDragCoefficient(shapeType);
+
+            Vector3 velocity = _velocityCalculator.GetVelocity();
+            Vector3 position = _simulationSettings.InitialPosition;
+            
+            prefab.Initialize(position, velocity, mass, area, dragCoefficient);
             return prefab;
+        }
+
+        private float GetDragCoefficient(ShapeType shapeType)
+        {
+            return shapeType switch
+            {
+                ShapeType.Cube => 1.05f,
+                ShapeType.Sphere => 0.47f,
+                _ => 0.5f
+            };
         }
     }
 }

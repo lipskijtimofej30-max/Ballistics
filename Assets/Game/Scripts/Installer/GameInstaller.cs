@@ -21,7 +21,6 @@ public class GameInstaller : MonoInstaller
         BindCalculator();
         Container.Bind<IPhysicsIntegrator>().To<SemiImplicitEulerIntegrator>().AsSingle().NonLazy();
 
-        Container.Bind<SimulationRecorder>().AsSingle();
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
         BindGameStateMachine();

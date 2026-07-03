@@ -8,13 +8,11 @@ namespace Game.Scripts.Core
     public class ForceCalculator
     {
         private List<IForce> _forces = new();
-        private EnvironmentSettings _environmentSettings;
 
         [Inject]
-        private void Construct(List<IForce> forces, EnvironmentSettings environmentSettings)
+        private void Construct(List<IForce> forces)
         {
             _forces = forces;
-            _environmentSettings = environmentSettings;
             Debug.Log($"Force count: {forces.Count}");
         }
 
@@ -23,13 +21,6 @@ namespace Game.Scripts.Core
             Vector3 total =  Vector3.zero;
             foreach (var force in _forces)
             {
-                if (!_environmentSettings.AirResistanceEnabled)
-                    if (force is DragForce df)
-                    {
-                        Debug.Log($"Drag force dont calculate");
-                        continue;
-                    }
-                
                 total +=  force.Calculate(projectile);
             }
             return total;

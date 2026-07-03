@@ -8,39 +8,33 @@ namespace Game.Scripts.Core
     public class SemiImplicitEulerIntegrator : IPhysicsIntegrator
     {
         private ForceCalculator _forceCalculator;
-        private SimulationRecorder _recorder;
 
         [Inject]
-        private void Construct(ForceCalculator forceCalculator, SimulationRecorder recorder)
+        private void Construct(ForceCalculator forceCalculator)
         {
             _forceCalculator = forceCalculator;
-            _recorder = recorder;
         }
 
-        public void Step(Projectile projectile, Action onCollision)
+        public void Step(Projectile projectile, SimulationRun run, float deltaTime, Action onCollision)
         {
             var force = _forceCalculator.CalculateTotalForce(projectile);
             var acceleration = force / projectile.Mass;
 
-            projectile.Velocity += acceleration * Time.fixedDeltaTime;
-            projectile.Position += projectile.Velocity * Time.fixedDeltaTime;
+            projectile.Velocity += acceleration * deltaTime;
+            projectile.Position += projectile.Velocity * deltaTime;
+
+            bool landed = projectile.Position.y <= 0;
+            if (landed)
+            {
+                projectile.Position = new Vector3(projectile.Position.x, 0, projectile.Position.z);
+            }
 
             projectile.transform.position = projectile.Position;
 
-            _recorder.Record(
-                projectile.Position,
-                projectile.Velocity,
-                acceleration,
-                force);
+            run.AddPoint(projectile.Position, projectile.Velocity, acceleration, force, deltaTime);
 
-            if (projectile.Position.y <= 0)
-            {
-                projectile.Position = new Vector3(
-                    projectile.Position.x,
-                    0,
-                    projectile.Position.z);
+            if (landed)
                 onCollision?.Invoke();
-            }
         }
     }
 }

@@ -4,20 +4,13 @@ namespace Game.Scripts.Core
 {
     public class MassCalculator
     {
-        private ProjectileSettings _settings;
-        
-        public MassCalculator(ProjectileSettings settings)
-        {
-            _settings = settings;
-        }
-        
-        public float GetMass(ShapeType shapeType)
+        public float GetMass(ShapeType shapeType, float density, float size)
         {
             float mass = 0f;
             if (shapeType == ShapeType.Cube)
-                mass = _settings.Density * (_settings.Size * _settings.Size * _settings.Size); //m=p*a^3
+                mass = density * (size * size * size); //m=p*a^3
             else if (shapeType == ShapeType.Sphere)
-                mass = _settings.Density * (4f/3f * Mathf.PI * (_settings.Size * _settings.Size * _settings.Size)); //m=p(4/3пR^3)
+                mass = density * (4f/3f * Mathf.PI * (size * size * size)); //m=p(4/3пR^3)
             return mass;
         }
     }

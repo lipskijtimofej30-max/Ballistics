@@ -15,32 +15,20 @@ namespace Game.Scripts.Core
         public Vector3 Position { get; set; }
         public Vector3 Velocity { get; set; }
 
-        private ProjectileSettings _settings;
         
-        public void Initialize(ProjectileSettings projectileSettings,SimulationSettings simulationSettings,
-            LaunchVelocityCalculator velocityCalculator, MassCalculator massCalculator, CrossSectionalAreaCalculator areaCalculator)
+        public void Initialize(Vector3 initialPosition, Vector3 initialVelocity,float mass, float area, float dragCoefficient)
         {
-            _settings = projectileSettings;
             
-            Velocity = velocityCalculator.GetVelocity();
-            Position = simulationSettings.InitialPosition;
+            Velocity = initialVelocity;
+            Position = initialPosition;
             transform.position = Position;
             
-            Mass = massCalculator.GetMass(ShapeType);
-            CrossSectionalArea = areaCalculator.GetCrossSectionalArea(_settings.ShapeType, _settings.Size);
-            DragCoefficient = GetDragCoefficient();
-            
-            Debug.Log($"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea};\n start speed : {simulationSettings.InitialSpeed}, start velocity : {Velocity}, start velocity magnitude : {Velocity.magnitude}");
-        }
-        
-        private float GetDragCoefficient()
-        {
-            float dragCoefficient = 0f;
-            if (ShapeType == ShapeType.Cube)
-                dragCoefficient = 1.05f;
-            else if (ShapeType == ShapeType.Sphere)
-                dragCoefficient = 0.47f;
-            return dragCoefficient;
+            Mass = mass;
+            CrossSectionalArea = area;
+            DragCoefficient = dragCoefficient;
+
+            Debug.Log(
+                $"Shape name : {gameObject.name}, shape type: {ShapeType}, mass : {Mass}, dragCoefficient: {DragCoefficient}, cross sectional area : {CrossSectionalArea}.");
         }
     }
     
