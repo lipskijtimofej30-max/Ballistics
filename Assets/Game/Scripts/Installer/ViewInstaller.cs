@@ -2,6 +2,7 @@ using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
 using Game.Scripts.View;
 using Game.Scripts.View.UseCase;
+using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
 
@@ -12,11 +13,15 @@ namespace Game.Scripts.Installer
         [SerializeField] private ProjectileView projectileView;
         [SerializeField] private SimulationView simulationView;
         [SerializeField] private EnvironmentView environmentView;
+        [SerializeField] private SetupPanelView setupPanelView;
+        [SerializeField] private TelemetryPanelView telemetryPanel;
         override public void InstallBindings()
         {
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
+            Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
+            Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();
         }
 
         private void BindEnvironmentView()

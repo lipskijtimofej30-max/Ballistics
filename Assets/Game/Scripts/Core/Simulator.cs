@@ -1,6 +1,7 @@
-using System;
 using System.IO;
+using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.Infrastructure.GameStateMachine;
 using UnityEngine;
 using Zenject;
 
@@ -12,52 +13,58 @@ namespace Game.Scripts.Core
         private SimulationPrinter _printer;
         private IPhysicsIntegrator _integrator;
         private ProjectileFactory _projectileFactory;
+        private SignalBus _signalBus;
         
         private Projectile _currentProjectile;
         private SimulationRun _currentRun;
 
         [field:SerializeField] public bool IsActive { get; private set; } = false;
         
+        public bool HasActiveRun => _currentRun != null;
+        
         [Inject]
         private void Construct(IPhysicsIntegrator integrator, ProjectileFactory projectileFactory, 
-            SimulationPrinter printer, CsvExporter csvExporter)
+            SimulationPrinter printer, CsvExporter csvExporter, SignalBus signalBus)
         {
             _integrator = integrator;
             _projectileFactory = projectileFactory;
             _printer = printer;
             _csvExporter = csvExporter;
+            _signalBus = signalBus;
         }
         
-        [ContextMenu("Spawn and Start")]
-        public void SpawnAndStart()
+        public void Spawn()
         {
+            if (_currentProjectile != null)
+                Destroy(_currentProjectile.gameObject);
+            
             _currentProjectile = _projectileFactory.Create();
+            _currentRun = null;
+            IsActive = false;
+        }
+
+        public void Begin()
+        {
+            if (_currentProjectile == null)
+                Spawn();
+            
             _currentRun = new SimulationRun();
             IsActive = true;
         }
-
-        [ContextMenu("Stop Simulation")]
-        public void StopSimulation()
+        
+        public void ClearProjectile()
         {
+            if(_currentProjectile != null)
+                Destroy(_currentProjectile.gameObject);
+            
+            _currentProjectile = null;
+            _currentRun = null;
             IsActive = false;
-            if (_currentRun != null)
-            {
-                _printer.Print(_currentRun.Points);
-                SaveCsv(_currentRun);
-            }
         }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                SpawnAndStart();
-            }
-            else if (Input.GetKeyDown(KeyCode.C))
-            {
-                StopSimulation();
-            }
-        }
+        
+        public void Resume() => IsActive = true;
+        public void Pause() => IsActive = false;
+        
 
         private void SaveCsv(SimulationRun run)
         {
@@ -69,7 +76,13 @@ namespace Game.Scripts.Core
         {
             if (!IsActive || _currentProjectile == null || _currentRun == null) return;
             
-            _integrator.Step(_currentProjectile, _currentRun, Time.fixedDeltaTime, StopSimulation);
+            _integrator.Step(_currentProjectile, _currentRun, Time.fixedDeltaTime, OnProjectileLanded);
+        }
+
+        private void OnProjectileLanded()
+        {
+            IsActive = false;
+            _signalBus.Fire(new ChangeStateSignal(GameStateType.FinishedSimulation));
         }
     }
 }

@@ -8873,6 +8873,8 @@ MonoBehaviour:
   projectileView: {fileID: 659418891}
   simulationView: {fileID: 659418892}
   environmentView: {fileID: 659418893}
+  setupPanelView: {fileID: 0}
+  telemetryPanel: {fileID: 0}
 --- !u!1 &1400057006
 GameObject:
   m_ObjectHideFlags: 0
