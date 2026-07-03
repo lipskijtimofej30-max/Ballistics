@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9005900345461209302}
   - component: {fileID: 8077538093031711145}
   - component: {fileID: 1629904683196314879}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -118,6 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 738e60d6c925448fb276db345c80fe59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _size: 0.5
-  _density: 7000
   <ShapeType>k__BackingField: 1

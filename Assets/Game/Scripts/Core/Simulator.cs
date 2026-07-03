@@ -46,7 +46,19 @@ namespace Game.Scripts.Core
                 SaveCsv(_currentRun);
             }
         }
-        
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                SpawnAndStart();
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                StopSimulation();
+            }
+        }
+
         private void SaveCsv(SimulationRun run)
         {
             string path = Path.Combine(Application.persistentDataPath, "simulation.csv");
