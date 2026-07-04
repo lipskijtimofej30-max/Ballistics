@@ -8,10 +8,12 @@ using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
 using Game.Scripts.Infrastructure.Signals;
+using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
+    [SerializeField] private Simulator _simulator;
     public override void InstallBindings()
     {
         BindSettings();
@@ -20,10 +22,16 @@ public class GameInstaller : MonoInstaller
         BindForce();
         BindCalculator();
         Container.Bind<IPhysicsIntegrator>().To<SemiImplicitEulerIntegrator>().AsSingle().NonLazy();
+        BindSimulation();
+        Container.Bind<Simulator>().FromInstance(_simulator).AsSingle().NonLazy();
+        BindGameStateMachine();
+    }
 
+    private void BindSimulation()
+    {
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
-        BindGameStateMachine();
+        Container.Bind<SimulationAnalyzer>().AsSingle();
     }
 
     private void BindCalculator()

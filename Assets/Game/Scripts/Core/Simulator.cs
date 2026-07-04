@@ -10,25 +10,23 @@ namespace Game.Scripts.Core
     public class Simulator : MonoBehaviour
     {
         private CsvExporter _csvExporter;
-        private SimulationPrinter _printer;
         private IPhysicsIntegrator _integrator;
         private ProjectileFactory _projectileFactory;
         private SignalBus _signalBus;
         
         private Projectile _currentProjectile;
-        private SimulationRun _currentRun;
+        public SimulationRun CurrentRun { get; private set; }
 
         [field:SerializeField] public bool IsActive { get; private set; } = false;
         
-        public bool HasActiveRun => _currentRun != null;
+        public bool HasActiveRun => CurrentRun != null;
         
         [Inject]
         private void Construct(IPhysicsIntegrator integrator, ProjectileFactory projectileFactory, 
-            SimulationPrinter printer, CsvExporter csvExporter, SignalBus signalBus)
+             CsvExporter csvExporter, SignalBus signalBus)
         {
             _integrator = integrator;
             _projectileFactory = projectileFactory;
-            _printer = printer;
             _csvExporter = csvExporter;
             _signalBus = signalBus;
         }
@@ -39,7 +37,7 @@ namespace Game.Scripts.Core
                 Destroy(_currentProjectile.gameObject);
             
             _currentProjectile = _projectileFactory.Create();
-            _currentRun = null;
+            CurrentRun = null;
             IsActive = false;
         }
 
@@ -48,7 +46,7 @@ namespace Game.Scripts.Core
             if (_currentProjectile == null)
                 Spawn();
             
-            _currentRun = new SimulationRun();
+            CurrentRun = new SimulationRun();
             IsActive = true;
         }
         
@@ -58,25 +56,18 @@ namespace Game.Scripts.Core
                 Destroy(_currentProjectile.gameObject);
             
             _currentProjectile = null;
-            _currentRun = null;
+            CurrentRun = null;
             IsActive = false;
         }
         
         public void Resume() => IsActive = true;
         public void Pause() => IsActive = false;
         
-
-        private void SaveCsv(SimulationRun run)
-        {
-            string path = Path.Combine(Application.persistentDataPath, "simulation.csv");
-            _csvExporter.Export(path, run.Points);
-        }
-        
         private void FixedUpdate()
         {
-            if (!IsActive || _currentProjectile == null || _currentRun == null) return;
+            if (!IsActive || _currentProjectile == null || CurrentRun == null) return;
             
-            _integrator.Step(_currentProjectile, _currentRun, Time.fixedDeltaTime, OnProjectileLanded);
+            _integrator.Step(_currentProjectile, CurrentRun, Time.fixedDeltaTime, OnProjectileLanded);
         }
 
         private void OnProjectileLanded()
