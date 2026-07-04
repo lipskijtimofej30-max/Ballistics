@@ -16,14 +16,21 @@ namespace Game.Scripts.Installer
         [SerializeField] private SetupPanelView setupPanelView;
         [SerializeField] private TelemetryPanelView telemetryPanel;
         [SerializeField] private ResultsPanelView resultsPanel;
+        [SerializeField] private ToolbarView toolbarView;
         override public void InstallBindings()
         {
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
+            BindToolbarView();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();
             Container.Bind<ResultsPanelView>().FromInstance(resultsPanel).AsSingle();
+        }
+
+        private void BindToolbarView()
+        {
+            Container.Bind<ToolbarView>().FromInstance(toolbarView).AsSingle();
         }
 
         private void BindEnvironmentView()

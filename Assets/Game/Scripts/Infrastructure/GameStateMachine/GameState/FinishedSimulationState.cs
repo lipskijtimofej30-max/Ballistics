@@ -14,6 +14,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly CsvExporter _csvExporter;
         private readonly SimulationAnalyzer _analyzer;
         private readonly ResultsPanelView _resultsPanel;
+        private readonly ToolbarView _toolbarView;
 
         [Inject]
         public FinishedSimulationState(
@@ -21,13 +22,15 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             SimulationPrinter printer,
             CsvExporter csvExporter,
             SimulationAnalyzer analyzer,
-            ResultsPanelView resultsPanel)
+            ResultsPanelView resultsPanel,
+            ToolbarView toolbarView)
         {
             _simulator = simulator;
             _printer = printer;
             _csvExporter = csvExporter;
             _analyzer = analyzer;
             _resultsPanel = resultsPanel;
+            _toolbarView = toolbarView;
         }
         
         public void Enter()
@@ -40,6 +43,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             var summary = _analyzer.Analyze(run.Points);
             _resultsPanel.SetSummary(summary);
             _resultsPanel.Show();
+            
+            _toolbarView.CreateButton.interactable = true;
             
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }

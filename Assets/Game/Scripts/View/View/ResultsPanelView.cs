@@ -16,12 +16,16 @@ namespace Game.Scripts.View.View
 
         public event Action SaveCsvRequested;
 
-        private void Awake() => _saveCsvButton.onClick.AddListener(() => SaveCsvRequested?.Invoke());
+        private void Awake()
+        {
+            _saveCsvButton.onClick.AddListener(() => SaveCsvRequested?.Invoke());
+            Hide();
+        } 
 
         public void Show()
         {
-            _root.SetActive(true);
             _titleText.text = "Результаты полета";
+            _root.SetActive(true);
         }
         public void Hide() => _root.SetActive(false);
 

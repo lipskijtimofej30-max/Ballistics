@@ -23,7 +23,7 @@ namespace Game.Scripts.Core
             projectile.Velocity += acceleration * deltaTime;
             projectile.Position += projectile.Velocity * deltaTime;
 
-            bool landed = projectile.Position.y <= 0;
+            var landed = projectile.Position.y <= 0;
             if (landed)
             {
                 projectile.Position = new Vector3(projectile.Position.x, 0, projectile.Position.z);

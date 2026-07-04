@@ -1,4 +1,3 @@
-using System;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.GameStateMachine;
@@ -17,6 +16,11 @@ namespace Game.Scripts.View.View
         
         private SignalBus _signalBus;
         private Simulator _simulator;
+        
+        public Button PauseButton => _pauseButton;
+        public Button CreateButton => _createButton;
+        public Button StartButton => _startButton;
+        public Button StopButton => _stopButton;
 
         [Inject]
         private void Construct(SignalBus signalBus, Simulator simulator)
@@ -32,6 +36,7 @@ namespace Game.Scripts.View.View
                 {
                     _signalBus.Fire(new ChangeStateSignal(GameStateType.SetupSimulation));
                     _simulator.Spawn();
+                    _startButton.interactable = true;
                 });
             
             _startButton.onClick.AddListener( 
@@ -43,7 +48,7 @@ namespace Game.Scripts.View.View
             _stopButton.onClick.AddListener(
                 () => _signalBus.Fire(new ChangeStateSignal(GameStateType.FinishedSimulation)));
         }
-
+        
         private void OnDestroy()
         {
             _pauseButton.onClick.RemoveAllListeners();
