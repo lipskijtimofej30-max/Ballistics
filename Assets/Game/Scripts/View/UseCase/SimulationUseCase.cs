@@ -29,7 +29,7 @@ namespace Assets.Game.Scripts.View.UseCase
 
             _heightBinder = new FloatParameterBinder(
                 view.HeightParameter,
-                0.1f,
+                0f,
                 15f,
                 "F2",
                 () => settings.InitialPosition.y,
@@ -38,7 +38,7 @@ namespace Assets.Game.Scripts.View.UseCase
 
             _angleBinder = new FloatParameterBinder(
                 view.AngleParameter,
-                0.1f,
+                0f,
                 90f,
                 "F2",
                 () => settings.LaunchAngle,

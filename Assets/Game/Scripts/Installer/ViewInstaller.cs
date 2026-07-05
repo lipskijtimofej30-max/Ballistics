@@ -1,5 +1,6 @@
 using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
+using Game.Scripts.UX;
 using Game.Scripts.View;
 using Game.Scripts.View.UseCase;
 using Game.Scripts.View.View;
@@ -17,6 +18,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private TelemetryPanelView telemetryPanel;
         [SerializeField] private ResultsPanelView resultsPanel;
         [SerializeField] private ToolbarView toolbarView;
+        [SerializeField] private VisualizationView visualizationView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -25,18 +27,26 @@ namespace Game.Scripts.Installer
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
+            Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             BindToolbarView();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();
             Container.Bind<ResultsPanelView>().FromInstance(resultsPanel).AsSingle();
             BindTrajectoryRenderer();
+            BindVisualization();
+        }
+
+        private void BindVisualization()
+        {
+            Container.Bind<VisualizationView>().FromInstance(visualizationView).AsSingle();
+            Container.BindInterfacesAndSelfTo<VisualizationUseCase>().AsSingle().NonLazy();
         }
 
         private void BindTrajectoryRenderer()
         {
             Container.Bind<TrajectoryRenderer>().WithId("Live").FromInstance(_liveTrajectoryRenderer).AsCached();
             Container.Bind<TrajectoryRenderer>().WithId("Preview").FromInstance(_previewTrajectoryRenderer).AsCached();
-            Container.Bind<TrajectoryPreviewUseCase>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TrajectoryPreviewUseCase>().AsSingle();
         }
 
         private void BindToolbarView()

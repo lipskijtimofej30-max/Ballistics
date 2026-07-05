@@ -14,11 +14,13 @@ namespace Game.Scripts.View.UseCase
         
         private readonly EnvironmentView _environmentView;
         private readonly EnvironmentSettings _environmentSettings;
+        private readonly SignalBus _signalBus;
 
         public EnvironmentUseCase(EnvironmentView environmentView, EnvironmentSettings environmentSettings, SignalBus signalBus)
         {
             _environmentView = environmentView;
             _environmentSettings = environmentSettings;
+            _signalBus = signalBus;
             
             _gravityBinder = new FloatParameterBinder(
                 _environmentView.GravityParameter,
@@ -31,8 +33,8 @@ namespace Game.Scripts.View.UseCase
             
             _airSpeedBinder = new FloatParameterBinder(
                 _environmentView.AirSpeedParameter,
-                -200f,
-                200f,
+                -20f,
+                20f,
                 "F2",
                 () => _environmentSettings.WindVelocity.x,
                 x => _environmentSettings.WindVelocity = new Vector3(x, 0f, 0f),
@@ -55,6 +57,7 @@ namespace Game.Scripts.View.UseCase
             _environmentSettings.AirResistanceEnabled = enabled;
             if (enabled) _environmentView.ShowContainer();
             else _environmentView.HideContainer();
+            _signalBus.Fire(new EnvironmentSettingsChangedSignal());                                      
         }
 
         public void Dispose()

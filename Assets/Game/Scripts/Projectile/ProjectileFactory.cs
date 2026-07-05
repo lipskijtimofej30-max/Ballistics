@@ -45,7 +45,7 @@ namespace Game.Scripts.Core
             Vector3 velocity = _velocityCalculator.GetVelocity();
             Vector3 position = _simulationSettings.InitialPosition;
             
-            return new ProjectileState(position, velocity, mass, dragCoefficient, area);
+            return new ProjectileState(position, velocity, mass, area, dragCoefficient);
         }
 
         public ProjectileBody CreateBody()

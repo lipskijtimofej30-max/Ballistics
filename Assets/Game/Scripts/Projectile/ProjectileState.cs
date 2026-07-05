@@ -6,9 +6,9 @@ namespace Game.Scripts.Core
     {
         public Vector3 Position { get; set; }
         public Vector3 Velocity { get; set; }
-        public float Mass { get; private set; }
-        public float CrossSectionalArea { get; private set; }
-        public float DragCoefficient { get; private set; }
+        public float Mass { get; }
+        public float CrossSectionalArea { get; }
+        public float DragCoefficient { get; }
 
         public ProjectileState(Vector3 position,Vector3 velocity, float mass, float crossSectionalArea, float dragCoefficient)
         {
@@ -17,6 +17,11 @@ namespace Game.Scripts.Core
             Mass = mass;
             CrossSectionalArea = crossSectionalArea;
             DragCoefficient = dragCoefficient;
+        }
+        
+        public ProjectileState Clone()
+        {
+            return new ProjectileState(Position, Velocity, Mass, CrossSectionalArea, DragCoefficient);
         }
     }
 }

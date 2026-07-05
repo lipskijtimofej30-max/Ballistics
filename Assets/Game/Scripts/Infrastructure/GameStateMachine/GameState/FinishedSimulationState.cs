@@ -45,6 +45,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _resultsPanel.Show();
             
             _toolbarView.CreateButton.interactable = true;
+            _toolbarView.PauseButton.interactable = false;
             
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }

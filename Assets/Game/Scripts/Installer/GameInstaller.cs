@@ -8,6 +8,7 @@ using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
 using Game.Scripts.Infrastructure.Signals;
+using Game.Scripts.Settings;
 using UnityEngine;
 using Zenject;
 
@@ -59,6 +60,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EnvironmentSettings>().AsSingle().NonLazy();
         Container.Bind<ProjectileSettings>().AsSingle().NonLazy();
         Container.Bind<SimulationSettings>().AsSingle().NonLazy();
+        Container.Bind<VisualizationSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
@@ -85,5 +87,7 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<ProjectileSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<SimulationSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<EnvironmentSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ProjectileSpawnedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<VisualizationSettingsChangedSignal>().OptionalSubscriber();
     }
 }

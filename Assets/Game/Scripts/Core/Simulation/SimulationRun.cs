@@ -13,6 +13,7 @@ namespace Game.Scripts.Core.Simulation
         public void AddPoint(Vector3 position, Vector3 velocity, Vector3 acceleration, Vector3 totalForce,
             float deltaTime)
         {
+            _elapsedTime += deltaTime;
             _points.Add(new SimulationPoint
             {
                 Time = _elapsedTime,
@@ -21,7 +22,6 @@ namespace Game.Scripts.Core.Simulation
                 Acceleration = acceleration,
                 TotalForce = totalForce
             });
-            _elapsedTime += deltaTime;
         }
     }
 }

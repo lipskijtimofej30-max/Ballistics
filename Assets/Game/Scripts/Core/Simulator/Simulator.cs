@@ -2,6 +2,7 @@ using System.IO;
 using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
+using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
@@ -31,7 +32,6 @@ namespace Game.Scripts.Core
             _projectileFactory = projectileFactory;
             _signalBus = signalBus;
         }
-
         
         public void Spawn()
         {
@@ -43,12 +43,16 @@ namespace Game.Scripts.Core
             CurrentBody.SyncTransform(CurrentState.Position);
             CurrentRun = null;
             IsActive = false;
+            _trajectoryRenderer.Clear();
+            
+            _signalBus.Fire(new ProjectileSpawnedSignal());
         }
 
         public void Begin()
         {
-            _integratorFactory.Create(IntegratorMethod.SemiImplicitEuler);
+           _integrator = _integratorFactory.Create(IntegratorMethod.SemiImplicitEuler);
             CurrentRun = new SimulationRun();
+            CurrentRun.AddPoint(CurrentState.Position, CurrentState.Velocity, Vector3.zero, Vector3.zero, 0f);
             IsActive = true;
         }
         
@@ -66,11 +70,16 @@ namespace Game.Scripts.Core
         
         private void FixedUpdate()
         {
-            if (!IsActive || CurrentBody == null || CurrentRun == null) return;
+            if (!IsActive || CurrentBody == null || CurrentRun == null || CurrentState == null) return;
+            bool landed = false;
             
-            _integrator.Step(CurrentState, CurrentRun, Time.fixedDeltaTime, OnProjectileLanded);
+            _integrator.Step(CurrentState, CurrentRun, Time.fixedDeltaTime, () => landed = true);
+            
             CurrentBody.SyncTransform(CurrentState.Position);
             _trajectoryRenderer.AppendPoint(CurrentState.Position);
+            
+            if (landed)
+                OnProjectileLanded();
         }
 
         private void OnProjectileLanded()

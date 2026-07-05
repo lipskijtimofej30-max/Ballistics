@@ -1,0 +1,57 @@
+﻿using System;
+using Assets.Game.Scripts.Infrastructure.Signals;
+using DefaultNamespace;
+using Game.Scripts.Core;
+using Game.Scripts.Infrastructure.Signals;
+using Game.Scripts.View.View;
+using Zenject;
+
+namespace Game.Scripts.UX
+{
+    public class SetupDirtyTracker : IInitializable, IDisposable
+    {
+        private readonly SignalBus _signalBus;
+        private readonly ToolbarView _toolbarView;
+        private readonly Simulator  _simulator;
+        
+        public bool IsDirty { get; private set; }
+
+        [Inject]
+        public SetupDirtyTracker(SignalBus signalBus, ToolbarView toolbarView, Simulator simulator)
+        {
+            _signalBus = signalBus;
+            _toolbarView = toolbarView;
+            _simulator = simulator;
+        }
+
+        public void Initialize()
+        {
+            _signalBus.Subscribe<ProjectileSettingsChangedSignal>(MarkDirty);
+            _signalBus.Subscribe<SimulationSettingsChangedSignal>(MarkDirty);
+            _signalBus.Subscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
+        }
+
+        private void MarkDirty()
+        {
+            if(_simulator.CurrentBody == null) return;
+            
+            IsDirty = true;
+            _toolbarView.CreateButtonLabel.text = "Обновить";
+            _toolbarView.StartButton.interactable = false;
+        }
+
+        public void MarkClean()
+        {
+            IsDirty = false;
+            _toolbarView.CreateButtonLabel.text = "+ Создать";
+            _toolbarView.StartButton.interactable = true;
+        }
+        
+        public void Dispose()
+        {
+            _signalBus.TryUnsubscribe<ProjectileSettingsChangedSignal>(MarkDirty);
+            _signalBus.TryUnsubscribe<SimulationSettingsChangedSignal>(MarkDirty);
+            _signalBus.TryUnsubscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
+        }
+    }
+}

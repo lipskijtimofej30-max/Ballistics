@@ -1,4 +1,5 @@
 using Game.Scripts.Core.Simulation;
+using UnityEngine;
 using Zenject;
 
 namespace Game.Scripts.Core
@@ -15,17 +16,20 @@ namespace Game.Scripts.Core
             _integratorFactory = integratorFactory;
         }
 
-        public SimulationRun Run(ProjectileState initialState, IntegratorMethod method, float dt)
+        public SimulationRun Run(ProjectileState originalState, IntegratorMethod method, float dt)
         {
+            var state = originalState.Clone();
             var integrator = _integratorFactory.Create(method);
             var run = new SimulationRun();
+            
+            run.AddPoint(state.Position, state.Velocity, Vector3.zero, Vector3.zero, 0f);
             
             bool landed = false;
             int steps = 0;
 
-            while (!landed || steps < MaxSteps)
+            while (!landed && steps < MaxSteps)
             {
-                integrator.Step(initialState, run, dt, () => landed = true);
+                integrator.Step(state, run, dt, () => landed = true);
                 steps++;
             }
             return run;
