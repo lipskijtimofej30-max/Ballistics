@@ -16,7 +16,7 @@ namespace Game.Scripts.Core
             Debug.Log($"Force count: {forces.Count}");
         }
 
-        public Vector3 CalculateTotalForce(Projectile projectile)
+        public Vector3 CalculateTotalForce(ProjectileState projectile)
         {
             Vector3 total =  Vector3.zero;
             foreach (var force in _forces)

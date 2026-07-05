@@ -18,13 +18,25 @@ public class GameInstaller : MonoInstaller
     {
         BindSettings();
         BindSignal();
-        Container.BindInterfacesAndSelfTo<ProjectileFactory>().AsSingle().NonLazy();
         BindForce();
         BindCalculator();
-        Container.Bind<IPhysicsIntegrator>().To<SemiImplicitEulerIntegrator>().AsSingle().NonLazy();
         BindSimulation();
-        Container.Bind<Simulator>().FromInstance(_simulator).AsSingle().NonLazy();
+        BindSimulator();
+        BindFactory();
+        Container.Bind<TrajectoryPool>().AsSingle();
         BindGameStateMachine();
+    }
+
+    private void BindFactory()
+    {
+        Container.BindInterfacesAndSelfTo<ProjectileFactory>().AsSingle().NonLazy();
+        Container.Bind<IntegratorFactory>().AsSingle();
+    }
+
+    private void BindSimulator()
+    {
+        Container.Bind<Simulator>().FromInstance(_simulator).AsSingle().NonLazy();
+        Container.Bind<FastForwardSimulator>().AsSingle();
     }
 
     private void BindSimulation()

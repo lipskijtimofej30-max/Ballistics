@@ -4,6 +4,6 @@ namespace Game.Scripts.Core.Force
 {
     public interface IForce
     {
-        Vector3 Calculate(Projectile projectile); 
+        Vector3 Calculate(ProjectileState projectile); 
     }
 }

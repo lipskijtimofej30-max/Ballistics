@@ -13,7 +13,7 @@ namespace Game.Scripts.Core.Force
             _environmentSettings = environmentSettings;
         }
 
-        public Vector3 Calculate(Projectile projectile)
+        public Vector3 Calculate(ProjectileState projectile)
         {
             return projectile.Mass * _environmentSettings.Gravity;
         }

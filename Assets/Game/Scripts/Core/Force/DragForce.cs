@@ -13,7 +13,7 @@ namespace Game.Scripts.Core.Force
             _environmentSettings = environmentSettings;
         }
         
-        public Vector3 Calculate(Projectile projectile)
+        public Vector3 Calculate(ProjectileState projectile)
         {
             if(!_environmentSettings.AirResistanceEnabled)
                 return Vector3.zero;

@@ -17,6 +17,9 @@ namespace Game.Scripts.Installer
         [SerializeField] private TelemetryPanelView telemetryPanel;
         [SerializeField] private ResultsPanelView resultsPanel;
         [SerializeField] private ToolbarView toolbarView;
+        [Header("Trajectory Renderer")]
+        [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
+        [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
             BindProjectileView();
@@ -26,6 +29,14 @@ namespace Game.Scripts.Installer
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();
             Container.Bind<ResultsPanelView>().FromInstance(resultsPanel).AsSingle();
+            BindTrajectoryRenderer();
+        }
+
+        private void BindTrajectoryRenderer()
+        {
+            Container.Bind<TrajectoryRenderer>().WithId("Live").FromInstance(_liveTrajectoryRenderer).AsCached();
+            Container.Bind<TrajectoryRenderer>().WithId("Preview").FromInstance(_previewTrajectoryRenderer).AsCached();
+            Container.Bind<TrajectoryPreviewUseCase>().AsSingle();
         }
 
         private void BindToolbarView()

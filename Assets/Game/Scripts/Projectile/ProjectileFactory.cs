@@ -8,7 +8,8 @@ namespace Game.Scripts.Core
 {
     public class ProjectileFactory : IInitializable
     {
-        private Dictionary<ShapeType, Projectile> _prefabs = new(2);
+        private Dictionary<ShapeType, ProjectileBody> _prefabs = new(2);
+        
         private ProjectileSettings _projectileSettings;
         private SimulationSettings _simulationSettings;
         private LaunchVelocityCalculator _velocityCalculator;
@@ -28,15 +29,14 @@ namespace Game.Scripts.Core
 
         public void Initialize()
         {
-            var prefabsArray = Resources.LoadAll<Projectile>("Projectiles");
+            var prefabsArray = Resources.LoadAll<ProjectileBody>("Projectiles");
             foreach (var prefab in prefabsArray)
                 _prefabs[prefab.ShapeType] = prefab;
         }
 
-        public Projectile Create()
+        public ProjectileState CreateState()
         {
             var shapeType = _projectileSettings.ShapeType;
-            var prefab = GameObject.Instantiate(_prefabs[shapeType]);
 
             float mass = _massCalculator.GetMass(shapeType, _projectileSettings.Density, _projectileSettings.Size);
             float area = _crossSectionalAreaCalculator.GetCrossSectionalArea(shapeType, _projectileSettings.Size);
@@ -45,7 +45,13 @@ namespace Game.Scripts.Core
             Vector3 velocity = _velocityCalculator.GetVelocity();
             Vector3 position = _simulationSettings.InitialPosition;
             
-            prefab.Initialize(position, velocity, mass, area, dragCoefficient);
+            return new ProjectileState(position, velocity, mass, dragCoefficient, area);
+        }
+
+        public ProjectileBody CreateBody()
+        {
+            var shapeType = _projectileSettings.ShapeType;
+            var prefab = GameObject.Instantiate(_prefabs[shapeType]);
             return prefab;
         }
 

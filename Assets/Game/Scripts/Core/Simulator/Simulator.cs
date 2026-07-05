@@ -2,6 +2,7 @@ using System.IO;
 using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
+using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
 
@@ -10,47 +11,53 @@ namespace Game.Scripts.Core
     public class Simulator : MonoBehaviour
     {
         private IPhysicsIntegrator _integrator;
+        private IntegratorFactory _integratorFactory;
         private ProjectileFactory _projectileFactory;
         private SignalBus _signalBus;
+        [Inject(Id = "Live")] private TrajectoryRenderer _trajectoryRenderer;
         
-        public Projectile CurrentProjectile { get; private set; }
+        public ProjectileBody CurrentBody { get; private set; }
+        public ProjectileState CurrentState { get; private set; }
         public SimulationRun CurrentRun { get; private set; }
 
         [field:SerializeField] public bool IsActive { get; private set; } = false;
         
         public bool HasActiveRun => CurrentRun != null;
-        
+
         [Inject]
-        private void Construct(IPhysicsIntegrator integrator, ProjectileFactory projectileFactory, 
-             SignalBus signalBus)
+        private void Construct(IntegratorFactory integratorFactory, ProjectileFactory projectileFactory, SignalBus signalBus)
         {
-            _integrator = integrator;
+            _integratorFactory =  integratorFactory;
             _projectileFactory = projectileFactory;
             _signalBus = signalBus;
         }
+
         
         public void Spawn()
         {
-            if (CurrentProjectile != null)
-                Destroy(CurrentProjectile.gameObject);
+            if (CurrentBody != null)
+                Destroy(CurrentBody.gameObject);
             
-            CurrentProjectile = _projectileFactory.Create();
+            CurrentBody = _projectileFactory.CreateBody();
+            CurrentState = _projectileFactory.CreateState();
+            CurrentBody.SyncTransform(CurrentState.Position);
             CurrentRun = null;
             IsActive = false;
         }
 
         public void Begin()
         {
+            _integratorFactory.Create(IntegratorMethod.SemiImplicitEuler);
             CurrentRun = new SimulationRun();
             IsActive = true;
         }
         
         public void ClearProjectile()
         {
-            if(CurrentProjectile != null)
-                Destroy(CurrentProjectile.gameObject);
+            if(CurrentBody != null)
+                Destroy(CurrentBody.gameObject);
             
-            CurrentProjectile = null;
+            CurrentBody = null;
             CurrentRun = null;
         }
         
@@ -59,9 +66,11 @@ namespace Game.Scripts.Core
         
         private void FixedUpdate()
         {
-            if (!IsActive || CurrentProjectile == null || CurrentRun == null) return;
+            if (!IsActive || CurrentBody == null || CurrentRun == null) return;
             
-            _integrator.Step(CurrentProjectile, CurrentRun, Time.fixedDeltaTime, OnProjectileLanded);
+            _integrator.Step(CurrentState, CurrentRun, Time.fixedDeltaTime, OnProjectileLanded);
+            CurrentBody.SyncTransform(CurrentState.Position);
+            _trajectoryRenderer.AppendPoint(CurrentState.Position);
         }
 
         private void OnProjectileLanded()

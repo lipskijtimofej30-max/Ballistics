@@ -5,6 +5,6 @@ namespace Game.Scripts.Core
 {
     public interface IPhysicsIntegrator
     {
-        void Step(Projectile projectile, SimulationRun run, float deltaTime, Action onCollision);
+        void Step(ProjectileState projectile, SimulationRun run, float deltaTime, Action onCollision);
     }
 }
