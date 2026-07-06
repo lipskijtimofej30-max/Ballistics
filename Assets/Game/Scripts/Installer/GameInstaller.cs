@@ -89,5 +89,6 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<EnvironmentSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<ProjectileSpawnedSignal>().OptionalSubscriber();
         Container.DeclareSignal<VisualizationSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ShapeDropdownChangedSignal>().OptionalSubscriber();
     }
 }

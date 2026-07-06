@@ -2,6 +2,7 @@
 using System.Linq;
 using DefaultNamespace;
 using Game.Scripts.Core;
+using Game.Scripts.Infrastructure.Signals;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -29,15 +30,15 @@ namespace Game.Scripts.View
             string[] options = Enum.GetNames(typeof(ShapeType));
             _dropdown.AddOptions(options.ToList());
             _dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
-            _dropdown.value = 0;
-            _projectileSettings.ShapeType = (ShapeType)_dropdown.value;
+            _dropdown.SetValueWithoutNotify(0);
+            OnDropdownValueChanged(0);
         }
         
         private void OnDropdownValueChanged(int value)
         {
             _projectileSettings.ShapeType = (ShapeType)value;
+            _signalBus.Fire(new ShapeDropdownChangedSignal(_projectileSettings.ShapeType));
             _signalBus.Fire<ProjectileSettingsChangedSignal>();
-            Debug.Log("Shape Type: " + _projectileSettings.ShapeType);
         }
 
         private void OnDestroy()
