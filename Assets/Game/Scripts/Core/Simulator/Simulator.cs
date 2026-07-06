@@ -7,6 +7,7 @@ using Game.Scripts.Settings;
 using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
+using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
 
 namespace Game.Scripts.Core
 {
@@ -19,6 +20,7 @@ namespace Game.Scripts.Core
         private ProjectileFactory _projectileFactory;
         private IntegratorSettings _integratorSettings;
         private SignalBus _signalBus;
+        private ILogger _logger;
         [Inject(Id = "Live")] private TrajectoryRenderer _trajectoryRenderer;
         
         public ProjectileBody CurrentBody { get; private set; }
@@ -33,12 +35,13 @@ namespace Game.Scripts.Core
 
         [Inject]
         private void Construct(IntegratorFactory integratorFactory, ProjectileFactory projectileFactory,
-            IntegratorSettings integratorSettings, SignalBus signalBus)
+            IntegratorSettings integratorSettings, SignalBus signalBus, ILogger logger)
         {
             _integratorFactory =  integratorFactory;
             _projectileFactory = projectileFactory;
             _integratorSettings = integratorSettings;
             _signalBus = signalBus;
+            _logger = logger;
         }
         
         public void Spawn()
@@ -100,6 +103,9 @@ namespace Game.Scripts.Core
                     remaining = 0;
                 }
             }
+            
+            if(steps > 2)
+                _logger.Log($"Steps {steps}");
             
             CurrentBody.SyncTransform(CurrentState.Position);
             _trajectoryRenderer.AppendPoint(CurrentState.Position);
