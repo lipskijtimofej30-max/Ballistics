@@ -1,4 +1,5 @@
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.Settings;
 using UnityEngine;
 using Zenject;
 

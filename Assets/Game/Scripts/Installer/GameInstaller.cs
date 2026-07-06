@@ -63,6 +63,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ProjectileSettings>().AsSingle().NonLazy();
         Container.Bind<SimulationSettings>().AsSingle().NonLazy();
         Container.Bind<VisualizationSettings>().AsSingle().NonLazy();
+        Container.Bind<IntegratorSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
@@ -92,5 +93,6 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<ProjectileSpawnedSignal>().OptionalSubscriber();
         Container.DeclareSignal<VisualizationSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<ShapeDropdownChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<IntegratorSettingsChangedSignal>().OptionalSubscriber();
     }
 }

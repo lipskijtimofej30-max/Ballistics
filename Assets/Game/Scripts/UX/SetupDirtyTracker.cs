@@ -29,6 +29,7 @@ namespace Game.Scripts.UX
             _signalBus.Subscribe<ProjectileSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
+            _signalBus.Subscribe<IntegratorSettingsChangedSignal>(MarkDirty);
         }
 
         private void MarkDirty()
@@ -52,6 +53,7 @@ namespace Game.Scripts.UX
             _signalBus.TryUnsubscribe<ProjectileSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
+            _signalBus.TryUnsubscribe<IntegratorSettingsChangedSignal>(MarkDirty);
         }
     }
 }
