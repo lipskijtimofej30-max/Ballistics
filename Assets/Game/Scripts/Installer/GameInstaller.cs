@@ -7,6 +7,7 @@ using Game.Scripts.Core.Force;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
+using Game.Scripts.Infrastructure.Logger;
 using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         BindSettings();
+        Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
         BindSignal();
         BindForce();
         BindCalculator();
@@ -71,7 +73,7 @@ public class GameInstaller : MonoInstaller
 
     private void BindGameStateMachine()
     {
-        Container.Bind<GameStateMachine>().AsSingle().NonLazy();
+        Container.Bind<GameStateMachine>().AsSingle();
         Container.Bind<SetupSimulationState>().AsSingle();
         Container.Bind<SimulationState>().AsSingle();
         Container.Bind<FinishedSimulationState>().AsSingle();

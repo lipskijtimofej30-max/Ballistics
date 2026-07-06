@@ -1,6 +1,7 @@
 using System;
 using DefaultNamespace;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
+using Game.Scripts.Infrastructure.Logger;
 using Zenject;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine
@@ -9,13 +10,15 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
     {
         private GameStateMachine _stateMachine;
         private SignalBus _signalBus;
+        private ILogger _logger;
 
         [Inject]
         private void Construct(GameStateMachine stateMachine, SignalBus signalBus, SetupSimulationState setupSimulationState,
-            SimulationState simulationState, PausedSimulationState pausedSimulationState, FinishedSimulationState finishedSimulationState)
+            SimulationState simulationState, PausedSimulationState pausedSimulationState, FinishedSimulationState finishedSimulationState, ILogger logger)
         {
             _stateMachine = stateMachine;
             _signalBus = signalBus;
+            _logger = logger;
             
             _stateMachine.RegisterState(GameStateType.SetupSimulation, setupSimulationState);
             _stateMachine.RegisterState(GameStateType.Simulation, simulationState);
@@ -34,6 +37,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
 
         private void OnChangeState(ChangeStateSignal signal)
         {
+            _logger.LogWarning($"Changing state to {signal.NextState}");
             _stateMachine.ChangeState(signal.NextState);
         }
 

@@ -13,7 +13,6 @@ namespace Game.Scripts.Core
         private void Construct(List<IForce> forces)
         {
             _forces = forces;
-            Debug.Log($"Force count: {forces.Count}");
         }
 
         public Vector3 CalculateTotalForce(ProjectileState projectile)

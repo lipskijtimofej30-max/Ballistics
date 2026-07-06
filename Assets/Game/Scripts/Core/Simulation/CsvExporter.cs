@@ -1,13 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using Game.Scripts.Infrastructure.Logger;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using UnityEngine;
+using Zenject;
 
 namespace Game.Scripts.Core.Simulation
 {
     public class CsvExporter
     {
+        private readonly ILogger _logger;
+
+        [Inject]
+        public CsvExporter(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Export(string path, IReadOnlyList<SimulationPoint> points)
         {
             StringBuilder builder = new StringBuilder();
@@ -44,7 +53,7 @@ namespace Game.Scripts.Core.Simulation
 
             File.WriteAllText(path, builder.ToString());
 
-            Debug.Log($"CSV saved: {path}");
+            _logger.Log($"CSV saved: {path}");
         }
     }
 }

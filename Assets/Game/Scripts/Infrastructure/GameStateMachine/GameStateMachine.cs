@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine
 {
@@ -8,11 +7,11 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
     {
         private readonly Dictionary<GameStateType, IGameState> _states = new();
         private readonly Dictionary<GameStateType, List<Transition>> _transitions = new();
-    
+
         private IGameState _currentGameState;
         private GameStateType _currentGameStateId;
-        
-        public GameStateType CurrentGameStateType => _currentGameStateId;
+
+        public GameStateType CurrentGameStateType => _currentGameStateId;        
 
         public void RegisterState(GameStateType id, IGameState gameState)
         {
@@ -32,9 +31,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
             _currentGameState?.Exit();
             _currentGameState = nextState;
             _currentGameStateId = id;
-            _currentGameState.Enter();
-            
-            Debug.LogWarning($"Changing state to {_currentGameStateId}");
+            _currentGameState.Enter();    
         }
 
         public void Tick()

@@ -17,7 +17,13 @@ namespace Game.Scripts.View.View
         private int _framesSinceUpdate;
         private int _liveStride = 1;
         private int _stepsSinceLastPoint;
-        
+
+        private void Awake()
+        {
+            _lineRenderer.positionCount = 0;
+            _lineRenderer.enabled = false;
+        }
+
         public void AppendPoint(Vector3 position)
         {    
             _stepsSinceLastPoint++;
