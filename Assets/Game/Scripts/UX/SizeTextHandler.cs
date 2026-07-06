@@ -26,9 +26,9 @@ namespace Game.Scripts.UX
         {
             string text = signal.Value switch
             {
-                ShapeType.Cube => "Грань",
-                ShapeType.Sphere => "Радиус",
-                _ => "Размер"
+                ShapeType.Cube => "Грань:",
+                ShapeType.Sphere => "Радиус:",
+                _ => "Размер:"
             };
             _sizeText.text = text;
         }
