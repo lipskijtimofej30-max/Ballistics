@@ -8,29 +8,21 @@ namespace Game.Scripts.Core
     public class SemiImplicitEulerIntegrator : IPhysicsIntegrator
     {
         private ForceCalculator _forceCalculator;
-
+ 
         [Inject]
-        private void Construct(ForceCalculator forceCalculator)
-        {
-            _forceCalculator = forceCalculator;
-        }
-
-        public void Step(ProjectileState projectile, SimulationRun run, float deltaTime, Action onCollision)
+        private void Construct(ForceCalculator forceCalculator) => _forceCalculator = forceCalculator;
+ 
+        public IntegrationStepResult Step(ProjectileState projectile, float deltaTime)
         {
             var force = _forceCalculator.CalculateTotalForce(projectile);
             var acceleration = force / projectile.Mass;
-
+ 
+            // "Semi-implicit": скорость обновляется первой и используется
+            // уже НОВАЯ скорость для обновления позиции.
             projectile.Velocity += acceleration * deltaTime;
             projectile.Position += projectile.Velocity * deltaTime;
-
-            var landed = projectile.Position.y <= 0;
-            if (landed)
-                projectile.Position = new Vector3(projectile.Position.x, 0, projectile.Position.z);
-            
-            run.AddPoint(projectile.Position, projectile.Velocity, acceleration, force, deltaTime);
-
-            if (landed)
-                onCollision?.Invoke();
+ 
+            return new IntegrationStepResult(acceleration, force);
         }
     }
 }

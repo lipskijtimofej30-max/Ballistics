@@ -5,7 +5,7 @@ namespace Game.Scripts.Core
 {
     public class RK2Integrator : IPhysicsIntegrator
     {
-        public void Step(ProjectileState projectile, SimulationRun run, float deltaTime, Action onCollision)
+        public IntegrationStepResult Step(ProjectileState projectile, float deltaTime)
         {
             throw new NotImplementedException();
         }

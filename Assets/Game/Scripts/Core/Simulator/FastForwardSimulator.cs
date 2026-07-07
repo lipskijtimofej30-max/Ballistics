@@ -21,6 +21,7 @@ namespace Game.Scripts.Core
         {
             var state = originalState.Clone();
             var integrator = _integratorFactory.Create(method);
+            var stepper = new SimulationStepper(integrator);
             var run = new SimulationRun();
             
             run.AddPoint(state.Position, state.Velocity, Vector3.zero, Vector3.zero, 0f);
@@ -30,7 +31,7 @@ namespace Game.Scripts.Core
 
             while (!landed && steps < MaxSteps)
             {
-                integrator.Step(state, run, dt, () => landed = true);
+                landed =  stepper.Step(state, run, dt);
                 steps++;
             }
             return run;
