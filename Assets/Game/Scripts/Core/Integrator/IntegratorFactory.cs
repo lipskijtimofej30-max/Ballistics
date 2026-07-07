@@ -19,6 +19,7 @@ namespace Game.Scripts.Core
             IntegratorMethod.SemiImplicitEuler => _container.Instantiate<SemiImplicitEulerIntegrator>(),
             IntegratorMethod.RK2 => _container.Instantiate<RK2Integrator>(),
             IntegratorMethod.RK4 => _container.Instantiate<RK4Integrator>(),
+            IntegratorMethod.VelocityVerlet => _container.Instantiate<VelocityVerletIntegrator>(),
             _ => throw new ArgumentOutOfRangeException(nameof(method), method, null)
         };
     }

@@ -5,6 +5,7 @@ namespace Game.Scripts.Core
         Euler,
         SemiImplicitEuler,
         RK2,
-        RK4
+        RK4,
+        VelocityVerlet
     }
 }
