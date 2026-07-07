@@ -1,4 +1,5 @@
-﻿using Game.Scripts.Infrastructure.Logger;
+﻿using System;
+using Game.Scripts.Infrastructure.Logger;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -18,6 +19,20 @@ namespace Game.Scripts.Core.Simulation
         }
 
         public void Export(string path, IReadOnlyList<SimulationPoint> points)
+        {
+            try
+            {
+                var builder = BuildCsvContent(points);
+                File.WriteAllText(path, builder.ToString(), new UTF8Encoding(true));
+                _logger.Log($"CSV saved: {path}");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Failed to save CSV to {path}: {e.Message}");   
+            }
+        }
+
+        private StringBuilder BuildCsvContent(IReadOnlyList<SimulationPoint> points)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -51,9 +66,7 @@ namespace Game.Scripts.Core.Simulation
                     $"{point.TotalForce.z.ToString(CultureInfo.InvariantCulture)}");
             }
 
-            File.WriteAllText(path, builder.ToString());
-
-            _logger.Log($"CSV saved: {path}");
+            return builder;
         }
     }
 }

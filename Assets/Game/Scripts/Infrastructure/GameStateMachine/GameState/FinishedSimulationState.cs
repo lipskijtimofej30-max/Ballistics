@@ -1,8 +1,6 @@
-using System.IO;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.View.View;
-using UnityEngine;
 using Zenject;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
@@ -11,7 +9,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
     {
         private readonly Simulator _simulator;
         private readonly SimulationPrinter _printer;
-        private readonly CsvExporter _csvExporter;
+        private readonly SimulationExporter _exporter;
         private readonly SimulationAnalyzer _analyzer;
         private readonly ResultsPanelView _resultsPanel;
         private readonly ToolbarView _toolbarView;
@@ -20,15 +18,15 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         public FinishedSimulationState(
             Simulator simulator,
             SimulationPrinter printer,
-            CsvExporter csvExporter,
             SimulationAnalyzer analyzer,
+            SimulationExporter exporter,
             ResultsPanelView resultsPanel,
             ToolbarView toolbarView)
         {
             _simulator = simulator;
             _printer = printer;
-            _csvExporter = csvExporter;
             _analyzer = analyzer;
+            _exporter = exporter;
             _resultsPanel = resultsPanel;
             _toolbarView = toolbarView;
         }
@@ -38,7 +36,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             var run = _simulator.CurrentRun;
             if (run == null) return;
             
-            _printer.Print(run.Points);
+            //_printer.Print(run.Points);
             
             var summary = _analyzer.Analyze(run.Points);
             _resultsPanel.SetSummary(summary);
@@ -65,9 +63,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             var run = _simulator.CurrentRun;
             if (run == null) return;
-
-            string path = Path.Combine(Application.persistentDataPath, "simulation.csv");
-            _csvExporter.Export(path, run.Points);
+            _exporter.ExportCsv(run.Points);
         }
     }
 }

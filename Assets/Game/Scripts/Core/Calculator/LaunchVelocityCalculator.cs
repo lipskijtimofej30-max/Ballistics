@@ -5,19 +5,12 @@ namespace Game.Scripts.Core
 {
     public class LaunchVelocityCalculator
     {
-        private SimulationSettings _simulationSettings;
-
-        public LaunchVelocityCalculator(SimulationSettings simulationSettings)
+        public Vector3 GetVelocity(float initialSpeed, float launchAngle)
         {
-            _simulationSettings = simulationSettings;
-        }
-
-        public Vector3 GetVelocity()
-        {
-            float angle = Mathf.Deg2Rad * _simulationSettings.LaunchAngle;
+            float angle = Mathf.Deg2Rad * launchAngle;
             var velocity = new Vector3(
-                _simulationSettings.InitialSpeed * Mathf.Cos(angle),
-                _simulationSettings.InitialSpeed * Mathf.Sin(angle),
+                initialSpeed * Mathf.Cos(angle),
+                initialSpeed * Mathf.Sin(angle),
                 0f);
             return velocity;
         }

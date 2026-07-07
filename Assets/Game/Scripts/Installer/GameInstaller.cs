@@ -47,6 +47,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
         Container.Bind<SimulationAnalyzer>().AsSingle();
+        Container.Bind<SimulationExporter>().AsSingle();
     }
 
     private void BindCalculator()

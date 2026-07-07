@@ -5,6 +5,7 @@ using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
 using Game.Scripts.View.View;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
@@ -116,6 +117,7 @@ namespace Game.Scripts.Core
 
         private void OnProjectileLanded()
         {
+            IsActive = false;
             _signalBus.Fire(new ChangeStateSignal(GameStateType.FinishedSimulation));
         }
     }

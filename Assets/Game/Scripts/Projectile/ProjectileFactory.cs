@@ -42,7 +42,7 @@ namespace Game.Scripts.Core
             float area = _crossSectionalAreaCalculator.GetCrossSectionalArea(shapeType, _projectileSettings.Size);
             float dragCoefficient = GetDragCoefficient(shapeType);
 
-            Vector3 velocity = _velocityCalculator.GetVelocity();
+            Vector3 velocity = _velocityCalculator.GetVelocity(_simulationSettings.InitialSpeed, _simulationSettings.LaunchAngle);
             Vector3 position = _simulationSettings.InitialPosition;
             
             return new ProjectileState(position, velocity, mass, area, dragCoefficient);
