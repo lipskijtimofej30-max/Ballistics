@@ -13,6 +13,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly SimulationAnalyzer _analyzer;
         private readonly ResultsPanelView _resultsPanel;
         private readonly ToolbarView _toolbarView;
+        
+        private SimulationSummary _summary;
 
         [Inject]
         public FinishedSimulationState(
@@ -36,10 +38,10 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             var run = _simulator.CurrentRun;
             if (run == null) return;
             
-            //_printer.Print(run.Points);
+            _printer.Print(run.Points);
             
-            var summary = _analyzer.Analyze(run.Points);
-            _resultsPanel.SetSummary(summary);
+            _summary = _analyzer.Analyze(run.Points);
+            _resultsPanel.SetSummary(_summary);
             _resultsPanel.Show();
             
             _toolbarView.CreateButton.interactable = true;
@@ -63,7 +65,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             var run = _simulator.CurrentRun;
             if (run == null) return;
-            _exporter.ExportCsv(run.Points);
+            _exporter.ExportCsv(run.Points, _simulator.CurrentState, _summary);
         }
     }
 }

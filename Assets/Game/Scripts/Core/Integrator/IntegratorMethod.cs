@@ -3,7 +3,7 @@ namespace Game.Scripts.Core
     public enum IntegratorMethod
     {
         Euler,
-        SemiImplicitEuler,
+        SymplecticEuler,
         RK2,
         RK4,
         VelocityVerlet

@@ -37,15 +37,17 @@ namespace Game.Scripts.Core
         public ProjectileState CreateState()
         {
             var shapeType = _projectileSettings.ShapeType;
-
-            float mass = _massCalculator.GetMass(shapeType, _projectileSettings.Density, _projectileSettings.Size);
-            float area = _crossSectionalAreaCalculator.GetCrossSectionalArea(shapeType, _projectileSettings.Size);
+            float size = _projectileSettings.Size;
+            float density = _projectileSettings.Density;
+ 
+            float mass = _massCalculator.GetMass(shapeType, density, size);
+            float area = _crossSectionalAreaCalculator.GetCrossSectionalArea(shapeType, size);
             float dragCoefficient = GetDragCoefficient(shapeType);
-
+ 
             Vector3 velocity = _velocityCalculator.GetVelocity(_simulationSettings.InitialSpeed, _simulationSettings.LaunchAngle);
             Vector3 position = _simulationSettings.InitialPosition;
-            
-            return new ProjectileState(position, velocity, mass, area, dragCoefficient);
+ 
+            return new ProjectileState(shapeType, size, density, position, velocity, mass, area, dragCoefficient);
         }
 
         public ProjectileBody CreateBody()

@@ -16,7 +16,7 @@ namespace Game.Scripts.Core
         public IPhysicsIntegrator Create(IntegratorMethod method) => method switch
         {
             IntegratorMethod.Euler => _container.Instantiate<EulerIntegrator>(),
-            IntegratorMethod.SemiImplicitEuler => _container.Instantiate<SemiImplicitEulerIntegrator>(),
+            IntegratorMethod.SymplecticEuler => _container.Instantiate<SemiImplicitEulerIntegrator>(),
             IntegratorMethod.RK2 => _container.Instantiate<RK2Integrator>(),
             IntegratorMethod.RK4 => _container.Instantiate<RK4Integrator>(),
             IntegratorMethod.VelocityVerlet => _container.Instantiate<VelocityVerletIntegrator>(),

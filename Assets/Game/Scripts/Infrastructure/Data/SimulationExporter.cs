@@ -18,30 +18,23 @@ namespace Game.Scripts.Core.Simulation
             _csvExporter = csvExporter;
         }
         
-        public void ExportCsv(IReadOnlyList<SimulationPoint> points)
+        public void ExportCsv(IReadOnlyList<SimulationPoint> points, ProjectileState projectile, SimulationSummary summary)
         {
-            var extensions = new[]
-            {
-                new ExtensionFilter("CSV файлы", "csv")
-            };
-
+            var extensions = new[] { new ExtensionFilter("CSV файлы", "csv") };
+ 
             string path = StandaloneFileBrowser.SaveFilePanel(
-                "Сохранить результаты симуляции",
-                "",
-                "simulation",
-                extensions
-            );
-            
+                "Сохранить результаты симуляции", "", "simulation", extensions);
+ 
             if (string.IsNullOrEmpty(path))
             {
                 _logger.Log("User canceled save");
                 return;
             }
-            
-            if(!path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+ 
+            if (!path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
                 path += ".csv";
-            
-            _csvExporter.Export(path, points);
+ 
+            _csvExporter.Export(path, points, projectile, summary);
         }
     }
 }

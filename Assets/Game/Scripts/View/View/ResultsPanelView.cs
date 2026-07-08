@@ -32,10 +32,10 @@ namespace Game.Scripts.View.View
         public void SetSummary(SimulationSummary summary)
         {
             _summaryText.text =
-                $"Макс. высота: {summary.MaxHeight:F2} м\n\n" +
-                $"Макс. скорость: {summary.MaxSpeed:F2} м/с\n\n" +
-                $"Дальность: {summary.Range:F2} м\n\n" +
-                $"Время полёта: {summary.FlightTime:F2} с";
+                $"Макс. высота: {summary.MaxHeight:F3} м\n\n" +
+                $"Макс. скорость: {summary.MaxSpeed:F3} м/с\n\n" +
+                $"Дальность: {summary.Range:F3} м\n\n" +
+                $"Время полёта: {summary.FlightTime:F3} с";
         }
     }
 }
