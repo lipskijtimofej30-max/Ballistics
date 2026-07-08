@@ -30,6 +30,8 @@ namespace Game.Scripts.UX
             _signalBus.Subscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<IntegratorSettingsChangedSignal>(MarkDirty);
+
+            _signalBus.Subscribe<CleanSetupRequestedSignal>(MarkClean);
         }
 
         private void MarkDirty()
@@ -39,6 +41,7 @@ namespace Game.Scripts.UX
             IsDirty = true;
             _toolbarView.CreateButtonLabel.text = "Обновить";
             _toolbarView.StartButton.interactable = false;
+            _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: true));
         }
 
         public void MarkClean()
@@ -46,14 +49,16 @@ namespace Game.Scripts.UX
             IsDirty = false;
             _toolbarView.CreateButtonLabel.text = "+ Создать";
             _toolbarView.StartButton.interactable = true;
+            _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: false));
         }
-        
+
         public void Dispose()
         {
             _signalBus.TryUnsubscribe<ProjectileSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<IntegratorSettingsChangedSignal>(MarkDirty);
+            _signalBus.TryUnsubscribe<CleanSetupRequestedSignal>(MarkClean);
         }
     }
 }

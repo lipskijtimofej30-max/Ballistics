@@ -121,5 +121,7 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<VisualizationSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<ShapeDropdownChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<IntegratorSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<SetupDirtyStatusChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<CleanSetupRequestedSignal>().OptionalSubscriber();
     }
 }
