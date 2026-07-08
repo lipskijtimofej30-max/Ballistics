@@ -119,7 +119,7 @@ namespace Game.Scripts.Core
         private void OnProjectileLanded()
         {
             IsActive = false;
-            _signalBus.Fire(new ChangeStateSignal(GameStateType.FinishedSimulation));
+            _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.FinishedSimulation));
         }
     }
 }

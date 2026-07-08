@@ -2,11 +2,11 @@ using Game.Scripts.Infrastructure.GameStateMachine;
 
 namespace DefaultNamespace
 {
-    public class ChangeStateSignal
+    public class ChangeStateSignal<TState>
     {
-        public GameStateType NextState;
+        public TState NextState;
 
-        public ChangeStateSignal(GameStateType nextState)
+        public ChangeStateSignal(TState nextState)
         {
             NextState = nextState;
         }

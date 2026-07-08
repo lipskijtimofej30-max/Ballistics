@@ -1,4 +1,8 @@
 using Assets.Game.Scripts.Core.Calculator;
+using Assets.Game.Scripts.Core.Experiment;
+using Assets.Game.Scripts.Core.Experiment.Parameter;
+using Assets.Game.Scripts.Infrastructure.GameStateMachine;
+using Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState;
 using Assets.Game.Scripts.Infrastructure.Signals;
 using Assets.Game.Scripts.Settings;
 using DefaultNamespace;
@@ -7,7 +11,6 @@ using Game.Scripts.Core.Force;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
-using Game.Scripts.Infrastructure.Logger;
 using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
 using UnityEngine;
@@ -19,15 +22,20 @@ public class GameInstaller : MonoInstaller
     public override void InstallBindings()
     {
         BindSettings();
-        Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
         BindSignal();
+        Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
+        Container.Bind<ExperimentSession>().AsSingle().NonLazy();
+        BindExperimentParameter();
         BindForce();
         BindCalculator();
         BindSimulation();
         BindSimulator();
         BindFactory();
+        Container.Bind<ExperimentRunner>().AsSingle().NonLazy();
         Container.Bind<TrajectoryPool>().AsSingle();
-        BindGameStateMachine();
+        BindSimulationStateMachine();
+        BindExperimentStateMachine();
+        Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();
     }
 
     private void BindFactory()
@@ -65,6 +73,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<SimulationSettings>().AsSingle().NonLazy();
         Container.Bind<VisualizationSettings>().AsSingle().NonLazy();
         Container.Bind<IntegratorSettings>().AsSingle().NonLazy();
+        Container.Bind<ExperimentSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
@@ -73,20 +82,37 @@ public class GameInstaller : MonoInstaller
         Container.Bind<IForce>().To<DragForce>().AsSingle().NonLazy();
     }
 
-    private void BindGameStateMachine()
+    private void BindSimulationStateMachine()
     {
-        Container.Bind<GameStateMachine>().AsSingle();
+        Container.Bind<GameStateMachine<SimulationStateType>>().AsSingle();
         Container.Bind<SetupSimulationState>().AsSingle();
         Container.Bind<SimulationState>().AsSingle();
         Container.Bind<FinishedSimulationState>().AsSingle();
         Container.Bind<PausedSimulationState>().AsSingle();
-        Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+        Container.Bind<SimulationController>().AsSingle().NonLazy();
+    }
+
+    private void BindExperimentStateMachine()
+    {
+        Container.Bind<GameStateMachine<ExperimentStateType>>().AsSingle();
+        Container.Bind<ExperimentSetupState>().AsSingle();
+        Container.Bind<ExperimentRunningState>().AsSingle();
+        Container.Bind<ExperimentPauseState>().AsSingle();
+        Container.Bind<ExperimentFinishedState>().AsSingle();
+        Container.Bind<ExperimentController>().AsSingle().NonLazy();
+    }
+
+    private void BindExperimentParameter()
+    {
+        Container.Bind<IExperimentParameter>().To<InitialSpeedParameter>().AsSingle();
+        Container.Bind<IExperimentParameter>().To<LaunchAngleParameter>().AsSingle();
     }
 
     private void BindSignal()
     {
         SignalBusInstaller.Install(Container);
-        Container.DeclareSignal<ChangeStateSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ChangeStateSignal<SimulationStateType>>().OptionalSubscriber();
+        Container.DeclareSignal<ChangeStateSignal<ExperimentStateType>>().OptionalSubscriber();
         Container.DeclareSignal<ConfirmButtonClickSignal>().OptionalSubscriber();
         Container.DeclareSignal<ProjectileSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<SimulationSettingsChangedSignal>().OptionalSubscriber();

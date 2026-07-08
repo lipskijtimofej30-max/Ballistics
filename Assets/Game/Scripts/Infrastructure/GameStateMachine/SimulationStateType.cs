@@ -1,6 +1,6 @@
 namespace Game.Scripts.Infrastructure.GameStateMachine
 {
-    public enum GameStateType
+    public enum SimulationStateType
     {
         SetupSimulation,
         Simulation,

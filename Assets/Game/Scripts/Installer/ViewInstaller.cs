@@ -29,7 +29,7 @@ namespace Game.Scripts.Installer
             BindSimulationView();
             BindEnvironmentView();
             BindIntegratorView();
-            Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle().NonLazy();
             BindToolbarView();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();

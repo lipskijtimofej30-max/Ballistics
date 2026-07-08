@@ -3,39 +3,43 @@ using System.Collections.Generic;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine
 {
-    public class GameStateMachine
+    public class GameStateMachine<T>
     {
-        private readonly Dictionary<GameStateType, IGameState> _states = new();
-        private readonly Dictionary<GameStateType, List<Transition>> _transitions = new();
+        private readonly Dictionary<T, IGameState> _states = new();
+        private readonly Dictionary<T, List<Transition<T>>> _transitions = new();
 
         private IGameState _currentGameState;
-        private GameStateType _currentGameStateId;
+        private T _currentGameStateId;
+        private bool _hasStarted = false;
 
-        public GameStateType CurrentGameStateType => _currentGameStateId;        
+        public T CurrentGameStateType => _currentGameStateId;        
 
-        public void RegisterState(GameStateType id, IGameState gameState)
+        public void RegisterState(T id, IGameState gameState)
         {
             _states[id] = gameState;
-            _transitions[id] = new List<Transition>(); 
+            _transitions[id] = new List<Transition<T>>(); 
         }
 
-        public void AddTransition(GameStateType from, GameStateType to, Func<bool> condition)
+        public void AddTransition(T from, T to, Func<bool> condition)
         {
-            _transitions[from].Add(new Transition(to, condition));
+            _transitions[from].Add(new Transition<T>(to, condition));
         }
 
-        public void ChangeState(GameStateType id)
+        public void ChangeState(T id)
         {
             if (!_states.TryGetValue(id, out var nextState)) return;
 
             _currentGameState?.Exit();
             _currentGameState = nextState;
             _currentGameStateId = id;
+            _hasStarted = true;
             _currentGameState.Enter();    
         }
 
         public void Tick()
         {
+            if (!_hasStarted) return;
+
             if (_transitions.TryGetValue(_currentGameStateId, out var currentTransitions))
             {
                 foreach (var transition in currentTransitions)
