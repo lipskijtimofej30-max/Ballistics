@@ -3,6 +3,7 @@ using Assets.Game.Scripts.Infrastructure.Signals;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.GameStateMachine;
+using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.UX;
 using TMPro;
 using UnityEngine;
@@ -13,15 +14,15 @@ namespace Game.Scripts.View.View
 {
     public class ToolbarView : MonoBehaviour
     {
-        [Header("Buttons")]
-        [SerializeField] private Button _pauseButton;
+        [Header("Buttons")] [SerializeField] private Button _pauseButton;
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _stopButton;
         [SerializeField] private Button _laboratoryButton;
         [SerializeField] private Button _experimentButton;
-        [Header("Label Buttons")]
-        [SerializeField] private TMP_Text _createButtonLabel;
+
+        [Header("Label Buttons")] [SerializeField]
+        private TMP_Text _createButtonLabel;
 
         private SignalBus _signalBus;
         private Simulator _simulator;
@@ -31,6 +32,8 @@ namespace Game.Scripts.View.View
         public Button CreateButton => _createButton;
         public Button StartButton => _startButton;
         public Button StopButton => _stopButton;
+        public Button LaboratoryButton => _laboratoryButton;
+        public Button ExperimentButton => _experimentButton;
 
         public TMP_Text CreateButtonLabel => _createButtonLabel;
 
@@ -44,29 +47,56 @@ namespace Game.Scripts.View.View
 
         private void Start()
         {
-            // Подписываемся на изменение состояния "грязи"
             _signalBus.Subscribe<SetupDirtyStatusChangedSignal>(OnDirtyStatusChanged);
 
-            _createButton.onClick.AddListener(
-                () =>
+            _createButton.onClick.AddListener(() =>
+            {
+                if (_modeController.CurrentMode == AppMode.Laboratory)
                 {
                     _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.SetupSimulation));
                     _simulator.Spawn();
-                    // Вместо вызова метода трекера напрямую, шлем сигнал
                     _signalBus.Fire(new CleanSetupRequestedSignal());
-                });
+                }
+            });
 
-            _startButton.onClick.AddListener(
-                () => _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.Simulation)));
+            _startButton.onClick.AddListener(() =>
+            {
+                if (_modeController.CurrentMode == AppMode.Laboratory)
+                    _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.Simulation));
+                else
+                    _signalBus.Fire(new ChangeStateSignal<ExperimentStateType>(ExperimentStateType.Running));
+            });
 
-            _pauseButton.onClick.AddListener(
-                () => _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.PausedSimulation)));
+            _pauseButton.onClick.AddListener(() =>
+            {
+                if (_modeController.CurrentMode == AppMode.Laboratory)
+                    _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.PausedSimulation));
+                else
+                    _signalBus.Fire(new ChangeStateSignal<ExperimentStateType>(ExperimentStateType.Pause));
+            });
 
-            _stopButton.onClick.AddListener(
-                () => _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.FinishedSimulation)));
+            _stopButton.onClick.AddListener(() =>
+            {
+                if (_modeController.CurrentMode == AppMode.Laboratory)
+                    _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.FinishedSimulation));
+                else
+                    _signalBus.Fire(new ChangeStateSignal<ExperimentStateType>(ExperimentStateType.Finished));
+            });
 
-            _laboratoryButton.onClick.AddListener(() => _modeController.SwitchTo(AppMode.Laboratory));
-            _experimentButton.onClick.AddListener(() => _modeController.SwitchTo(AppMode.Experiment));
+            _laboratoryButton.onClick.AddListener(SwitchToLaboratory);
+            _experimentButton.onClick.AddListener(SwitchToExperiment);
+        }
+
+        private void SwitchToLaboratory()
+        {
+            _modeController.SwitchTo(AppMode.Laboratory);
+            _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.SetupSimulation));
+        }
+
+        private void SwitchToExperiment()
+        {
+            _modeController.SwitchTo(AppMode.Experiment);
+            _signalBus.Fire(new ChangeStateSignal<ExperimentStateType>(ExperimentStateType.Setup));
         }
 
         private void OnDirtyStatusChanged(SetupDirtyStatusChangedSignal signal)
@@ -92,6 +122,7 @@ namespace Game.Scripts.View.View
             _startButton.onClick?.RemoveAllListeners();
             _stopButton.onClick?.RemoveAllListeners();
             _laboratoryButton.onClick?.RemoveAllListeners();
+            _experimentButton.onClick?.RemoveAllListeners();
         }
     }
 }

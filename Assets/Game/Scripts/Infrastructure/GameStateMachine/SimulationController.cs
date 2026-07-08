@@ -13,17 +13,17 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
         private ILogger _logger;
 
         [Inject]
-        private void Construct(GameStateMachine<SimulationStateType> stateMachine, SignalBus signalBus, SetupSimulationState setupSimulationState,
-            SimulationState simulationState, PausedSimulationState pausedSimulationState, FinishedSimulationState finishedSimulationState, ILogger logger)
+        private void Construct(GameStateMachine<SimulationStateType> stateMachine, SignalBus signalBus, SimulationSetupState simulationSetupState,
+            SimulationState simulationState, SimulationPausedState simulationPausedState, SimulationFinishedState simulationFinishedState, ILogger logger)
         {
             _stateMachine = stateMachine;
             _signalBus = signalBus;
             _logger = logger;
             
-            _stateMachine.RegisterState(SimulationStateType.SetupSimulation, setupSimulationState);
+            _stateMachine.RegisterState(SimulationStateType.SetupSimulation, simulationSetupState);
             _stateMachine.RegisterState(SimulationStateType.Simulation, simulationState);
-            _stateMachine.RegisterState(SimulationStateType.PausedSimulation, pausedSimulationState);
-            _stateMachine.RegisterState(SimulationStateType.FinishedSimulation, finishedSimulationState);
+            _stateMachine.RegisterState(SimulationStateType.PausedSimulation, simulationPausedState);
+            _stateMachine.RegisterState(SimulationStateType.FinishedSimulation, simulationFinishedState);
             
             _stateMachine.ChangeState(SimulationStateType.SetupSimulation);
             

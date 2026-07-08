@@ -8,5 +8,13 @@ namespace Game.Scripts.Core
         public Vector3 WindVelocity { get; set; } = new Vector3(-10f, 0f, 0f);
         public float AirDensity { get; set; } = 1.22f;
         public bool AirResistanceEnabled { get; set; } = true;
+
+        public EnvironmentSettings Clone() => new EnvironmentSettings
+        {
+            Gravity = Gravity,
+            WindVelocity = WindVelocity,
+            AirDensity = AirDensity,
+            AirResistanceEnabled = AirResistanceEnabled
+        };
     }
 }

@@ -4,12 +4,12 @@ using Zenject;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
 {
-    public class PausedSimulationState : IGameState
+    public class SimulationPausedState : IGameState
     {
         private readonly TelemetryPanelView _telemetryPanelView;
 
         [Inject]
-        public PausedSimulationState(TelemetryPanelView telemetryPanelView)
+        public SimulationPausedState(TelemetryPanelView telemetryPanelView)
         {
             _telemetryPanelView = telemetryPanelView;
         }

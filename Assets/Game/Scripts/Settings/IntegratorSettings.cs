@@ -8,5 +8,12 @@ namespace Game.Scripts.Settings
         public IntegratorMethod IntegratorMethod { get; set; } = IntegratorMethod.SymplecticEuler;
         public float IntegrationStep {get; set;} = Time.fixedDeltaTime;
         public float TimeScale {get; set;} = 1.0f;
+
+        public IntegratorSettings Clone() => new IntegratorSettings
+        {   
+            IntegratorMethod = IntegratorMethod,
+            IntegrationStep = IntegrationStep,
+            TimeScale = TimeScale
+        };
     }
 }

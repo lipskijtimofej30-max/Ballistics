@@ -13,12 +13,15 @@ using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
 using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
+using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
 
 public class GameInstaller : MonoInstaller
 {
     [SerializeField] private Simulator _simulator;
+    [SerializeField] private ExperimentPlaybackSequencer _sequencer;
+    [SerializeField] private TrajectoryRenderer _prefab;
     public override void InstallBindings()
     {
         BindSettings();
@@ -32,7 +35,9 @@ public class GameInstaller : MonoInstaller
         BindSimulator();
         BindFactory();
         Container.Bind<ExperimentRunner>().AsSingle().NonLazy();
-        Container.Bind<TrajectoryPool>().AsSingle();
+        Container.Bind<TrajectoryPool>().AsSingle().WithArguments(_prefab);
+        Container.Bind<ExperimentPlaybackController>().AsSingle();
+        Container.Bind<ExperimentPlaybackSequencer>().FromInstance(_sequencer).AsSingle();
         BindSimulationStateMachine();
         BindExperimentStateMachine();
         Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();
@@ -85,10 +90,10 @@ public class GameInstaller : MonoInstaller
     private void BindSimulationStateMachine()
     {
         Container.Bind<GameStateMachine<SimulationStateType>>().AsSingle();
-        Container.Bind<SetupSimulationState>().AsSingle();
+        Container.Bind<SimulationSetupState>().AsSingle();
         Container.Bind<SimulationState>().AsSingle();
-        Container.Bind<FinishedSimulationState>().AsSingle();
-        Container.Bind<PausedSimulationState>().AsSingle();
+        Container.Bind<SimulationFinishedState>().AsSingle();
+        Container.Bind<SimulationPausedState>().AsSingle();
         Container.Bind<SimulationController>().AsSingle().NonLazy();
     }
 
@@ -123,5 +128,6 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<IntegratorSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<SetupDirtyStatusChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<CleanSetupRequestedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ChangeAppModeSignal>().OptionalSubscriber();
     }
 }

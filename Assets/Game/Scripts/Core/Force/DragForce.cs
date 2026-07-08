@@ -19,7 +19,7 @@ namespace Game.Scripts.Core.Force
                 return Vector3.zero;
             
             var v_rel = projectile.Velocity - _environmentSettings.WindVelocity;
-            return -0.5f * projectile.DragCoefficient * _environmentSettings.AirDensity * projectile.CrossSectionalArea * v_rel.magnitude *  v_rel;
+            return -0.5f * projectile.DragCoefficient * _environmentSettings.AirDensity * projectile.CrossSectionalArea * v_rel.sqrMagnitude *  v_rel.normalized;
         }
     }
 }

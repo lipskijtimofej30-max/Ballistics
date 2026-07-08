@@ -26,6 +26,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         public void Enter()
         {
             _toolbarView.CreateButton.interactable = false;
+            _toolbarView.ExperimentButton.interactable = false;
             _trajectoryRenderer.SetVisible(true);
             _visualizationUseCase.SetPreviewAllowed(false);
             
@@ -47,6 +48,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
 
         public void Exit()
         {
+            _toolbarView.CreateButton.interactable = true;
+            _toolbarView.ExperimentButton.interactable = true;
             _simulator.Pause();
             _telemetryPanelView.Hide();   
             _trajectoryRenderer.FlushBuffer();

@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
 {
-    public class FinishedSimulationState : IGameState
+    public class SimulationFinishedState : IGameState
     {
         private readonly Simulator _simulator;
         private readonly SimulationPrinter _printer;
@@ -17,7 +17,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private SimulationSummary _summary;
 
         [Inject]
-        public FinishedSimulationState(
+        public SimulationFinishedState(
             Simulator simulator,
             SimulationPrinter printer,
             SimulationAnalyzer analyzer,

@@ -18,8 +18,8 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine
         private readonly ILogger _logger;
 
         [Inject]
-        public ExperimentController(GameStateMachine<ExperimentStateType> stateMachine, SignalBus signalBus, ILogger logger,
-            ExperimentSetupState setupState, ExperimentRunningState runningState, ExperimentPauseState pauseState, ExperimentFinishedState finishedState)
+        public ExperimentController(GameStateMachine<ExperimentStateType> stateMachine, SignalBus signalBus, 
+            ExperimentSetupState setupState, ExperimentRunningState runningState, ExperimentPauseState pauseState, ExperimentFinishedState finishedState,ILogger logger)
         {
             _stateMachine = stateMachine;
             _signalBus = signalBus;
@@ -30,7 +30,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine
             _stateMachine.RegisterState(ExperimentStateType.Pause, pauseState);
             _stateMachine.RegisterState(ExperimentStateType.Finished, finishedState);
 
-            _stateMachine.ChangeState(ExperimentStateType.Setup);
+            //_stateMachine.ChangeState(ExperimentStateType.Setup);
 
             _signalBus.Subscribe<ChangeStateSignal<ExperimentStateType>>(OnChangeState);
         }

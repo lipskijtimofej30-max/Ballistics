@@ -31,7 +31,7 @@ namespace Game.Scripts.Core
 
             while (!landed && steps < MaxSteps)
             {
-                landed =  stepper.Step(state, run, dt);
+                landed = stepper.Step(state, run, dt);
                 steps++;
             }
             return run;

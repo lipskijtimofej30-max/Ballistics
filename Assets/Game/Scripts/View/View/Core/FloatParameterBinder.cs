@@ -9,11 +9,13 @@ namespace Game.Scripts.Core
     public class FloatParameterBinder : IDisposable
     {
         private readonly ParameterView _view;
-        private readonly float _min;
-        private readonly float _max;
         private readonly string _format;
         private readonly Action<float> _setter;
         private readonly Func<float> _getter;
+        
+        private float _min;
+        private float _max;
+        private string _unit;
         private Action _onChanged;
         
         public FloatParameterBinder(
@@ -37,6 +39,7 @@ namespace Game.Scripts.Core
 
             _view.Slider.minValue = min;
             _view.Slider.maxValue = max;
+            _unit = _view.Unit;
 
             _view.Slider.onValueChanged.AddListener(OnSliderChanged);
             _view.InputField.onEndEdit.AddListener(OnInputChanged);
@@ -70,9 +73,24 @@ namespace Game.Scripts.Core
             _setter(value);
 
             _view.Slider.SetValueWithoutNotify(value);
-            _view.InputField.SetTextWithoutNotify($"{value.ToString(_format)} {_view.Unit}");
+            _view.InputField.SetTextWithoutNotify($"{value.ToString(_format)} {_unit}");
 
             _onChanged?.Invoke();
+        }
+        
+        public void UpdateValue(float newMin, float newMax, string newUnit)
+        {
+            _view.Slider.minValue = newMin;
+            _view.Slider.maxValue = newMax;
+            _min = newMin;
+            _max = newMax;
+            
+            _unit = newUnit;
+            // При необходимости подправим текущее значение, если оно выходит за новые границы
+            float current = _getter();
+            if (current < newMin) Apply(newMin);
+            else if (current > newMax) Apply(newMax);
+            // _min/_max поля не храним, они больше не нужны, если всегда берём из слайдера
         }
 
         public void Dispose()

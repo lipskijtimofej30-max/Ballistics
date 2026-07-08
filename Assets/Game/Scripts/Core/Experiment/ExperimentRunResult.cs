@@ -8,12 +8,14 @@ namespace Assets.Game.Scripts.Core.Experiment
         public int RunId { get; private set; }
         public ProjectileState InitialState { get; private set; }
         public SimulationSummary Summary { get; private set; }
+        public SimulationRun Run {get; private set;}
 
-        public ExperimentRunResult(int runId, ProjectileState projectileState, SimulationSummary summary)
+        public ExperimentRunResult(int runId, ProjectileState projectileState, SimulationSummary summary, SimulationRun run)
         {
             RunId = runId;
             InitialState = projectileState;
             Summary = summary;
+            Run = run;
         }
     }
 }

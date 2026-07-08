@@ -1,9 +1,4 @@
 ﻿using Assets.Game.Scripts.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Game.Scripts.Core.Experiment.Parameter
 {
@@ -20,5 +15,8 @@ namespace Assets.Game.Scripts.Core.Experiment.Parameter
         public float GetValue() => _simulationSettings.InitialSpeed;
 
         public void SetValue(float value) => _simulationSettings.InitialSpeed = value;
+        
+        public float MinRangeValue { get; } = 1f;
+        public float MaxRangeValue { get; } = 50f;
     }
 }

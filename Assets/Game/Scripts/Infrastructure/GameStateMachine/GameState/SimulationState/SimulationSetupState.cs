@@ -6,24 +6,29 @@ using Zenject;
 
 namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
 {
-    public class SetupSimulationState : IGameState
+    public class SimulationSetupState : IGameState
     {
         private readonly Simulator _simulator;
         private readonly SetupPanelView _setupPanelView;
         private readonly ToolbarView _toolbarView;
         private readonly VisualizationUseCase _visualizationUseCase;
+        private readonly ModeControllerView _modeControllerView;
         [Inject(Id ="Live")] private readonly TrajectoryRenderer _liveTrajectoryRenderer;
 
         [Inject]
-        public SetupSimulationState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, VisualizationUseCase visualizationUseCase)
+        public SimulationSetupState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, VisualizationUseCase visualizationUseCase, ModeControllerView modeControllerView)
         {
             _simulator = simulator;
             _setupPanelView = setupPanelView;
             _toolbarView = toolbarView;
             _visualizationUseCase = visualizationUseCase;
+            _modeControllerView = modeControllerView;
         }
         public void Enter()
         {
+            _modeControllerView.HideObjectsForExperiment();
+            _modeControllerView.ShowObjectsForSimulation();
+            
             _simulator.ClearProjectile();
             _setupPanelView.Show();
             _liveTrajectoryRenderer.SetVisible(false);

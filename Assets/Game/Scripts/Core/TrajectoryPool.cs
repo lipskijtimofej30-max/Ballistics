@@ -12,10 +12,10 @@ namespace Game.Scripts.Core
         private List<TrajectoryRenderer> _active = new();
 
         [Inject]
-        public TrajectoryPool(DiContainer container)
+        public TrajectoryPool(DiContainer container,TrajectoryRenderer prefab)
         {
             _container = container;
-            _prefab = Resources.Load<TrajectoryRenderer>("Prefabs/TrajectoryRenderer");
+            _prefab = prefab;
         }
 
         public TrajectoryRenderer Rent()
