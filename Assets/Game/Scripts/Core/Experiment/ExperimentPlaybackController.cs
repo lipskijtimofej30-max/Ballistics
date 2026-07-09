@@ -15,26 +15,38 @@ namespace Assets.Game.Scripts.Core.Experiment
         private int _cursorIndex;
         private bool _isPlaying;
         private bool _isPaused;
-        
+
         public event Action<Vector3> PositionUpdated;
-        public event Action PlaybackFinished;
 
         public bool IsPlaying => _isPlaying;
-
+        public SimulationPoint CurrentPoint { get; private set; }
+        public int CurrentRunIndex { get; private set; }
+        
         [Inject]
         public ExperimentPlaybackController(IntegratorSettings integratorSettings) => _integratorSettings = integratorSettings;
 
-        public void Play(SimulationRun run)
+        public void Play(int runIndex, SimulationRun run)
         {
+            CurrentRunIndex = runIndex;
+            
             _elapsedTime = 0f;
             _cursorIndex = 0;
             _isPlaying = true;
             _isPaused = false;
             _currentRun = run;
+            
+            CurrentPoint = run.Points.Count > 0 ? run.Points[0] : new SimulationPoint();
         }
 
         public void Pause() => _isPaused = true;
         public void Resume() => _isPaused = false;
+        
+        public void Stop()
+        {
+            _isPlaying = false;
+            _isPaused = false;
+            _currentRun = null;
+        }
 
         public void Tick(float deltaTime)
         {
@@ -57,9 +69,17 @@ namespace Assets.Game.Scripts.Core.Experiment
                 ? Mathf.Clamp01((_elapsedTime - pointA.Time) / segmentDuration)
                 : 0f;
 
-            Vector3 position = Vector3.Lerp(pointA.Position, pointB.Position, t);
-            PositionUpdated?.Invoke(position);
+            CurrentPoint = new SimulationPoint
+            {
+                Time = Mathf.Lerp(pointA.Time, pointB.Time, t),
+                Position = Vector3.Lerp(pointA.Position, pointB.Position, t),
+                Velocity = Vector3.Lerp(pointA.Velocity, pointB.Velocity, t),
+                Acceleration = Vector3.Lerp(pointA.Acceleration, pointB.Acceleration, t),
+                TotalForce =  Vector3.Lerp(pointA.TotalForce, pointB.TotalForce, t)
+            };
 
+            PositionUpdated?.Invoke(CurrentPoint.Position);
+            
             if (_elapsedTime >= _currentRun.Points[^1].Time)
                 Finish();
         }
@@ -67,7 +87,6 @@ namespace Assets.Game.Scripts.Core.Experiment
         private void Finish()
         {
             _isPlaying = false;
-            PlaybackFinished?.Invoke();
         }
     }
 }

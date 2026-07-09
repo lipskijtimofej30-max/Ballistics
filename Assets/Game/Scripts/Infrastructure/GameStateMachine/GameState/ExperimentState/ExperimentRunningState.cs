@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Assets.Game.Scripts.Settings;
+using Assets.Game.Scripts.UX;
 using Game.Scripts.Core;
 using Game.Scripts.Settings;
 using Game.Scripts.View.View;
@@ -20,14 +21,17 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ExperimentSession _session;
         private readonly ExperimentRunner _experimentRunner;
         private readonly ExperimentSettings  _experimentSettings;
-        private readonly IntegratorSettings _integratorSettings;
         private readonly TrajectoryPool _pool;
         private readonly ToolbarView _toolbarView;
+        private readonly TelemetryPanelView _telemetryPanelView;
+        private readonly ResultsPanelView _resultsPanelView;
         private readonly ILogger _logger;
 
         [Inject]
-        public ExperimentRunningState(List<IExperimentParameter> parameters, ExperimentPlaybackController experimentController, ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView,
-            ExperimentSession session, ExperimentRunner experimentRunner, ExperimentSettings experimentSettings, IntegratorSettings integratorSettings, TrajectoryPool pool, ILogger logger)
+        public ExperimentRunningState(List<IExperimentParameter> parameters, ExperimentPlaybackController experimentController,
+            ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView, ExperimentSession session,
+            ExperimentRunner experimentRunner, ExperimentSettings experimentSettings, TrajectoryPool pool, 
+            TelemetryPanelView telemetryPanelView, ResultsPanelView resultsPanelView, ILogger logger)
         {
             _parameters = parameters;
             _experimentController = experimentController;
@@ -37,24 +41,32 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _experimentRunner = experimentRunner;
             _pool = pool;
             _experimentSettings = experimentSettings;
-            _integratorSettings = integratorSettings;
+            _telemetryPanelView = telemetryPanelView;
+            _resultsPanelView = resultsPanelView;
             _logger = logger;
         }
         
         public void Enter()
         {
             _toolbarView.LaboratoryButton.interactable = false;
+            _telemetryPanelView.Show();
+            _resultsPanelView.Hide();
+            
+            _sequencer.RunPlaybackStarted += OnRunStarted;
+            _sequencer.RunPlaybackFinished += OnRunFinished;
+            
             if (_session.ExperimentRunResults.Count == 0)
             {
                 _pool.ClearAll();
                 var parameter = _parameters[_experimentSettings.SelectedParameterIndex];
                 var preset = new ExperimentPreset(ShapeType.Sphere, 5000f, 0.17f, 15f, 0f, 10f, 
                     new Vector3(0f, -9.81f, 0f), false, new Vector3(10f,0f,0f), IntegratorMethod.RK2, 0.01f);
+                
                 var results = _experimentRunner.RunSeries(
                     parameter, _experimentSettings.MinValue, _experimentSettings.MaxValue, _experimentSettings.Step, preset);
                 
                 _logger.Log($"Parameter {parameter.DisplayName}");
-
+                
                 _session.ClearAll();
                 foreach (var result in results)
                     _session.Register(result);
@@ -69,12 +81,34 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         
         public void Tick()
         {
-            _experimentController.Tick(Time.deltaTime);
+           _experimentController.Tick(Time.deltaTime);
+           if (_experimentController.IsPlaying)
+           {
+               int currentIndex = _experimentController.CurrentRunIndex;
+               _telemetryPanelView.SetExperimentPoint(currentIndex, _experimentController.CurrentPoint);
+           }
         }
 
         public void Exit()
         {
+            _telemetryPanelView.Hide();
             _toolbarView.LaboratoryButton.interactable = true;
+            
+            _sequencer.RunPlaybackStarted -= OnRunStarted;
+            _sequencer.RunPlaybackFinished -= OnRunFinished;
+        }
+
+        private void OnRunStarted()
+        {
+            _resultsPanelView.Hide();
+            _telemetryPanelView.Show();
+        }
+
+        private void OnRunFinished(ExperimentRunResult result)
+        {
+            _telemetryPanelView.Hide();
+            _resultsPanelView.Show();
+            _resultsPanelView.SetExperimentSummary(result);
         }
     }
 }

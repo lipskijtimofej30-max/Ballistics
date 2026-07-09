@@ -11,13 +11,13 @@ namespace Assets.Game.Scripts.UX
 {
     public class LaunchStand : MonoBehaviour
     {
-        [Header("Stand Parts")]
-        [SerializeField] private Transform _base;
+        [Header("Stand Parts")] [SerializeField]
+        private Transform _base;
+
         [SerializeField] private Transform _pole;
         [SerializeField] private Transform _platform;
 
-        [Header("Settings")]
-        [SerializeField] private float _baseHeight = 0.2f;
+        [Header("Settings")] [SerializeField] private float _baseHeight = 0.2f;
         [SerializeField] private float _platformHeight = 0.1f;
         [SerializeField] private float _animationDuration = 0.2f;
 
@@ -49,52 +49,38 @@ namespace Assets.Game.Scripts.UX
 
         private void UpdateStand()
         {
-            if (_simulator.CurrentBody == null)
-                return;
+            if (_simulator.CurrentBody == null) return;
 
             float launchHeight = Mathf.Max(0f, _simulationSettings.InitialPosition.y);
+            float projectileRadius = _simulator.CurrentBody.transform.localScale.y * 0.5f;
+            float launchAngle = _simulationSettings.LaunchAngle;
+            Vector3 basePosition = _simulator.CurrentState.Position;
 
-            // Если почти на земле — стойка не нужна
+            SetParameters(launchHeight, launchAngle, projectileRadius, basePosition);
+        }
+
+        public void SetParameters(float launchHeight, float launchAngle, float projectileRadius, Vector3 basePosition)
+        {
             gameObject.SetActive(launchHeight > 0.05f);
 
             if (!gameObject.activeSelf)
                 return;
 
-            // Ставим стойку под снаряд
-            transform.position = new Vector3(
-                _simulator.CurrentState.Position.x,
-                0f,
-                _simulator.CurrentState.Position.z);
+            transform.position = new Vector3(basePosition.x, 0f, basePosition.z);
 
-            // Радиус снаряда
-            float projectileRadius = _simulator.CurrentBody.transform.localScale.y * 0.5f;
-
-            // Высота стойки
             float poleHeight = launchHeight / 2f;
-
             poleHeight = Mathf.Max(0.01f, poleHeight - _baseHeight * 2f);
 
-            // Основание всегда лежит на земле
             _base.DOLocalMoveY(_baseHeight * 0.5f, _animationDuration);
 
-            // Палка
             Vector3 scale = _pole.localScale;
             scale.y = poleHeight;
             _pole.DOScale(scale, _animationDuration);
 
-            _pole.DOLocalMoveY(
-                poleHeight + _baseHeight,
-                _animationDuration);
+            _pole.DOLocalMoveY(poleHeight + _baseHeight, _animationDuration);
 
-            // Верхняя площадка
-            _platform.DOLocalMoveY(launchHeight - projectileRadius - _platformHeight * 1f, _animationDuration);
-            
-            _platform.DOLocalRotate(
-                new Vector3(0f, 0f, _simulationSettings.LaunchAngle),
-                _animationDuration);
-
-            _logger.Log($"Launch Height = {launchHeight:F2}");
-            _logger.Log($"Pole Height = {poleHeight:F2}");
+            _platform.DOLocalMoveY(launchHeight - projectileRadius * 0.5f - _platformHeight * 1f, _animationDuration);
+            _platform.DOLocalRotate(new Vector3(0f, 0f, launchAngle), _animationDuration);
         }
 
         private void OnDestroy()

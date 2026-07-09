@@ -85,17 +85,26 @@ namespace Game.Scripts.View.View
 
             _laboratoryButton.onClick.AddListener(SwitchToLaboratory);
             _experimentButton.onClick.AddListener(SwitchToExperiment);
+            SetImageModeButton(_modeController.CurrentMode == AppMode.Laboratory);
         }
 
         private void SwitchToLaboratory()
         {
             _modeController.SwitchTo(AppMode.Laboratory);
+            SetImageModeButton(true);
             _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.SetupSimulation));
+        }
+
+        private void SetImageModeButton(bool active)
+        {
+            _laboratoryButton.image.enabled = active;
+            _experimentButton.image.enabled = !active;
         }
 
         private void SwitchToExperiment()
         {
             _modeController.SwitchTo(AppMode.Experiment);
+            SetImageModeButton(false);
             _signalBus.Fire(new ChangeStateSignal<ExperimentStateType>(ExperimentStateType.Setup));
         }
 

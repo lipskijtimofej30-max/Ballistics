@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.UX;
 using Game.Scripts.Core;
 using Game.Scripts.Settings;
 using Game.Scripts.View.UseCase;
@@ -16,7 +17,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         [Inject(Id ="Live")] private readonly TrajectoryRenderer _liveTrajectoryRenderer;
 
         [Inject]
-        public SimulationSetupState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, VisualizationUseCase visualizationUseCase, ModeControllerView modeControllerView)
+        public SimulationSetupState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, 
+            VisualizationUseCase visualizationUseCase, ModeControllerView modeControllerView)
         {
             _simulator = simulator;
             _setupPanelView = setupPanelView;

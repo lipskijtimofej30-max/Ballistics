@@ -18,6 +18,7 @@ namespace Game.Scripts.View.UseCase
         private readonly FloatParameterBinder _minBinder;
         private readonly FloatParameterBinder _maxBinder;
         private readonly FloatParameterBinder _stepBinder;
+        private readonly FloatParameterBinder _pauseBinder;
 
         [Inject]
         public ExperimentSettingsUseCase(List<IExperimentParameter> parameters, ExperimentSettings settings, ExperimentSettingsView view)
@@ -39,6 +40,8 @@ namespace Game.Scripts.View.UseCase
                 () => _settings.MaxValue, x => _settings.MaxValue = x, () => { });
             _stepBinder = new FloatParameterBinder(_view.StepParameter, 1f, 20f, "F2",
                 () => _settings.Step, x => _settings.Step = x, () => { });
+            _pauseBinder = new FloatParameterBinder(_view.PauseParameter, 0.5f, 5f, "F2",
+                () => _settings.PauseBetweenRuns, x => _settings.PauseBetweenRuns = x, () => { });
         }
 
         private void OnParameterChanged(int index)
@@ -60,6 +63,7 @@ namespace Game.Scripts.View.UseCase
             _minBinder?.Dispose();
             _maxBinder?.Dispose();
             _stepBinder?.Dispose();
+            _pauseBinder?.Dispose();
         }
     }
 }

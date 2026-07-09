@@ -85,12 +85,12 @@ namespace Game.Scripts.Core
             _min = newMin;
             _max = newMax;
             
+            OnInputChanged(_getter().ToString(_format));
+            
             _unit = newUnit;
-            // При необходимости подправим текущее значение, если оно выходит за новые границы
             float current = _getter();
             if (current < newMin) Apply(newMin);
             else if (current > newMax) Apply(newMax);
-            // _min/_max поля не храним, они больше не нужны, если всегда берём из слайдера
         }
 
         public void Dispose()

@@ -58,16 +58,13 @@ namespace Assets.Game.Scripts.Core.Experiment
             if (step <= 0f || minValue > maxValue)
                 return new List<ExperimentRunResult>();
 
-            // 1. Сохраняем оригинальные настройки
             var originalProjectile = _projectileSettings.Clone();
             var originalSimulation = _simulationSettings.Clone();
             var originalEnvironment = _environmentSettings.Clone();
             var originalIntegrator = _integratorSettings.Clone();
 
-            // 2. Применяем пресет
             ApplyPreset(preset);
 
-            // 3. Сохраняем исходное значение варьируемого параметра (уже из подменённых настроек)
             float originalParameterValue = parameter.GetValue();
             var results = new List<ExperimentRunResult>();
             int runId = 1;
@@ -77,20 +74,19 @@ namespace Assets.Game.Scripts.Core.Experiment
                 for (float value = minValue; value <= maxValue; value += step)
                 {
                     parameter.SetValue(value);
-                    var state = _projectileFactory.CreateState(); // фабрика видит подменённые настройки
+                    var state = _projectileFactory.CreateState();
                     var run = _fastForwardSimulator.Run(
                         state,
                         _integratorSettings.IntegratorMethod,
                         _integratorSettings.IntegrationStep);
                     var summary = _analyzer.Analyze(run.Points);
 
-                    results.Add(new ExperimentRunResult(runId, state.Clone(), summary, run));
+                    results.Add(new ExperimentRunResult(runId, state.Clone(), summary, run, preset));
                     runId++;
                 }
             }
             finally
             {
-                // 4. Восстанавливаем оригинальные настройки в любом случае
                 RestoreSettings(originalProjectile, originalSimulation, originalEnvironment, originalIntegrator);
                 parameter.SetValue(originalParameterValue);
             }

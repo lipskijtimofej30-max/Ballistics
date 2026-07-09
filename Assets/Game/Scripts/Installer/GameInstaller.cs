@@ -5,6 +5,7 @@ using Assets.Game.Scripts.Infrastructure.GameStateMachine;
 using Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState;
 using Assets.Game.Scripts.Infrastructure.Signals;
 using Assets.Game.Scripts.Settings;
+using Assets.Game.Scripts.UX;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Force;
@@ -21,6 +22,7 @@ public class GameInstaller : MonoInstaller
 {
     [SerializeField] private Simulator _simulator;
     [SerializeField] private ExperimentPlaybackSequencer _sequencer;
+    [SerializeField] private LaunchStand _launchStand;
     [SerializeField] private TrajectoryRenderer _prefab;
     public override void InstallBindings()
     {
@@ -38,6 +40,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<TrajectoryPool>().AsSingle().WithArguments(_prefab);
         Container.Bind<ExperimentPlaybackController>().AsSingle();
         Container.Bind<ExperimentPlaybackSequencer>().FromInstance(_sequencer).AsSingle();
+        Container.Bind<LaunchStand>().FromInstance(_launchStand).AsSingle();
         BindSimulationStateMachine();
         BindExperimentStateMachine();
         Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();
