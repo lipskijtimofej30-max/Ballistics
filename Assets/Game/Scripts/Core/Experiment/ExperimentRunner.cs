@@ -18,15 +18,13 @@ namespace Assets.Game.Scripts.Core.Experiment
         private readonly ProjectileSettings _projectileSettings;
         private readonly SimulationSettings _simulationSettings;
         private readonly EnvironmentSettings _environmentSettings;
-        private readonly VisualizationSettings _visualizationSettings;
         private readonly IntegratorSettings _integratorSettings;
 
         [Inject]
         public ExperimentRunner(SimulationAnalyzer analyzer, FastForwardSimulator fastForwardSimulator,
             ProjectileFactory projectileFactory,
             ProjectileSettings projectileSettings, SimulationSettings simulationSettings,
-            EnvironmentSettings environmentSettings, VisualizationSettings visualizationSettings,
-            IntegratorSettings integratorSettings)
+            EnvironmentSettings environmentSettings, IntegratorSettings integratorSettings)
         {
             _analyzer = analyzer;
             _fastForwardSimulator = fastForwardSimulator;
@@ -35,7 +33,6 @@ namespace Assets.Game.Scripts.Core.Experiment
             _projectileSettings = projectileSettings;
             _simulationSettings = simulationSettings;
             _environmentSettings = environmentSettings;
-            _visualizationSettings = visualizationSettings;
             _integratorSettings = integratorSettings;
         }
 
