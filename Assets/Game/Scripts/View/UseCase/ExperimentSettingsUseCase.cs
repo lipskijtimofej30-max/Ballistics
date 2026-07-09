@@ -11,7 +11,7 @@ namespace Game.Scripts.View.UseCase
 {
     public class ExperimentSettingsUseCase : IDisposable
     {
-        private readonly List<IExperimentParameter> _parameters;
+        private readonly ExperimentParameterDataBase _parameters;
         private readonly ExperimentSettings  _settings;
         private readonly ExperimentSettingsView _view;
           
@@ -21,18 +21,18 @@ namespace Game.Scripts.View.UseCase
         private readonly FloatParameterBinder _pauseBinder;
 
         [Inject]
-        public ExperimentSettingsUseCase(List<IExperimentParameter> parameters, ExperimentSettings settings, ExperimentSettingsView view)
+        public ExperimentSettingsUseCase(ExperimentParameterDataBase parameters, ExperimentSettings settings, ExperimentSettingsView view)
         {
             _parameters = parameters;
             _settings = settings;
             _view = view;
             
             _view.DropdownParameter.ClearOptions();
-            _view.DropdownParameter.AddOptions(_parameters.Select(p => p.DisplayName).ToList());
+            _view.DropdownParameter.AddOptions(_parameters.Parameters.Select(p => p.DisplayName).ToList());
             _view.DropdownParameter.SetValueWithoutNotify(_settings.SelectedParameterIndex);
             _view.DropdownParameter.onValueChanged.AddListener(OnParameterChanged);
             
-            var firstParameter = _parameters[_settings.SelectedParameterIndex];
+            var firstParameter = _parameters.GetCurrentParameter();
             
             _minBinder = new FloatParameterBinder(_view.MinParameter, /* границы */ firstParameter.MinRangeValue, firstParameter.MaxRangeValue, "F2",
                 () => _settings.MinValue, x => _settings.MinValue = x, () => { });
@@ -47,7 +47,7 @@ namespace Game.Scripts.View.UseCase
         private void OnParameterChanged(int index)
         {
             _settings.SelectedParameterIndex = index;
-            var selected = _parameters[index];
+            var selected = _parameters.Parameters[index];
 
             // Обновляем границы min/max
             _minBinder.UpdateValue(selected.MinRangeValue, selected.MaxRangeValue, selected.Unit);

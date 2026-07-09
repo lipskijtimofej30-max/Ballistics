@@ -22,6 +22,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private ExperimentSettingsView experimentSettingsView;
         [SerializeField] private IntegratorView integratorView;
         [SerializeField] private ModeControllerView modeControllerView;
+        [SerializeField] private ExperimentTableView experimentTableView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -32,6 +33,7 @@ namespace Game.Scripts.Installer
             BindEnvironmentView();
             BindIntegratorView();
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
+            Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
             BindToolbarView();
             Container.Bind<ModeControllerView>().FromInstance(modeControllerView).AsSingle();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();

@@ -31,6 +31,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
         Container.Bind<ExperimentSession>().AsSingle().NonLazy();
         BindExperimentParameter();
+        Container.Bind<ExperimentParameterDataBase>().AsSingle();
         BindForce();
         BindCalculator();
         BindSimulation();
@@ -63,7 +64,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
         Container.Bind<CsvExporter>().AsSingle();
         Container.Bind<SimulationAnalyzer>().AsSingle();
-        Container.Bind<SimulationExporter>().AsSingle();
+        Container.Bind<DataExporter>().AsSingle();
     }
 
     private void BindCalculator()

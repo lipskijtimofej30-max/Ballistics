@@ -78,7 +78,7 @@ namespace Assets.Game.Scripts.Core.Experiment
                         _integratorSettings.IntegrationStep);
                     var summary = _analyzer.Analyze(run.Points);
 
-                    results.Add(new ExperimentRunResult(runId, state.Clone(), summary, run, preset));
+                    results.Add(new ExperimentRunResult(runId, value, state.Clone(), summary, run, preset));
                     runId++;
                 }
             }

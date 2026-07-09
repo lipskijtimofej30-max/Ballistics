@@ -15,7 +15,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
 {
     public class ExperimentRunningState : IGameState
     {
-        private readonly List<IExperimentParameter>  _parameters;
+        private readonly ExperimentParameterDataBase  _parameters;
         private readonly ExperimentPlaybackController _experimentController;
         private readonly ExperimentPlaybackSequencer _sequencer;
         private readonly ExperimentSession _session;
@@ -28,7 +28,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ILogger _logger;
 
         [Inject]
-        public ExperimentRunningState(List<IExperimentParameter> parameters, ExperimentPlaybackController experimentController,
+        public ExperimentRunningState(ExperimentParameterDataBase parameters, ExperimentPlaybackController experimentController,
             ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView, ExperimentSession session,
             ExperimentRunner experimentRunner, ExperimentSettings experimentSettings, TrajectoryPool pool, 
             TelemetryPanelView telemetryPanelView, ResultsPanelView resultsPanelView, ILogger logger)
@@ -58,14 +58,15 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             if (_session.ExperimentRunResults.Count == 0)
             {
                 _pool.ClearAll();
-                var parameter = _parameters[_experimentSettings.SelectedParameterIndex];
+                var parameter = _parameters.GetCurrentParameter();
                 var preset = new ExperimentPreset(ShapeType.Sphere, 5000f, 0.17f, 15f, 0f, 10f, 
                     new Vector3(0f, -9.81f, 0f), false, new Vector3(10f,0f,0f), IntegratorMethod.RK2, 0.01f);
                 
                 var results = _experimentRunner.RunSeries(
                     parameter, _experimentSettings.MinValue, _experimentSettings.MaxValue, _experimentSettings.Step, preset);
                 
-                _logger.Log($"Parameter {parameter.DisplayName}");
+                _logger.Log($"Parameter {parameter.DisplayName} with min value {_experimentSettings.MinValue}, max value {_experimentSettings.MaxValue}," +
+                            $" step {_experimentSettings.Step}, pause {_experimentSettings.PauseBetweenRuns}");
                 
                 _session.ClearAll();
                 foreach (var result in results)
@@ -92,6 +93,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         public void Exit()
         {
             _telemetryPanelView.Hide();
+            _resultsPanelView.Hide();
             _toolbarView.LaboratoryButton.interactable = true;
             
             _sequencer.RunPlaybackStarted -= OnRunStarted;

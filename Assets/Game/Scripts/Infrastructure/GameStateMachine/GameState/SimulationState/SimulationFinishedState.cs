@@ -9,7 +9,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
     {
         private readonly Simulator _simulator;
         private readonly SimulationPrinter _printer;
-        private readonly SimulationExporter _exporter;
+        private readonly DataExporter _exporter;
         private readonly SimulationAnalyzer _analyzer;
         private readonly ResultsPanelView _resultsPanel;
         private readonly ToolbarView _toolbarView;
@@ -21,7 +21,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             Simulator simulator,
             SimulationPrinter printer,
             SimulationAnalyzer analyzer,
-            SimulationExporter exporter,
+            DataExporter exporter,
             ResultsPanelView resultsPanel,
             ToolbarView toolbarView)
         {
