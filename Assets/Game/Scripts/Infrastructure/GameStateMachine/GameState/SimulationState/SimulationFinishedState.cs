@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.UX;
@@ -15,6 +16,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly ResultsPanelView _resultsPanel;
         private readonly ToolbarView _toolbarView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
+        private readonly GraphRenderer _graphRenderer;
         
         private SimulationSummary _summary;
 
@@ -26,7 +28,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             DataExporter exporter,
             ResultsPanelView resultsPanel,
             ToolbarView toolbarView,
-            ParameterCanvasInteractable parameterCanvasInteractable)
+            ParameterCanvasInteractable parameterCanvasInteractable,
+            GraphRenderer graphRenderer)
         {
             _simulator = simulator;
             _printer = printer;
@@ -35,6 +38,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _resultsPanel = resultsPanel;
             _toolbarView = toolbarView;
             _parameterCanvasInteractable = parameterCanvasInteractable;
+            _graphRenderer = graphRenderer;
         }
         
         public void Enter()
@@ -51,8 +55,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _summary = _analyzer.Analyze(run.Points);
             _resultsPanel.SetSummary(_summary);
             _resultsPanel.Show();
-            
-            
+            _graphRenderer.DrawGraph(new TrajectoryGraphDataSource(run));
             
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }
