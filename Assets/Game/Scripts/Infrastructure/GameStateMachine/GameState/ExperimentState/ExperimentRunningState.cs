@@ -1,11 +1,10 @@
 ﻿using Game.Scripts.Infrastructure.GameStateMachine;
-using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Assets.Game.Scripts.Settings;
-using Assets.Game.Scripts.UX;
 using Game.Scripts.Core;
 using Game.Scripts.Settings;
+using Game.Scripts.UX;
 using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
@@ -25,13 +24,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ToolbarView _toolbarView;
         private readonly TelemetryPanelView _telemetryPanelView;
         private readonly ResultsPanelView _resultsPanelView;
+        private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly ILogger _logger;
 
         [Inject]
         public ExperimentRunningState(ExperimentParameterDataBase parameters, ExperimentPlaybackController experimentController,
-            ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView, ExperimentSession session,
-            ExperimentRunner experimentRunner, ExperimentSettings experimentSettings, TrajectoryPool pool, 
-            TelemetryPanelView telemetryPanelView, ResultsPanelView resultsPanelView, ILogger logger)
+            ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView, ExperimentSession session, ExperimentRunner experimentRunner, 
+            ExperimentSettings experimentSettings, TrajectoryPool pool, TelemetryPanelView telemetryPanelView, ResultsPanelView resultsPanelView,
+            ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger)
         {
             _parameters = parameters;
             _experimentController = experimentController;
@@ -43,12 +43,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _experimentSettings = experimentSettings;
             _telemetryPanelView = telemetryPanelView;
             _resultsPanelView = resultsPanelView;
+            _parameterCanvasInteractable = parameterCanvasInteractable;
             _logger = logger;
         }
         
         public void Enter()
         {
             _toolbarView.LaboratoryButton.interactable = false;
+            _parameterCanvasInteractable.Toggle(false);
             _telemetryPanelView.Show();
             _resultsPanelView.Hide();
             

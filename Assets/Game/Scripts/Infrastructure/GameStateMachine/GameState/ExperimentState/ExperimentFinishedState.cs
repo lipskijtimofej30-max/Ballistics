@@ -1,14 +1,10 @@
 ﻿using Game.Scripts.Infrastructure.GameStateMachine;
-using System;
-using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
-using Assets.Game.Scripts.Settings;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
-using Game.Scripts.Settings;
+using Game.Scripts.UX;
 using Game.Scripts.View.View;
-using UnityEngine;
 using Zenject;
 
 namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
@@ -21,10 +17,11 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ExperimentTableView _tableView;
         private readonly DataExporter _exporter;
         private readonly TrajectoryPool _pool;
+        private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
 
         [Inject]
         public ExperimentFinishedState(ExperimentPlaybackSequencer sequencer, ExperimentSession session,
-            TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters, DataExporter exporter)
+            TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters, DataExporter exporter, ParameterCanvasInteractable parameterCanvasInteractable)
         {
             _sequencer = sequencer;
             _session = session;
@@ -32,9 +29,11 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _tableView = tableView;
             _parameters = parameters;
             _exporter = exporter;
+            _parameterCanvasInteractable = parameterCanvasInteractable;
         }
         public void Enter()
         {
+            _parameterCanvasInteractable.Toggle(true);
             _tableView.SaveCsvRequested += OnSaveCsvRequested;
             _tableView.Show(_parameters.GetCurrentParameter(), _session.ExperimentRunResults);
         }

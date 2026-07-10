@@ -1,5 +1,6 @@
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.UX;
 using Game.Scripts.View.View;
 using Zenject;
 
@@ -13,6 +14,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly SimulationAnalyzer _analyzer;
         private readonly ResultsPanelView _resultsPanel;
         private readonly ToolbarView _toolbarView;
+        private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         
         private SimulationSummary _summary;
 
@@ -23,7 +25,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             SimulationAnalyzer analyzer,
             DataExporter exporter,
             ResultsPanelView resultsPanel,
-            ToolbarView toolbarView)
+            ToolbarView toolbarView,
+            ParameterCanvasInteractable parameterCanvasInteractable)
         {
             _simulator = simulator;
             _printer = printer;
@@ -31,10 +34,15 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _exporter = exporter;
             _resultsPanel = resultsPanel;
             _toolbarView = toolbarView;
+            _parameterCanvasInteractable = parameterCanvasInteractable;
         }
         
         public void Enter()
         {
+            _toolbarView.CreateButton.interactable = true;
+            _toolbarView.PauseButton.interactable = false;
+            _parameterCanvasInteractable.Toggle(true);
+            
             var run = _simulator.CurrentRun;
             if (run == null) return;
             
@@ -44,8 +52,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _resultsPanel.SetSummary(_summary);
             _resultsPanel.Show();
             
-            _toolbarView.CreateButton.interactable = true;
-            _toolbarView.PauseButton.interactable = false;
+            
             
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }

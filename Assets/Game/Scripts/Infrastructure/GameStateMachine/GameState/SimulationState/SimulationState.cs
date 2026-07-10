@@ -1,5 +1,6 @@
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.UX;
 using Game.Scripts.View.UseCase;
 using Game.Scripts.View.View;
 using Zenject;
@@ -12,15 +13,18 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly TelemetryPanelView _telemetryPanelView;
         private readonly ToolbarView _toolbarView;
         private readonly VisualizationUseCase _visualizationUseCase;
+        private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         [Inject(Id = "Live")] private readonly TrajectoryRenderer _trajectoryRenderer;
 
         [Inject]
-        public SimulationState(Simulator simulator, TelemetryPanelView telemetryPanelView, ToolbarView toolbarView, VisualizationUseCase visualizationUseCase)
+        public SimulationState(Simulator simulator, TelemetryPanelView telemetryPanelView, ToolbarView toolbarView,
+            VisualizationUseCase visualizationUseCase, ParameterCanvasInteractable parameterCanvasInteractable)
         {
             _simulator = simulator;
             _telemetryPanelView = telemetryPanelView;
             _toolbarView = toolbarView;
             _visualizationUseCase = visualizationUseCase;
+            _parameterCanvasInteractable = parameterCanvasInteractable;
         }
         
         public void Enter()
@@ -29,6 +33,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _toolbarView.ExperimentButton.interactable = false;
             _trajectoryRenderer.SetVisible(true);
             _visualizationUseCase.SetPreviewAllowed(false);
+            _parameterCanvasInteractable.Toggle(false);
             
             if (!_simulator.HasActiveRun)
                 _simulator.Begin();

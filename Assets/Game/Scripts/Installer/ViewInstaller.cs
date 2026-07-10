@@ -23,11 +23,13 @@ namespace Game.Scripts.Installer
         [SerializeField] private IntegratorView integratorView;
         [SerializeField] private ModeControllerView modeControllerView;
         [SerializeField] private ExperimentTableView experimentTableView;
+        [SerializeField] private ParameterCanvasInteractable parameterCanvasInteractable;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
+            Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
