@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using DefaultNamespace;
+using Assets.Game.Scripts.Core.Graphics;
 using UnityEngine;
 
 namespace Game.Scripts.View.View

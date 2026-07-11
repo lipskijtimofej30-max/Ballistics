@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using Assets.Game.Scripts.Core.Graphics;
 using Game.Scripts.Core.Simulation;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace Assets.Game.Scripts.Core.Graphics
 {
     public class TrajectoryGraphDataSource : IGraphDataSource
     {
         private readonly SimulationRun _run;
         
-        public string XAxisLabel { get; } = "X";
-        public string YAxisLabel { get; } = "Y";
+        public string XAxisLabel { get; } = "Дальность, м";
+        public string YAxisLabel { get; } = "Высота, м";
         public string DisplayName { get; } = "Траектория";
 
         public TrajectoryGraphDataSource(SimulationRun run) => _run = run;

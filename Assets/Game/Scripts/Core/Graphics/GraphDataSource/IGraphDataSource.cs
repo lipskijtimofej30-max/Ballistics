@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace Assets.Game.Scripts.Core.Graphics
 {
     public interface IGraphDataSource
     {

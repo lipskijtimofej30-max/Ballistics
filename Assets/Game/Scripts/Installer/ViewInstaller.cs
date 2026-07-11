@@ -24,13 +24,14 @@ namespace Game.Scripts.Installer
         [SerializeField] private ModeControllerView modeControllerView;
         [SerializeField] private ExperimentTableView experimentTableView;
         [SerializeField] private ParameterCanvasInteractable parameterCanvasInteractable;
-        [SerializeField] private GraphRenderer graphRenderer;
+        [SerializeField] private GraphView graphView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
             Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
+            Container.Bind<GraphView>().FromInstance(graphView).AsSingle().NonLazy();
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
@@ -38,7 +39,6 @@ namespace Game.Scripts.Installer
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
             BindToolbarView();
-            Container.Bind<GraphRenderer>().FromInstance(graphRenderer).AsSingle();
             Container.Bind<ModeControllerView>().FromInstance(modeControllerView).AsSingle();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();

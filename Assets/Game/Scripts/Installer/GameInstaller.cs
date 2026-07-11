@@ -1,6 +1,7 @@
 using Assets.Game.Scripts.Core.Calculator;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
+using Assets.Game.Scripts.Core.Graphics;
 using Assets.Game.Scripts.Infrastructure.GameStateMachine;
 using Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState;
 using Assets.Game.Scripts.Infrastructure.Signals;
@@ -30,6 +31,7 @@ public class GameInstaller : MonoInstaller
         BindSignal();
         Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
         Container.Bind<ExperimentSession>().AsSingle().NonLazy();
+        Container.Bind<GraphDataSourceFactory>().AsSingle();
         BindExperimentParameter();
         Container.Bind<ExperimentParameterDataBase>().AsSingle();
         BindForce();
@@ -37,6 +39,7 @@ public class GameInstaller : MonoInstaller
         BindSimulation();
         BindSimulator();
         BindFactory();
+        Container.Bind<GraphController>().AsSingle();
         Container.Bind<ExperimentRunner>().AsSingle().NonLazy();
         Container.Bind<TrajectoryPool>().AsSingle().WithArguments(_prefab);
         Container.Bind<ExperimentPlaybackController>().AsSingle();

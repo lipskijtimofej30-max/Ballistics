@@ -1,0 +1,21 @@
+using System;
+using Game.Scripts.Core.Simulation;
+
+namespace Assets.Game.Scripts.Core.Graphics
+{
+    public class GraphDataSourceFactory
+    {
+        public IGraphDataSource Create(GraphType type, SimulationRun run)
+        {
+            return type switch
+            {
+                GraphType.HeightTime => new HeightTimeGraphDataSource(run),
+                GraphType.Trajectory => new TrajectoryGraphDataSource(run),
+                GraphType.SpeedTime => new SpeedTImeGraphDataSource(run),
+                GraphType.XTime => new XTimeGraphDataSource(run),
+                GraphType.AccelerationTime => new AccelerationTimeGraphDataSource(run),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Неизвестный тип графика")
+            };
+        }
+    }
+}
