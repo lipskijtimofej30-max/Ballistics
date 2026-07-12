@@ -1,95 +1,122 @@
 using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Graphics;
+using Game.Scripts.Core;
+using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace Game.Scripts.View.View
 {
     public class GraphRenderer : MonoBehaviour
     {
-        [Header("Line Renderers")] 
+        [Header("Axes Renderers")] 
         [SerializeField] private LineRenderer _xAxisLine;
         [SerializeField] private LineRenderer _yAxisLine;
-        [SerializeField] private LineRenderer _dataLine; // В будущем можно заменить на список/префаб для нескольких линий
 
-        [Header("Graph Setup")]
+        [Header("Labels")] 
+        [SerializeField] private TMP_Text _labelPrefab;
+        [SerializeField] private Transform _labelContainer;
+        [SerializeField] private int _countLabelX = 6;
+        [SerializeField] private int _countLabelY = 4;
         
-        [Tooltip("Физический размер графика в локальных координатах Unity (ширина и высота)")]
+        [Header("Lines Container")]
+        [SerializeField] private Transform _linesContainer;
+        
+        [Header("UI Offsets (Fix for overlapping)")] 
+        [SerializeField] private Vector2 _xAxisLabelOffset = new Vector2(0f, -0.6f);
+        [SerializeField] private Vector2 _yAxisLabelOffset = new Vector2(-1.5f, 0f);
+
+        [Header("Graph Setup")] 
         [SerializeField] private Vector2 _graphSize = new Vector2(10f, 10f);
+        [SerializeField, Range(0f, 0.5f)] private float _padding = 0.05f;
+        [SerializeField] private bool _forceZeroOrigin = true;
+        
+        private Color[] _lineColors = { new Color(0.309f, 0.639f, 1f), Color.red, Color.green, Color.yellow, Color.cyan };
 
-        [Tooltip("Отступ от краев графика, чтобы линия не прилипала к осям (в долях, 0.1 = 10%)")]
-        [SerializeField, Range(0f, 0.5f)]
-        private float _padding = 0.05f;
+        private List<IGraphDataSource> _dataSources = new List<IGraphDataSource>();
+        private GraphLinePool _linePool;
 
-        [Tooltip("Если включено, оси всегда будут начинаться с нуля (если минимальные значения больше нуля)")]
-        [SerializeField]
-        private bool _forceZeroOrigin = true;
+        [Inject]
+        private void Construct(GraphLinePool linePool)
+        {
+            _linePool = linePool;
+        }
 
         private void Awake()
         {
-            // Убеждаемся, что линии рисуются в локальных координатах родителя (самого графика)
             _xAxisLine.useWorldSpace = false;
             _yAxisLine.useWorldSpace = false;
-            _dataLine.useWorldSpace = false;
         }
 
-        /// <summary>
-        /// Основной метод для отрисовки графика из источника данных.
-        /// </summary>
-        public void DrawGraph(IGraphDataSource source)
+        public void DrawSingleGraph(IGraphDataSource source)
         {
-            if (source == null) return;
+            ClearAll();
+            AddGraph(source);
+        }
 
-            List<Vector2> points = source.GetPoints();
-            if (points == null || points.Count == 0)
-            {
-                Clear();
-                return;
-            }
+        public void AddGraph(IGraphDataSource source)
+        {
+            if (source == null || source.GetPoints() == null || source.GetPoints().Count == 0) return;
 
-            // 1. Вычисляем реальные границы данных (Min/Max) с учетом отступов
-            CalculateBounds(points, out Vector2 dataMin, out Vector2 dataMax);
+            _dataSources.Add(source);
 
-            // 2. Отрисовываем базовые оси X и Y
+            GraphLine newLine = _linePool.GetLine();
+
+            int activeCount = _linePool.GetActiveLines().Count;
+            Color lineColor = _lineColors[(activeCount - 1) % _lineColors.Length];
+
+            newLine.Initialize(source.GetPoints(), lineColor);
+            newLine.transform.SetParent(_linesContainer);
+            newLine.transform.localPosition = Vector3.zero;
+
+            RedrawAll();
+        }
+
+        public void ClearAll()
+        {
+            _dataSources.Clear();
+            _linePool.ReleaseAll();
+        }
+
+        private void RedrawAll()
+        {
+            if (_dataSources.Count == 0) return;
+
+            CalculateGlobalBounds(out Vector2 dataMin, out Vector2 dataMax);
             DrawAxes();
 
-            // 3. ЗАДЕЛ НА БУДУЩЕЕ: Здесь будет отрисовка сетки (Grid) и подписей
-            DrawGridAndLabelsPlaceholder(dataMin, dataMax, source.XAxisLabel, source.YAxisLabel);
+            var firstSource = _dataSources[0];
+            DrawGridAndLabels(dataMin, dataMax, firstSource.XAxisLabel, firstSource.YAxisLabel);
 
-            // 4. Отрисовываем саму линию данных
-            DrawDataLine(points, dataMin, dataMax);
+            foreach (var line in _linePool.GetActiveLines())
+            {
+                line.Draw(dataMin, dataMax, _graphSize);
+            }
         }
 
-        public void Clear()
-        {
-            _dataLine.positionCount = 0;
-        }
-
-        private void CalculateBounds(List<Vector2> points, out Vector2 min, out Vector2 max)
+        private void CalculateGlobalBounds(out Vector2 min, out Vector2 max)
         {
             min = new Vector2(float.MaxValue, float.MaxValue);
             max = new Vector2(float.MinValue, float.MinValue);
 
-            // Ищем абсолютные минимумы и максимумы
-            foreach (var p in points)
+            foreach (var source in _dataSources)
             {
-                if (p.x < min.x) min.x = p.x;
-                if (p.x > max.x) max.x = p.x;
-                if (p.y < min.y) min.y = p.y;
-                if (p.y > max.y) max.y = p.y;
+                foreach (var p in source.GetPoints())
+                {
+                    if (p.x < min.x) min.x = p.x;
+                    if (p.x > max.x) max.x = p.x;
+                    if (p.y < min.y) min.y = p.y;
+                    if (p.y > max.y) max.y = p.y;
+                }
             }
 
-            // Вычисляем диапазон (разницу)
             Vector2 range = new Vector2(max.x - min.x, max.y - min.y);
-
-            // Защита от плоских графиков (когда все значения равны, например y = 5)
             if (range.x == 0) range.x = 1f;
             if (range.y == 0) range.y = 1f;
 
-            // Добавляем Padding (отступы), чтобы график не терся о края
             max += range * _padding;
             min -= range * _padding;
 
-            // Если нужно, привязываем начало к нулю
             if (_forceZeroOrigin)
             {
                 if (min.x > 0) min.x = 0;
@@ -99,41 +126,44 @@ namespace Game.Scripts.View.View
 
         private void DrawAxes()
         {
-            // Ось X: от (0,0) до (Ширина, 0)
             _xAxisLine.positionCount = 2;
             _xAxisLine.SetPosition(0, Vector3.zero);
             _xAxisLine.SetPosition(1, new Vector3(_graphSize.x, 0f, 0f));
 
-            // Ось Y: от (0,0) до (0, Высота)
             _yAxisLine.positionCount = 2;
             _yAxisLine.SetPosition(0, Vector3.zero);
             _yAxisLine.SetPosition(1, new Vector3(0f, _graphSize.y, 0f));
         }
 
-        private void DrawDataLine(List<Vector2> points, Vector2 dataMin, Vector2 dataMax)
+        private void DrawGridAndLabels(Vector2 min, Vector2 max, string xLabel, string yLabel)
         {
-            _dataLine.positionCount = points.Count;
+            foreach (Transform child in _labelContainer) Destroy(child.gameObject);
 
-            var positions = new Vector3[points.Count];
-            for (int i = 0; i < points.Count; i++)
+            CreateLabel(xLabel, new Vector3(_graphSize.x * 0.5f, _xAxisLabelOffset.y, 0f), _labelContainer);
+            CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), _labelContainer,
+                Quaternion.Euler(0, 0, 90));
+
+            for (int i = 0; i <= _countLabelX; i++)
             {
-                float nx = Mathf.InverseLerp(dataMin.x, dataMax.x, points[i].x);
-                float ny = Mathf.InverseLerp(dataMin.y, dataMax.y, points[i].y);
-                positions[i] = new Vector3(nx * _graphSize.x, ny * _graphSize.y, 0f);
+                float t = i / (float)_countLabelX;
+                float value = Mathf.Lerp(min.x, max.x, t);
+                CreateLabel(value.ToString("F2"), new Vector3(t * _graphSize.x, -0.3f, 0f), _labelContainer);
             }
-            _dataLine.positionCount = points.Count;
-            _dataLine.SetPositions(positions);
+
+            for (int i = 0; i <= _countLabelY; i++)
+            {
+                float t = i / (float)_countLabelY;
+                float value = Mathf.Lerp(min.y, max.y, t);
+                CreateLabel(value.ToString("F2"), new Vector3(-0.5f, t * _graphSize.y, 0f), _labelContainer);
+            }
         }
 
-        /// <summary>
-        /// Заглушка для будущей реализации сетки (Tick marks) и текста осей
-        /// </summary>
-        private void DrawGridAndLabelsPlaceholder(Vector2 min, Vector2 max, string xLabel, string yLabel)
+        private void CreateLabel(string text, Vector3 localPos, Transform parent, Quaternion? rot = null)
         {
-            // В будущем здесь будет:
-            // 1. Вычисление шага деления (например, с использованием Math.Log10 для "красивых" круглых чисел).
-            // 2. Включение/Выключение дополнительных LineRenderer'ов для сетки (вертикальных и горизонтальных).
-            // 3. Размещение TextMeshPro компонентов для подписей делений на основе координат.
+            var label = Instantiate(_labelPrefab, parent);
+            label.transform.localPosition = localPos;
+            if (rot.HasValue) label.transform.rotation = rot.Value;
+            label.text = text;
         }
     }
 }

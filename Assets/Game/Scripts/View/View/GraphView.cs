@@ -31,7 +31,7 @@ namespace Game.Scripts.View.View
 
         public void RenderGraph(IGraphDataSource dataSource)
         {
-            _renderer.DrawGraph(dataSource);
+            _renderer.DrawSingleGraph(dataSource);
         }
 
         private void OnDestroy()

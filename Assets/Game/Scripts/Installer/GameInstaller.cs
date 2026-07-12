@@ -25,6 +25,7 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private ExperimentPlaybackSequencer _sequencer;
     [SerializeField] private LaunchStand _launchStand;
     [SerializeField] private TrajectoryRenderer _prefab;
+    [SerializeField] private GraphLine _linePrefab;
     public override void InstallBindings()
     {
         BindSettings();
@@ -34,6 +35,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<GraphDataSourceFactory>().AsSingle();
         BindExperimentParameter();
         Container.Bind<ExperimentParameterDataBase>().AsSingle();
+        Container.Bind<GraphLinePool>().AsSingle().WithArguments(_linePrefab);
         BindForce();
         BindCalculator();
         BindSimulation();
