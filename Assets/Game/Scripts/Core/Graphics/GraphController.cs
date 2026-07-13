@@ -54,14 +54,14 @@ namespace Assets.Game.Scripts.Core.Graphics
                     sources.Add(_factory.Create(graphType, run));
                 }
 
-                _view.RenderGraphs(sources);
+                _view.RenderGraphs(sources, sources[0].DisplayName);
             }
             else
             {
                 if (_currentRun == null) return;
 
                 var data = _factory.Create(graphType, _currentRun);
-                _view.RenderGraph(data);
+                _view.RenderGraph(data, data.DisplayName);
             }
         }
 

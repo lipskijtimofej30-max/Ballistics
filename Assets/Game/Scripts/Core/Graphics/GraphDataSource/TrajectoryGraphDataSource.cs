@@ -10,7 +10,7 @@ namespace Assets.Game.Scripts.Core.Graphics
         
         public string XAxisLabel { get; } = "Дальность, м";
         public string YAxisLabel { get; } = "Высота, м";
-        public string DisplayName { get; } = "Траектория";
+        public string DisplayName { get; } = "Траектория полёта";
 
         public TrajectoryGraphDataSource(SimulationRun run) => _run = run;
         

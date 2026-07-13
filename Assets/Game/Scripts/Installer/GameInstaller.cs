@@ -47,6 +47,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ExperimentPlaybackController>().AsSingle();
         Container.Bind<ExperimentPlaybackSequencer>().FromInstance(_sequencer).AsSingle();
         Container.Bind<LaunchStand>().FromInstance(_launchStand).AsSingle();
+        Container.BindInterfacesAndSelfTo<GraphTooltipController>().AsSingle();
         BindSimulationStateMachine();
         BindExperimentStateMachine();
         Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();

@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Game.Scripts.View.View
 {
-    public class GraphRenderer : MonoBehaviour
+    public class GraphRenderer : MonoBehaviour, IGraphInfoProvider
     {
         [Header("Axes Renderers")] 
         [SerializeField] private LineRenderer _xAxisLine;
@@ -18,25 +18,31 @@ namespace Game.Scripts.View.View
         [Header("Labels")] 
         [SerializeField] private TMP_Text _labelPrefab;
         [SerializeField] private Transform _labelContainer;
-        
-        [Header("Lines Container")]
+
+        [Header("Lines Container")] 
         [SerializeField] private Transform _linesContainer;
-        
+
         [Header("UI Offsets (Fix for overlapping)")] 
         [SerializeField] private Vector2 _xAxisLabelOffset = new Vector2(0f, -0.6f);
         [SerializeField] private Vector2 _yAxisLabelOffset = new Vector2(-1.5f, 0f);
 
-        [Header("Graph Setup")] 
+        [Header("Graph Setup")]
         [SerializeField] private Vector2 _graphSize = new Vector2(10f, 10f);
         [SerializeField, Range(0f, 0.5f)] private float _padding = 0.05f;
         [SerializeField] private bool _forceZeroOrigin = true;
-        
-        private Color[] _lineColors = { new Color(0.309f, 0.639f, 1f), Color.red, Color.green, Color.yellow, Color.cyan };
+
+        private Color[] _lineColors =
+            { new Color(0.309f, 0.639f, 1f), Color.red, Color.green, Color.yellow, Color.cyan };
 
         private List<IGraphDataSource> _dataSources = new List<IGraphDataSource>();
         private GraphLinePool _linePool;
         private GraphSettings _graphSettings;
         private SignalBus _signalBus;
+        
+        public IReadOnlyList<IGraphDataSource> DataSources => _dataSources;
+        public Vector2 CurrentMin { get; set; }
+        public Vector2 CurrentMax { get; set; }
+        public Vector2 GraphSize => _graphSize;
 
         [Inject]
         private void Construct(GraphLinePool linePool, GraphSettings graphSettings, SignalBus signalBus)
@@ -51,7 +57,7 @@ namespace Game.Scripts.View.View
             _xAxisLine.useWorldSpace = false;
             _yAxisLine.useWorldSpace = false;
 
-            _signalBus.Subscribe<GraphSettingsChangedSignal>(DrawAxes);
+            _signalBus.Subscribe<GraphSettingsChangedSignal>(RedrawAxesAndLabels);
         }
 
         public void DrawSingleGraph(IGraphDataSource source)
@@ -64,14 +70,17 @@ namespace Game.Scripts.View.View
         {
             if (source == null || source.GetPoints() == null || source.GetPoints().Count == 0) return;
 
-            _dataSources.Add(source);
-
             GraphLine newLine = _linePool.GetLine();
+
+            if (newLine == null) return;
+
+            _dataSources.Add(source);
 
             int activeCount = _linePool.GetActiveLines().Count;
             Color lineColor = _lineColors[(activeCount - 1) % _lineColors.Length];
 
             newLine.Initialize(source.GetPoints(), lineColor);
+
             newLine.transform.SetParent(_linesContainer);
             newLine.transform.localPosition = Vector3.zero;
 
@@ -89,15 +98,31 @@ namespace Game.Scripts.View.View
             if (_dataSources.Count == 0) return;
 
             CalculateGlobalBounds(out Vector2 dataMin, out Vector2 dataMax);
-            DrawAxes();
-
-            var firstSource = _dataSources[0];
-            DrawGridAndLabels(dataMin, dataMax, firstSource.XAxisLabel, firstSource.YAxisLabel);
+            DrawAxesAndLabels(dataMin, dataMax); // общая часть
 
             foreach (var line in _linePool.GetActiveLines())
             {
                 line.Draw(dataMin, dataMax, _graphSize);
             }
+        }
+
+        private void RedrawAxesAndLabels()
+        {
+            if (_dataSources.Count == 0) return;
+
+            CalculateGlobalBounds(out Vector2 dataMin, out Vector2 dataMax);
+            DrawAxesAndLabels(dataMin, dataMax);
+        }
+
+        private void DrawAxesAndLabels(Vector2 dataMin, Vector2 dataMax)
+        {
+            CurrentMin = dataMin;
+            CurrentMax = dataMax;
+            
+            DrawAxes();
+
+            var firstSource = _dataSources[0];
+            DrawGridAndLabels(dataMin, dataMax, firstSource.XAxisLabel, firstSource.YAxisLabel);
         }
 
         private void CalculateGlobalBounds(out Vector2 min, out Vector2 max)
@@ -145,9 +170,8 @@ namespace Game.Scripts.View.View
         {
             foreach (Transform child in _labelContainer) Destroy(child.gameObject);
 
-            CreateLabel(xLabel, new Vector3(_graphSize.x * 0.5f, _xAxisLabelOffset.y, 0f), _labelContainer);
-            CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), _labelContainer,
-                Quaternion.Euler(0, 0, 90));
+            CreateLabel(xLabel, new Vector3(_graphSize.x * 0.5f, _xAxisLabelOffset.y, 0f), _labelContainer, null, 6f);
+            CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), _labelContainer, Quaternion.Euler(0, 0, 90), 7f);
 
             for (int i = 0; i <= _graphSettings.CountLabelX; i++)
             {
@@ -164,17 +188,18 @@ namespace Game.Scripts.View.View
             }
         }
 
-        private void CreateLabel(string text, Vector3 localPos, Transform parent, Quaternion? rot = null)
+        private void CreateLabel(string text, Vector3 localPos, Transform parent, Quaternion? rot = null, float fontSize = 5f)
         {
             var label = Instantiate(_labelPrefab, parent);
             label.transform.localPosition = localPos;
             if (rot.HasValue) label.transform.rotation = rot.Value;
             label.text = text;
+            label.fontSize = fontSize;
         }
 
         private void OnDestroy()
         {
-            _signalBus.TryUnsubscribe<GraphSettingsChangedSignal>(DrawAxes);
+            _signalBus.TryUnsubscribe<GraphSettingsChangedSignal>(RedrawAxesAndLabels);
         }
     }
 }

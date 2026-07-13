@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.Core.Graphics;
 using Assets.Game.Scripts.UX;
 using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
@@ -26,12 +27,15 @@ namespace Game.Scripts.Installer
         [SerializeField] private ExperimentTableView experimentTableView;
         [SerializeField] private ParameterCanvasInteractable parameterCanvasInteractable;
         [SerializeField] private GraphView graphView;
+        [SerializeField] private GraphTooltipView graphTooltipView;
+        [SerializeField] private GraphRenderer _graphRenderer;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
             Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
+            BindGraphTooltip();
             BindGraphView();
             BindProjectileView();
             BindSimulationView();
@@ -47,6 +51,12 @@ namespace Game.Scripts.Installer
             BindExperimentView();
             BindTrajectoryRenderer();
             BindVisualization();
+        }
+
+        private void BindGraphTooltip()
+        {
+            Container.Bind<GraphTooltipView>().FromInstance(graphTooltipView).AsSingle().NonLazy();
+            Container.Bind<IGraphInfoProvider>().To<GraphRenderer>().FromInstance(_graphRenderer).AsSingle().NonLazy();
         }
 
         private void BindGraphView()

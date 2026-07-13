@@ -13,6 +13,7 @@ namespace Game.Scripts.View.View
         [field: SerializeField] public ParameterView CountLabelY { get; private set; }
         [field: SerializeField] public TMP_Dropdown Dropdown { get; private set; }
         [SerializeField] private GraphRenderer _renderer;
+        [SerializeField] private TMP_Text _titleText;
         [Header("Container")]
         [SerializeField] private GameObject _warningContainer;
         [SerializeField] private GameObject _graphContainer;
@@ -28,19 +29,23 @@ namespace Game.Scripts.View.View
             _warningContainer.SetActive(toggle);
         }
 
-        public void RenderGraph(IGraphDataSource dataSource)
+        public void RenderGraph(IGraphDataSource dataSource, string title)
         {
             _renderer.DrawSingleGraph(dataSource);
+            SetTitleText(title);
         }
 
-        public void RenderGraphs(List<IGraphDataSource> sources)
+        public void RenderGraphs(List<IGraphDataSource> sources, string title)
         {
             _renderer.ClearAll();
             foreach (var source in sources)
             {
                 _renderer.AddGraph(source);
             }
+            SetTitleText(title);
         }
+        
+        private void SetTitleText(string title) => _titleText.text = title;
 
         private void OnDestroy()
         {
