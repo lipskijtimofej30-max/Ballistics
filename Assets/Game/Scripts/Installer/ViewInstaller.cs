@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.UX;
 using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
 using Game.Scripts.UX;
@@ -31,7 +32,7 @@ namespace Game.Scripts.Installer
         override public void InstallBindings()
         {
             Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
-            Container.Bind<GraphView>().FromInstance(graphView).AsSingle().NonLazy();
+            BindGraphView();
             BindProjectileView();
             BindSimulationView();
             BindEnvironmentView();
@@ -46,6 +47,13 @@ namespace Game.Scripts.Installer
             BindExperimentView();
             BindTrajectoryRenderer();
             BindVisualization();
+        }
+
+        private void BindGraphView()
+        {
+            Container.Bind<GraphView>().FromInstance(graphView).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<GraphUseCase>().AsSingle();
+            Container.BindInterfacesAndSelfTo<OverflowGraphUX>().AsSingle();
         }
 
         private void BindExperimentView()

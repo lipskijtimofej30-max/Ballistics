@@ -1,6 +1,7 @@
+using Assets.Game.Scripts.Core.Graphics;
+using Game.Scripts.Core;
 using System;
 using System.Collections.Generic;
-using Assets.Game.Scripts.Core.Graphics;
 using TMPro;
 using UnityEngine;
 
@@ -8,25 +9,23 @@ namespace Game.Scripts.View.View
 {
     public class GraphView : MonoBehaviour
     {
-        [SerializeField] private TMP_Dropdown _dropdown;
+        [field: SerializeField] public ParameterView CountLabelX { get; private set; }
+        [field: SerializeField] public ParameterView CountLabelY { get; private set; }
+        [field: SerializeField] public TMP_Dropdown Dropdown { get; private set; }
         [SerializeField] private GraphRenderer _renderer;
-
-        public TMP_Dropdown Dropdown => _dropdown;
+        [Header("Container")]
+        [SerializeField] private GameObject _warningContainer;
+        [SerializeField] private GameObject _graphContainer;
         
-        public event Action<GraphType> OnGraphTypeSelected;
-
         private void Start()
+        {    
+            ToggleContainer(false);
+        }
+
+        public void ToggleContainer(bool toggle)
         {
-            _dropdown.ClearOptions();
-            var options = new List<string>();
-            foreach (GraphType type in Enum.GetValues(typeof(GraphType)))
-                options.Add(type.GetDisplayName());
-            _dropdown.AddOptions(options);
-            
-            _dropdown.onValueChanged.AddListener(index =>
-                {
-                    OnGraphTypeSelected?.Invoke((GraphType)index);   
-                });
+            _graphContainer.SetActive(!toggle);
+            _warningContainer.SetActive(toggle);
         }
 
         public void RenderGraph(IGraphDataSource dataSource)
@@ -34,9 +33,18 @@ namespace Game.Scripts.View.View
             _renderer.DrawSingleGraph(dataSource);
         }
 
+        public void RenderGraphs(List<IGraphDataSource> sources)
+        {
+            _renderer.ClearAll();
+            foreach (var source in sources)
+            {
+                _renderer.AddGraph(source);
+            }
+        }
+
         private void OnDestroy()
         {
-            _dropdown.onValueChanged.RemoveAllListeners();
+            Dropdown.onValueChanged.RemoveAllListeners();
         }
     }
 }

@@ -6,6 +6,10 @@ using Game.Scripts.Core.Simulation;
 using Game.Scripts.UX;
 using Game.Scripts.View.View;
 using Zenject;
+using Assets.Game.Scripts.Core.Graphics;
+using System.Collections.Generic;
+using System;
+using Game.Scripts.Infrastructure.Logger;
 
 namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
 {
@@ -17,11 +21,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ExperimentTableView _tableView;
         private readonly DataExporter _exporter;
         private readonly TrajectoryPool _pool;
+        private readonly GraphController _graphController;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
+        private readonly ILogger _logger;
 
         [Inject]
         public ExperimentFinishedState(ExperimentPlaybackSequencer sequencer, ExperimentSession session,
-            TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters, DataExporter exporter, ParameterCanvasInteractable parameterCanvasInteractable)
+            TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters,
+            DataExporter exporter, GraphController graphController, ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger)
         {
             _sequencer = sequencer;
             _session = session;
@@ -29,10 +36,25 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _tableView = tableView;
             _parameters = parameters;
             _exporter = exporter;
+            _graphController = graphController;
             _parameterCanvasInteractable = parameterCanvasInteractable;
+            _logger = logger;
         }
         public void Enter()
         {
+            try
+            {
+                List<SimulationRun> runs = new();
+                foreach (var result in _session.ExperimentRunResults)
+                    runs.Add(result.Run);
+
+                _graphController.SetupMultiData(runs);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"[ExperimentFInishedState] {e.Message}");
+            }
+           
             _parameterCanvasInteractable.Toggle(true);
             _tableView.SaveCsvRequested += OnSaveCsvRequested;
             _tableView.Show(_parameters.GetCurrentParameter(), _session.ExperimentRunResults);

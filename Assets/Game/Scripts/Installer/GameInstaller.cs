@@ -88,6 +88,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<VisualizationSettings>().AsSingle().NonLazy();
         Container.Bind<IntegratorSettings>().AsSingle().NonLazy();
         Container.Bind<ExperimentSettings>().AsSingle().NonLazy();
+        Container.Bind<GraphSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
@@ -138,5 +139,7 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<SetupDirtyStatusChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<CleanSetupRequestedSignal>().OptionalSubscriber();
         Container.DeclareSignal<ChangeAppModeSignal>().OptionalSubscriber();
+        Container.DeclareSignal<OverflowLineSignal>().OptionalSubscriber();
+        Container.DeclareSignal<GraphSettingsChangedSignal>().OptionalSubscriber();
     }
 }

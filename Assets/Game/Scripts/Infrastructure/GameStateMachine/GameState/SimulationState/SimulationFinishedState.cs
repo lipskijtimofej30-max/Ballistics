@@ -55,7 +55,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _summary = _analyzer.Analyze(run.Points);
             _resultsPanel.SetSummary(_summary);
             _resultsPanel.Show();
-            _graphController.SetupData(run);
+            _graphController.SetupSingleData(run);
             
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }

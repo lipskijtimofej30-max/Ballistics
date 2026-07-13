@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Graphics;
+using Assets.Game.Scripts.Infrastructure.Signals;
+using Assets.Game.Scripts.Settings;
 using Game.Scripts.Core;
 using TMPro;
 using UnityEngine;
@@ -16,8 +18,6 @@ namespace Game.Scripts.View.View
         [Header("Labels")] 
         [SerializeField] private TMP_Text _labelPrefab;
         [SerializeField] private Transform _labelContainer;
-        [SerializeField] private int _countLabelX = 6;
-        [SerializeField] private int _countLabelY = 4;
         
         [Header("Lines Container")]
         [SerializeField] private Transform _linesContainer;
@@ -35,17 +35,23 @@ namespace Game.Scripts.View.View
 
         private List<IGraphDataSource> _dataSources = new List<IGraphDataSource>();
         private GraphLinePool _linePool;
+        private GraphSettings _graphSettings;
+        private SignalBus _signalBus;
 
         [Inject]
-        private void Construct(GraphLinePool linePool)
+        private void Construct(GraphLinePool linePool, GraphSettings graphSettings, SignalBus signalBus)
         {
             _linePool = linePool;
+            _graphSettings = graphSettings;
+            _signalBus = signalBus;
         }
 
         private void Awake()
         {
             _xAxisLine.useWorldSpace = false;
             _yAxisLine.useWorldSpace = false;
+
+            _signalBus.Subscribe<GraphSettingsChangedSignal>(DrawAxes);
         }
 
         public void DrawSingleGraph(IGraphDataSource source)
@@ -143,16 +149,16 @@ namespace Game.Scripts.View.View
             CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), _labelContainer,
                 Quaternion.Euler(0, 0, 90));
 
-            for (int i = 0; i <= _countLabelX; i++)
+            for (int i = 0; i <= _graphSettings.CountLabelX; i++)
             {
-                float t = i / (float)_countLabelX;
+                float t = i / (float)_graphSettings.CountLabelX;
                 float value = Mathf.Lerp(min.x, max.x, t);
                 CreateLabel(value.ToString("F2"), new Vector3(t * _graphSize.x, -0.3f, 0f), _labelContainer);
             }
 
-            for (int i = 0; i <= _countLabelY; i++)
+            for (int i = 0; i <= _graphSettings.CountLabelY; i++)
             {
-                float t = i / (float)_countLabelY;
+                float t = i / (float)_graphSettings.CountLabelY;
                 float value = Mathf.Lerp(min.y, max.y, t);
                 CreateLabel(value.ToString("F2"), new Vector3(-0.5f, t * _graphSize.y, 0f), _labelContainer);
             }
@@ -164,6 +170,11 @@ namespace Game.Scripts.View.View
             label.transform.localPosition = localPos;
             if (rot.HasValue) label.transform.rotation = rot.Value;
             label.text = text;
+        }
+
+        private void OnDestroy()
+        {
+            _signalBus.TryUnsubscribe<GraphSettingsChangedSignal>(DrawAxes);
         }
     }
 }
