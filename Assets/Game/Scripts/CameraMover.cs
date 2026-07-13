@@ -38,7 +38,6 @@ namespace Game.Scripts
         {
             _targetPosition = transform.position;
 
-            // Инициализируем целевой FOV текущим значением камеры
             if (_camera != null)
                 _targetFOV = _camera.fieldOfView;
         }
@@ -65,7 +64,6 @@ namespace Game.Scripts
                 _targetPosition += moveDirection * _moveSpeed * Time.deltaTime;
             }
 
-            // Ограничиваем целевую позицию
             _targetPosition.x = Mathf.Clamp(_targetPosition.x, _minBounds.x, _maxBounds.x);
             _targetPosition.y = Mathf.Clamp(_targetPosition.y, _minBounds.y, _maxBounds.y);
         }
@@ -76,7 +74,6 @@ namespace Game.Scripts
 
             if (scrollInput != 0f)
             {
-                // Вычитаем, потому что обычно скролл вверх (положительный) — это приближение (уменьшение FOV)
                 _targetFOV -= scrollInput * _fovSpeed;
                 _targetFOV = Mathf.Clamp(_targetFOV, _minFOV, _maxFOV);
             }
@@ -91,10 +88,7 @@ namespace Game.Scripts
 
         private void ApplyMovementAndZoom()
         {
-            // Плавно двигаем камеру
             transform.position = Vector3.Lerp(transform.position, _targetPosition, _smoothing * Time.deltaTime);
-
-            // Плавно меняем зум
             _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _targetFOV, _fovSmoothing * Time.deltaTime);
         }
     }

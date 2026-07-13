@@ -26,13 +26,10 @@ namespace Game.Scripts.View
         private void Awake()
         {
             _button = GetComponent<Button>();
-            // Позиция, когда панель открыта
             _shownPosition = panel.anchoredPosition;
 
-            // Сдвигаем панель вправо на ее ширину
             _hiddenPosition = _shownPosition + Vector2.right * panel.rect.width;
 
-            // Скрываем при старте
             panel.anchoredPosition = _hiddenPosition;
             _button.onClick.AddListener(() => Toggle());
         }

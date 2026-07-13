@@ -3,8 +3,6 @@ using Assets.Game.Scripts.Infrastructure.Signals;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.GameStateMachine;
-using Game.Scripts.Infrastructure.Signals;
-using Game.Scripts.UX;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

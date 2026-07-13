@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Assets.Game.Scripts.Core.Graphics;
 using Game.Scripts.Core.Simulation;
 using UnityEngine;
 

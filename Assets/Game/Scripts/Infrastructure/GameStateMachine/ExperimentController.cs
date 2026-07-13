@@ -3,10 +3,6 @@ using DefaultNamespace;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.Logger;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zenject;
 
 namespace Assets.Game.Scripts.Infrastructure.GameStateMachine

@@ -106,7 +106,7 @@ namespace Game.Scripts.Core
                     break;
             }
 
-            if (steps > 2)
+            if (steps > 10)
                 _logger.Log($"Steps {steps}");
 
             CurrentBody.SyncTransform(CurrentState.Position);

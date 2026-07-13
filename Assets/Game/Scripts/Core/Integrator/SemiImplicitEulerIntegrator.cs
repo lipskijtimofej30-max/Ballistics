@@ -1,7 +1,4 @@
-﻿using System;
-using Game.Scripts.Core.Simulation;
-using UnityEngine;
-using Zenject;
+﻿using Zenject;
 
 namespace Game.Scripts.Core
 {

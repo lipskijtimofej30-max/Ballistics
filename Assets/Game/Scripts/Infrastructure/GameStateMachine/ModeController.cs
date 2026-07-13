@@ -1,12 +1,6 @@
 ﻿using Game.Scripts.Infrastructure.GameStateMachine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Scripts.Infrastructure.Logger;
 using Game.Scripts.Infrastructure.Signals;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace Assets.Game.Scripts.Infrastructure.GameStateMachine
