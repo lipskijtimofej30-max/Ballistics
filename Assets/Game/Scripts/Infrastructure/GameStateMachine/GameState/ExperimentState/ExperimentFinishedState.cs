@@ -22,13 +22,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly DataExporter _exporter;
         private readonly TrajectoryPool _pool;
         private readonly GraphController _graphController;
+        private readonly GraphView _view;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly ILogger _logger;
 
         [Inject]
         public ExperimentFinishedState(ExperimentPlaybackSequencer sequencer, ExperimentSession session,
             TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters,
-            DataExporter exporter, GraphController graphController, ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger)
+            DataExporter exporter, GraphController graphController, ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger, GraphView graphView)
         {
             _sequencer = sequencer;
             _session = session;
@@ -39,6 +40,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _graphController = graphController;
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _logger = logger;
+            _view = graphView;
         }
         public void Enter()
         {
@@ -71,6 +73,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _sequencer.StopSequence();
             _pool.ClearAll();
             _session.ClearAll();
+            _view.ClearAll();
         }
 
         private void OnSaveCsvRequested()

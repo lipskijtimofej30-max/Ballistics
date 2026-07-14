@@ -9,6 +9,7 @@ namespace Assets.Game.Scripts.Core.Graphics
 {
     public class GraphController : IDisposable
     {
+        private readonly GraphLegendView _legendView;
         private readonly GraphView _view;
         private readonly GraphUseCase _useCase;
         private readonly GraphDataSourceFactory _factory;
@@ -19,8 +20,9 @@ namespace Assets.Game.Scripts.Core.Graphics
         private bool _isMultiMode;
 
         [Inject]
-        public GraphController(GraphView view, GraphDataSourceFactory factory, GraphUseCase useCase)
+        public GraphController(GraphLegendView legendView, GraphView view, GraphDataSourceFactory factory, GraphUseCase useCase)
         {
+            _legendView = legendView;
             _view = view;
             _factory = factory;
             _useCase = useCase;
@@ -55,6 +57,7 @@ namespace Assets.Game.Scripts.Core.Graphics
                 }
 
                 _view.RenderGraphs(sources, sources[0].DisplayName);
+                _legendView.RendererLegend(sources);
             }
             else
             {

@@ -20486,6 +20486,7 @@ RectTransform:
   m_Children:
   - {fileID: 810816792}
   - {fileID: 1821785533}
+  - {fileID: 1603056317}
   m_Father: {fileID: 1410880486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -21910,6 +21911,7 @@ MonoBehaviour:
   graphView: {fileID: 1505298485}
   graphTooltipView: {fileID: 1505298486}
   _graphRenderer: {fileID: 443086744}
+  _legendView: {fileID: 1505298487}
   _previewTrajectoryRenderer: {fileID: 8044955044768213441}
   _liveTrajectoryRenderer: {fileID: 1924061965}
 --- !u!1 &1400057006
@@ -23979,6 +23981,7 @@ GameObject:
   - component: {fileID: 1505298481}
   - component: {fileID: 1505298485}
   - component: {fileID: 1505298486}
+  - component: {fileID: 1505298487}
   m_Layer: 5
   m_Name: GraphicView
   m_TagString: Untagged
@@ -24110,6 +24113,20 @@ MonoBehaviour:
   _tooltipPanel: {fileID: 411793293}
   _tooltipText: {fileID: 1791781107}
   _cursorDot: {fileID: 691520633}
+--- !u!114 &1505298487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505298480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68f9c132467b4eaf99b8fd471b5b6cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rowPrefab: {fileID: 3810333093707524961, guid: a7a5f72e346504c75b50c5be0ea6ab80, type: 3}
+  _container: {fileID: 1603056317}
 --- !u!1 &1510041382
 GameObject:
   m_ObjectHideFlags: 0
@@ -25520,6 +25537,77 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1600481855}
+  m_CullTransparentMesh: 1
+--- !u!1 &1603056316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1603056317}
+  - component: {fileID: 1603056318}
+  - component: {fileID: 1603056319}
+  m_Layer: 5
+  m_Name: LegendContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1603056317
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603056316}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1273487053}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 540, y: 0}
+  m_SizeDelta: {x: 100, y: 250}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1603056318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603056316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: -25
+    m_Bottom: 40
+  m_ChildAlignment: 4
+  m_Spacing: -100
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!222 &1603056319
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603056316}
   m_CullTransparentMesh: 1
 --- !u!1 &1637568654
 GameObject:
@@ -27281,8 +27369,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -559.0166, y: -100}
-  m_SizeDelta: {x: 1004.142, y: 200}
+  m_AnchoredPosition: {x: -536.2497, y: -99.09891}
+  m_SizeDelta: {x: 982.0707, y: 200.0001}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1745223004
 MonoBehaviour:

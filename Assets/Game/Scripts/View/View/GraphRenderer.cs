@@ -11,6 +11,9 @@ namespace Game.Scripts.View.View
 {
     public class GraphRenderer : MonoBehaviour, IGraphInfoProvider
     {
+        public static Color[] LineColors =
+            { new Color(0.309f, 0.639f, 1f), Color.red, Color.green, Color.yellow, Color.cyan, Color.blue };
+        
         [Header("Axes Renderers")] 
         [SerializeField] private LineRenderer _xAxisLine;
         [SerializeField] private LineRenderer _yAxisLine;
@@ -30,9 +33,6 @@ namespace Game.Scripts.View.View
         [SerializeField] private Vector2 _graphSize = new Vector2(10f, 10f);
         [SerializeField, Range(0f, 0.5f)] private float _padding = 0.05f;
         [SerializeField] private bool _forceZeroOrigin = true;
-
-        private Color[] _lineColors =
-            { new Color(0.309f, 0.639f, 1f), Color.red, Color.green, Color.yellow, Color.cyan };
 
         private List<IGraphDataSource> _dataSources = new List<IGraphDataSource>();
         private GraphLinePool _linePool;
@@ -77,7 +77,7 @@ namespace Game.Scripts.View.View
             _dataSources.Add(source);
 
             int activeCount = _linePool.GetActiveLines().Count;
-            Color lineColor = _lineColors[(activeCount - 1) % _lineColors.Length];
+            Color lineColor = LineColors[(activeCount - 1) % LineColors.Length];
 
             newLine.Initialize(source.GetPoints(), lineColor);
 

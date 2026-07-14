@@ -29,6 +29,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private GraphView graphView;
         [SerializeField] private GraphTooltipView graphTooltipView;
         [SerializeField] private GraphRenderer _graphRenderer;
+        [SerializeField] private GraphLegendView _legendView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -44,6 +45,7 @@ namespace Game.Scripts.Installer
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
             BindToolbarView();
+            Container.Bind<GraphLegendView>().FromInstance(_legendView).AsSingle();
             Container.Bind<ModeControllerView>().FromInstance(modeControllerView).AsSingle();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();
             Container.Bind<TelemetryPanelView>().FromInstance(telemetryPanel).AsSingle();

@@ -17,6 +17,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly ToolbarView _toolbarView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly GraphController _graphController;
+        private readonly GraphView _graphView;
         
         private SimulationSummary _summary;
 
@@ -29,7 +30,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             ResultsPanelView resultsPanel,
             ToolbarView toolbarView,
             ParameterCanvasInteractable parameterCanvasInteractable,
-            GraphController graphController)
+            GraphController graphController,
+            GraphView graphView)
         {
             _simulator = simulator;
             _printer = printer;
@@ -39,6 +41,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _toolbarView = toolbarView;
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _graphController = graphController;
+            _graphView = graphView;
         }
         
         public void Enter()
@@ -69,6 +72,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             _resultsPanel.SaveCsvRequested -= OnSaveCsvRequested;
             _resultsPanel.Hide();
+            _graphView.ClearAll();
         }
         
         private void OnSaveCsvRequested()

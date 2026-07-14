@@ -1,6 +1,5 @@
 using Assets.Game.Scripts.Core.Graphics;
 using Game.Scripts.Core;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -43,6 +42,11 @@ namespace Game.Scripts.View.View
                 _renderer.AddGraph(source);
             }
             SetTitleText(title);
+        }
+
+        public void ClearAll()
+        {
+            _renderer.ClearAll();
         }
         
         private void SetTitleText(string title) => _titleText.text = title;
