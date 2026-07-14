@@ -85,12 +85,9 @@ namespace Game.Scripts.Core
             _min = newMin;
             _max = newMax;
             
-            OnInputChanged(_getter().ToString(_format));
-            
             _unit = newUnit;
-            float current = _getter();
-            if (current < newMin) Apply(newMin);
-            else if (current > newMax) Apply(newMax);
+            
+            Apply(_getter());
         }
 
         public void Dispose()

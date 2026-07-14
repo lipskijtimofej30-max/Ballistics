@@ -35,16 +35,7 @@ namespace Assets.Game.Scripts.Core.Experiment
             _environmentSettings = environmentSettings;
             _integratorSettings = integratorSettings;
         }
-
-        /// <summary>
-        /// Запускает серию прогонов, временно заменяя все настройки на значения из пресета.
-        /// </summary>
-        /// <param name="parameter">Варьируемый параметр (читает/пишет в реальные настройки, которые мы подменили).</param>
-        /// <param name="minValue">Минимальное значение варьируемого параметра.</param>
-        /// <param name="maxValue">Максимальное значение.</param>
-        /// <param name="step">Шаг изменения.</param>
-        /// <param name="preset">Пресет со значениями всех остальных параметров.</param>
-        /// <returns>Список результатов ExperimentRunResult для каждого шага.</returns>
+        
         public List<ExperimentRunResult> RunSeries(
             IExperimentParameter parameter,
             float minValue,
@@ -84,8 +75,8 @@ namespace Assets.Game.Scripts.Core.Experiment
             }
             finally
             {
-                RestoreSettings(originalProjectile, originalSimulation, originalEnvironment, originalIntegrator);
                 parameter.SetValue(originalParameterValue);
+                RestoreSettings(originalProjectile, originalSimulation, originalEnvironment, originalIntegrator);
             }
 
             return results;

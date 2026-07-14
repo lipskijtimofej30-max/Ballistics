@@ -22,14 +22,17 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly DataExporter _exporter;
         private readonly TrajectoryPool _pool;
         private readonly GraphController _graphController;
-        private readonly GraphView _view;
+        private readonly GraphView _graphView;
+        private readonly GraphLegendView _legendView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly ILogger _logger;
 
         [Inject]
         public ExperimentFinishedState(ExperimentPlaybackSequencer sequencer, ExperimentSession session,
-            TrajectoryPool pool,ExperimentTableView tableView, ExperimentParameterDataBase parameters,
-            DataExporter exporter, GraphController graphController, ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger, GraphView graphView)
+            TrajectoryPool pool, ExperimentTableView tableView, ExperimentParameterDataBase parameters,
+            DataExporter exporter, GraphController graphController,
+            ParameterCanvasInteractable parameterCanvasInteractable,
+            ILogger logger, GraphView graphGraphView, GraphLegendView legendView)
         {
             _sequencer = sequencer;
             _session = session;
@@ -40,7 +43,8 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _graphController = graphController;
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _logger = logger;
-            _view = graphView;
+            _graphView = graphGraphView;
+            _legendView = legendView;
         }
         public void Enter()
         {
@@ -51,12 +55,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
                     runs.Add(result.Run);
 
                 _graphController.SetupMultiData(runs);
+                _legendView.Show();
             }
             catch(Exception e)
             {
-                _logger.LogError($"[ExperimentFInishedState] {e.Message}");
+                _logger.LogError($"[ExperimentFinishedState] {e.Message}");
             }
            
+            
             _parameterCanvasInteractable.Toggle(true);
             _tableView.SaveCsvRequested += OnSaveCsvRequested;
             _tableView.Show(_parameters.GetCurrentParameter(), _session.ExperimentRunResults);
@@ -69,11 +75,13 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         public void Exit()
         {
             _tableView.SaveCsvRequested -= OnSaveCsvRequested;
+            _graphController.ClearRuns();
             _tableView.Hide();
             _sequencer.StopSequence();
             _pool.ClearAll();
             _session.ClearAll();
-            _view.ClearAll();
+            _graphView.ClearAll();
+            _legendView.Hide();
         }
 
         private void OnSaveCsvRequested()

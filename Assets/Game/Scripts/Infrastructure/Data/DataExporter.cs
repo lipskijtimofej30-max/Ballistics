@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
-using Game.Scripts.Infrastructure.Logger;
 using Game.Scripts.Settings;
 using SFB;
+using UnityEngine;
 using Zenject;
+using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
 
 namespace Game.Scripts.Core.Simulation
 {
@@ -28,12 +29,12 @@ namespace Game.Scripts.Core.Simulation
             string path = StandaloneFileBrowser.SaveFilePanel(
                 "Сохранить результаты симуляции", "", "simulation", extensions);
  
-            if (IsCanceledAndFormatPath(ref path)) return;
+            if (IsCanceledAndFormatPath(ref path, "csv")) return;
 
             _csvExporter.ExportSimulation(path, points, projectile, summary);
         }
-
-        private bool IsCanceledAndFormatPath(ref string path)
+        
+        private bool IsCanceledAndFormatPath(ref string path, string extension)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -41,8 +42,8 @@ namespace Game.Scripts.Core.Simulation
                 return true;
             }
 
-            if (!path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
-                path += ".csv";
+            if (!path.EndsWith($".{extension}", StringComparison.OrdinalIgnoreCase))
+                path += $".{extension}";
             return false;
         }
 
@@ -54,7 +55,7 @@ namespace Game.Scripts.Core.Simulation
             string path = StandaloneFileBrowser.SaveFilePanel(
                 "Сохранить таблицу прогонов", "", "experimentTable", extensions);
             
-            if (IsCanceledAndFormatPath(ref path)) return;
+            if (IsCanceledAndFormatPath(ref path, "csv")) return;
             
             _csvExporter.ExportExperiment(path, results, preset, parameter);
         }

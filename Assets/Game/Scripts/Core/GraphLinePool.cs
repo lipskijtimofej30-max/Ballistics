@@ -3,7 +3,6 @@ using Assets.Game.Scripts.Settings;
 using Game.Scripts.View.View;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace Game.Scripts.Core

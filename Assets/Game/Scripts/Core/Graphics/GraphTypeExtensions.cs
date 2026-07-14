@@ -7,9 +7,8 @@ namespace Assets.Game.Scripts.Core.Graphics
             return type switch
             {
                 GraphType.Trajectory => "Траектория y(x)",
-                GraphType.HeightTime => "Высота h(t)",
                 GraphType.SpeedTime => "Скорость v(t)",
-                GraphType.XTime => "X(t)",
+                GraphType.XTime => "Дальность x(t)",
                 GraphType.AccelerationTime => "Ускорение a(t)"
             };
         }

@@ -7,9 +7,10 @@ namespace Game.Scripts.View.View
     public class GraphLine : MonoBehaviour
     {
         private LineRenderer _lineRenderer;
-        private List<Vector2> _points;
+        private IReadOnlyList<Vector2> _points;
+        private Vector3[] _positionsCache = new Vector3[100];
 
-        public void Initialize(List<Vector2> points, Color color)
+        public void Initialize(IReadOnlyList<Vector2> points, Color color)
         {
             _lineRenderer = GetComponent<LineRenderer>();
             _lineRenderer.useWorldSpace = false;
@@ -27,18 +28,20 @@ namespace Game.Scripts.View.View
                 _lineRenderer.positionCount = 0;
                 return;
             }
+            
+            if (_points.Count > _positionsCache.Length)
+                _positionsCache = new Vector3[_points.Count * 2];
 
-            var positions = new Vector3[_points.Count];
             for (int i = 0; i < _points.Count; i++)
             {
                 float nx = Mathf.InverseLerp(dataMin.x, dataMax.x, _points[i].x);
                 float ny = Mathf.InverseLerp(dataMin.y, dataMax.y, _points[i].y);
             
-                positions[i] = new Vector3(nx * graphSize.x, ny * graphSize.y, 0f);
+                _positionsCache[i] = new Vector3(nx * graphSize.x, ny * graphSize.y, 0f);
             }
         
             _lineRenderer.positionCount = _points.Count;
-            _lineRenderer.SetPositions(positions);
+            _lineRenderer.SetPositions(_positionsCache);
         }
     }
 }

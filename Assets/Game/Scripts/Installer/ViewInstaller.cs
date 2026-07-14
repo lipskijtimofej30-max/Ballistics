@@ -58,7 +58,7 @@ namespace Game.Scripts.Installer
         private void BindGraphTooltip()
         {
             Container.Bind<GraphTooltipView>().FromInstance(graphTooltipView).AsSingle().NonLazy();
-            Container.Bind<IGraphInfoProvider>().To<GraphRenderer>().FromInstance(_graphRenderer).AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<GraphRenderer>().FromInstance(_graphRenderer).AsSingle().NonLazy();
         }
 
         private void BindGraphView()

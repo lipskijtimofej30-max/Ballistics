@@ -68,6 +68,9 @@ namespace Assets.Game.Scripts.Core.Graphics
             }
         }
 
+        public void ClearRun() => _currentRun = null;
+        public void ClearRuns() => _runsForExperiment?.Clear();
+
         public void Dispose()
         {
             _useCase.OnGraphTypeSelected -= HandleGraphTypeChanged;

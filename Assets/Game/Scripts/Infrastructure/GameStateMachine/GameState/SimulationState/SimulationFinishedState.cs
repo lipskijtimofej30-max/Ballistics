@@ -73,6 +73,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _resultsPanel.SaveCsvRequested -= OnSaveCsvRequested;
             _resultsPanel.Hide();
             _graphView.ClearAll();
+            _graphController.ClearRun();
         }
         
         private void OnSaveCsvRequested()

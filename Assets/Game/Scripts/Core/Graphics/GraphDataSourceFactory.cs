@@ -9,10 +9,9 @@ namespace Assets.Game.Scripts.Core.Graphics
         {
             return type switch
             {
-                GraphType.HeightTime => new HeightTimeGraphDataSource(run),
                 GraphType.Trajectory => new TrajectoryGraphDataSource(run),
                 GraphType.SpeedTime => new SpeedTImeGraphDataSource(run),
-                GraphType.XTime => new XTimeGraphDataSource(run),
+                GraphType.XTime => new RangeTimeGraphDataSource(run),
                 GraphType.AccelerationTime => new AccelerationTimeGraphDataSource(run),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Неизвестный тип графика")
             };

@@ -2,7 +2,7 @@
 
 namespace Game.Scripts.Infrastructure.Logger
 {
-    public class Logger: Game.Scripts.Infrastructure.Logger.ILogger
+    public class Logger: ILogger
     {
         public bool IsEnabled { get; set; } = true;
 

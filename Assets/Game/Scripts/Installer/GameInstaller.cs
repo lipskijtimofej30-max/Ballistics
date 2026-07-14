@@ -31,13 +31,14 @@ public class GameInstaller : MonoInstaller
         BindSettings();
         BindSignal();
         Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
+        BindCalculator();
         Container.Bind<ExperimentSession>().AsSingle().NonLazy();
         Container.Bind<GraphDataSourceFactory>().AsSingle();
         BindExperimentParameter();
         Container.Bind<ExperimentParameterDataBase>().AsSingle();
         Container.Bind<GraphLinePool>().AsSingle().WithArguments(_linePrefab);
         BindForce();
-        BindCalculator();
+        BindExporter();
         BindSimulation();
         BindSimulator();
         BindFactory();
@@ -48,6 +49,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<ExperimentPlaybackSequencer>().FromInstance(_sequencer).AsSingle();
         Container.Bind<LaunchStand>().FromInstance(_launchStand).AsSingle();
         Container.BindInterfacesAndSelfTo<GraphTooltipController>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GraphInteractionsController>().AsSingle().NonLazy();
         BindSimulationStateMachine();
         BindExperimentStateMachine();
         Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();
@@ -68,9 +70,14 @@ public class GameInstaller : MonoInstaller
     private void BindSimulation()
     {
         Container.Bind<SimulationPrinter>().AsSingle().NonLazy();
-        Container.Bind<CsvExporter>().AsSingle();
         Container.Bind<SimulationAnalyzer>().AsSingle();
+    }
+
+    private void BindExporter()
+    {
+        Container.Bind<CsvExporter>().AsSingle();
         Container.Bind<DataExporter>().AsSingle();
+        Container.Bind<GraphExporter>().AsSingle();
     }
 
     private void BindCalculator()

@@ -6,20 +6,36 @@ namespace Assets.Game.Scripts.Core.Graphics
 {
     public class AccelerationTimeGraphDataSource : IGraphDataSource
     {
-        private readonly SimulationRun _run;
-
-        public string XAxisLabel { get; } = "Время, с";
-        public string YAxisLabel { get; } = "Ускорение, м/с^2";
-        public string DisplayName { get; } = "a(t)";
-
-        public AccelerationTimeGraphDataSource(SimulationRun run) => _run = run;
+        public bool IsVisible { get; set; } = true;
+        public string XAxisLabel { get; } = "Время (с)";
+        public string YAxisLabel { get; } = "Ускорение (м/с^2)";
+        public string DisplayName { get; } = "Ускорение от времени";
+        public Vector2 MinBound { get; }
+        public Vector2 MaxBound { get; } 
         
-        public List<Vector2> GetPoints()
+        private readonly List<Vector2> _cachedPoints;
+
+        public AccelerationTimeGraphDataSource(SimulationRun run)
         {
-            List<Vector2> points = new List<Vector2>(_run.Points.Count);
-            foreach (var point in _run.Points)
-                points.Add(new Vector2(point.Time, point.Acceleration.magnitude));
-            return points;
+            _cachedPoints = new List<Vector2>(run.Points.Count);
+            float minX = float.MaxValue, minY = float.MaxValue;
+            float maxX = float.MinValue, maxY = float.MinValue;
+
+            foreach (var point in run.Points)
+            {
+                Vector2 p = new Vector2(point.Time, point.Acceleration.magnitude);
+                _cachedPoints.Add(p);
+
+                if (p.x < minX) minX = p.x;
+                if (p.x > maxX) maxX = p.x;
+                if (p.y < minY) minY = p.y;
+                if (p.y > maxY) maxY = p.y;
+            }
+
+            MinBound = new Vector2(minX, minY);
+            MaxBound = new Vector2(maxX, maxY);
         }
+        
+        public IReadOnlyList<Vector2> GetPoints() => _cachedPoints;
     }
 }

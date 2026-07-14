@@ -5,7 +5,6 @@ using System.IO;
 using System.Text;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
-using Assets.Game.Scripts.Settings;
 using Game.Scripts.Settings;
 using UnityEngine;
 using Zenject;

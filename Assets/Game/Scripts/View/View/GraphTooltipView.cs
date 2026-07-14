@@ -39,9 +39,10 @@ namespace Game.Scripts.View.View
 
         public void OnPointerExit(PointerEventData eventData) => OnPointerExited?.Invoke();
 
-        public void Show(Vector2 normalizedPos, string text)
+        public void Show(string text)
         {
             _tooltipPanel.gameObject.SetActive(true);
+            _cursorDot.gameObject.SetActive(true);
             _tooltipText.text = text;
         }
         
@@ -66,7 +67,6 @@ namespace Game.Scripts.View.View
         {
             _tooltipPanel.gameObject.SetActive(false);
             if (_cursorDot != null) _cursorDot.gameObject.SetActive(false);
-            
         }
     }
 }

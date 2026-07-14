@@ -33,11 +33,21 @@ namespace Game.Scripts.View.View
         [SerializeField] private Vector2 _graphSize = new Vector2(10f, 10f);
         [SerializeField, Range(0f, 0.5f)] private float _padding = 0.05f;
         [SerializeField] private bool _forceZeroOrigin = true;
+        
+        [Header("Grid")]
+        [SerializeField] private LineRenderer _gridLinePrefab;
+        [SerializeField] private Transform _gridContainer;
 
         private List<IGraphDataSource> _dataSources = new List<IGraphDataSource>();
         private GraphLinePool _linePool;
         private GraphSettings _graphSettings;
         private SignalBus _signalBus;
+        
+        private List<TMP_Text> _labelPool = new List<TMP_Text>();
+        private int _activeLabelsCount = 0;
+        
+        private List<LineRenderer> _gridPool = new List<LineRenderer>();
+        private int _activeGridLinesCount = 0;
         
         public IReadOnlyList<IGraphDataSource> DataSources => _dataSources;
         public Vector2 CurrentMin { get; set; }
@@ -91,6 +101,7 @@ namespace Game.Scripts.View.View
         {
             _dataSources.Clear();
             _linePool.ReleaseAll();
+            ReleaseLabels();
         }
 
         private void RedrawAll()
@@ -98,11 +109,24 @@ namespace Game.Scripts.View.View
             if (_dataSources.Count == 0) return;
 
             CalculateGlobalBounds(out Vector2 dataMin, out Vector2 dataMax);
-            DrawAxesAndLabels(dataMin, dataMax); // общая часть
+            DrawAxesAndLabels(dataMin, dataMax);
+            
+            var activeLines = _linePool.GetActiveLines();
 
-            foreach (var line in _linePool.GetActiveLines())
+            for (int i = 0; i < _dataSources.Count; i++)
             {
-                line.Draw(dataMin, dataMax, _graphSize);
+                if (i < activeLines.Count)
+                {
+                    if (_dataSources[i].IsVisible)
+                    {
+                        activeLines[i].gameObject.SetActive(true);
+                        activeLines[i].Draw(dataMin, dataMax, _graphSize);
+                    }
+                    else
+                    {
+                        activeLines[i].gameObject.SetActive(false);
+                    }
+                }
             }
         }
 
@@ -129,16 +153,22 @@ namespace Game.Scripts.View.View
         {
             min = new Vector2(float.MaxValue, float.MaxValue);
             max = new Vector2(float.MinValue, float.MinValue);
-
+            bool hasVisible = false;
+            
             foreach (var source in _dataSources)
             {
-                foreach (var p in source.GetPoints())
-                {
-                    if (p.x < min.x) min.x = p.x;
-                    if (p.x > max.x) max.x = p.x;
-                    if (p.y < min.y) min.y = p.y;
-                    if (p.y > max.y) max.y = p.y;
-                }
+                if (!source.IsVisible) continue;
+                hasVisible = true;
+                if (source.MinBound.x < min.x) min.x = source.MinBound.x;
+                if (source.MaxBound.x > max.x) max.x = source.MaxBound.x;
+                if (source.MinBound.y < min.y) min.y = source.MinBound.y;
+                if (source.MaxBound.y > max.y) max.y = source.MaxBound.y;
+            }
+            
+            if (!hasVisible)
+            {
+                min = Vector2.zero;
+                max = new Vector2(1f, 1f);
             }
 
             Vector2 range = new Vector2(max.x - min.x, max.y - min.y);
@@ -168,33 +198,108 @@ namespace Game.Scripts.View.View
 
         private void DrawGridAndLabels(Vector2 min, Vector2 max, string xLabel, string yLabel)
         {
-            foreach (Transform child in _labelContainer) Destroy(child.gameObject);
-
-            CreateLabel(xLabel, new Vector3(_graphSize.x * 0.5f, _xAxisLabelOffset.y, 0f), _labelContainer, null, 6f);
-            CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), _labelContainer, Quaternion.Euler(0, 0, 90), 7f);
+            ReleaseLabels();
+            ReleaseGridLines();
+            
+            CreateLabel(xLabel, new Vector3(_graphSize.x * 0.5f, _xAxisLabelOffset.y, 0f), null, 6f);
+            CreateLabel(yLabel, new Vector3(_yAxisLabelOffset.x, _graphSize.y * 0.5f, 0f), Quaternion.Euler(0, 0, 90), 7f);
 
             for (int i = 0; i <= _graphSettings.CountLabelX; i++)
             {
                 float t = i / (float)_graphSettings.CountLabelX;
                 float value = Mathf.Lerp(min.x, max.x, t);
-                CreateLabel(value.ToString("F2"), new Vector3(t * _graphSize.x, -0.3f, 0f), _labelContainer);
+                float xPos = t * _graphSize.x;
+        
+                CreateLabel(value.ToString("F2"), new Vector3(xPos, -0.3f, 0f));
+        
+                // Рисуем вертикальную линию сетки (кроме оси Y, где xPos = 0)
+                if (i > 0)
+                    CreateGridLine(new Vector3(xPos, 0, 0), new Vector3(xPos, _graphSize.y, 0));
             }
 
+            // --- Горизонтальные линии сетки и метки Y ---
             for (int i = 0; i <= _graphSettings.CountLabelY; i++)
             {
                 float t = i / (float)_graphSettings.CountLabelY;
                 float value = Mathf.Lerp(min.y, max.y, t);
-                CreateLabel(value.ToString("F2"), new Vector3(-0.5f, t * _graphSize.y, 0f), _labelContainer);
+                float yPos = t * _graphSize.y;
+        
+                CreateLabel(value.ToString("F2"), new Vector3(-0.5f, yPos, 0f));
+        
+                // Рисуем горизонтальную линию сетки (кроме оси X, где yPos = 0)
+                if (i > 0)
+                    CreateGridLine(new Vector3(0, yPos, 0), new Vector3(_graphSize.x, yPos, 0));
             }
         }
-
-        private void CreateLabel(string text, Vector3 localPos, Transform parent, Quaternion? rot = null, float fontSize = 5f)
+        
+        private void CreateGridLine(Vector3 start, Vector3 end)
         {
-            var label = Instantiate(_labelPrefab, parent);
+            LineRenderer line;
+            if (_activeGridLinesCount < _gridPool.Count)
+            {
+                line = _gridPool[_activeGridLinesCount];
+                line.gameObject.SetActive(true);
+            }
+            else
+            {
+                line = Instantiate(_gridLinePrefab, _gridContainer);
+                line.useWorldSpace = false;
+                _gridPool.Add(line);
+            }
+
+            _activeGridLinesCount++;
+            line.positionCount = 2;
+            line.SetPosition(0, start);
+            line.SetPosition(1, end);
+        }
+
+        private void CreateLabel(string text, Vector3 localPos, Quaternion? rot = null, float fontSize = 5f)
+        {
+            TMP_Text label;
+        
+            // Берем из пула или создаем
+            if (_activeLabelsCount < _labelPool.Count)
+            {
+                label = _labelPool[_activeLabelsCount];
+                label.gameObject.SetActive(true);
+            }
+            else
+            {
+                label = Instantiate(_labelPrefab, _labelContainer);
+                _labelPool.Add(label);
+            }
+
+            _activeLabelsCount++;
+        
             label.transform.localPosition = localPos;
-            if (rot.HasValue) label.transform.rotation = rot.Value;
+            label.transform.localRotation = rot ?? Quaternion.identity;
             label.text = text;
             label.fontSize = fontSize;
+        }
+        
+        private void ReleaseLabels()
+        {
+            for (int i = 0; i < _activeLabelsCount; i++)
+            {
+                _labelPool[i].gameObject.SetActive(false);
+            }
+            _activeLabelsCount = 0;
+        }
+        
+        public void ToggleGraphVisibility(int index)
+        {
+            if (index < 0 || index >= _dataSources.Count) return;
+            
+            _dataSources[index].IsVisible = !_dataSources[index].IsVisible;
+        
+            RedrawAll(); 
+        }
+        
+        private void ReleaseGridLines()
+        {
+            for (int i = 0; i < _activeGridLinesCount; i++)
+                _gridPool[i].gameObject.SetActive(false);
+            _activeGridLinesCount = 0;
         }
 
         private void OnDestroy()
