@@ -257,7 +257,6 @@ namespace Game.Scripts.View.View
         {
             TMP_Text label;
         
-            // Берем из пула или создаем
             if (_activeLabelsCount < _labelPool.Count)
             {
                 label = _labelPool[_activeLabelsCount];
