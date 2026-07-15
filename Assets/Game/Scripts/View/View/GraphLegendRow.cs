@@ -11,14 +11,13 @@ namespace Game.Scripts.View.View
         [SerializeField] private Image _colorImage;
         [SerializeField] private Button _legendButton;
         [SerializeField] private TMP_Text _nameText;
-        
-        private CanvasGroup _canvasGroup;
+        [SerializeField] private CanvasGroup _canvasGroup;
+
         private int _index;
         private Action<int> _onClicked;
 
         private void Awake()
         {
-            _canvasGroup = GetComponent<CanvasGroup>();
             _legendButton.onClick.AddListener(() => _onClicked?.Invoke(_index));
         }
         public void Initialize(int index, Color color, string title, bool isVisible, Action<int> onClicked)

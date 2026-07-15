@@ -11,13 +11,13 @@ namespace Assets.Game.Scripts.UX
 {
     public class LaunchStand : MonoBehaviour
     {
-        [Header("Stand Parts")] [SerializeField]
-        private Transform _base;
-
+        [Header("Stand Parts")] 
+        [SerializeField] private Transform _base;
         [SerializeField] private Transform _pole;
         [SerializeField] private Transform _platform;
 
-        [Header("Settings")] [SerializeField] private float _baseHeight = 0.2f;
+        [Header("Settings")] 
+        [SerializeField] private float _baseHeight = 0.2f;
         [SerializeField] private float _platformHeight = 0.1f;
         [SerializeField] private float _animationDuration = 0.2f;
 
@@ -66,7 +66,7 @@ namespace Assets.Game.Scripts.UX
             if (!gameObject.activeSelf)
                 return;
 
-            transform.position = new Vector3(basePosition.x, 0f, basePosition.z);
+            transform.position = new Vector3(0f, 0f, 0f);
 
             float poleHeight = launchHeight / 2f;
             poleHeight = Mathf.Max(0.01f, poleHeight - _baseHeight * 2f);

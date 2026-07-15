@@ -59,9 +59,8 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             }
             catch(Exception e)
             {
-                _logger.LogError($"[ExperimentFinishedState] {e.Message}");
+                _logger.LogError($"[ExperimentFinishedState] {e.ToString()} {e.StackTrace}");
             }
-           
             
             _parameterCanvasInteractable.Toggle(true);
             _tableView.SaveCsvRequested += OnSaveCsvRequested;

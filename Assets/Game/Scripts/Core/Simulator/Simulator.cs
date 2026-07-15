@@ -1,4 +1,5 @@
 using System.IO;
+using Assets.Game.Scripts.View.View;
 using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
@@ -23,6 +24,7 @@ namespace Game.Scripts.Core
         private SignalBus _signalBus;
         private ILogger _logger;
         private SimulationStepper _stepper;
+        private VectorRenderer _vectorRenderer;
         [Inject(Id = "Live")] private TrajectoryRenderer _trajectoryRenderer;
 
         public ProjectileBody CurrentBody { get; private set; }
@@ -37,13 +39,14 @@ namespace Game.Scripts.Core
 
         [Inject]
         private void Construct(IntegratorFactory integratorFactory, ProjectileFactory projectileFactory,
-            IntegratorSettings integratorSettings, SignalBus signalBus, ILogger logger)
+            IntegratorSettings integratorSettings, SignalBus signalBus, ILogger logger, VectorRenderer vectorRenderer)
         {
             _integratorFactory = integratorFactory;
             _projectileFactory = projectileFactory;
             _integratorSettings = integratorSettings;
             _signalBus = signalBus;
             _logger = logger;
+            _vectorRenderer = vectorRenderer;
         }
 
         public void Spawn()
@@ -111,6 +114,7 @@ namespace Game.Scripts.Core
 
             CurrentBody.SyncTransform(CurrentState.Position);
             _trajectoryRenderer.AppendPoint(CurrentState.Position);
+            _vectorRenderer.UpdateVectors(CurrentState);
 
             if (landed)
                 OnProjectileLanded();

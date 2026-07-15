@@ -2,6 +2,7 @@ using Assets.Game.Scripts.Core.Graphics;
 using Assets.Game.Scripts.UX;
 using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.UX;
 using Game.Scripts.View;
 using Game.Scripts.View.UseCase;
@@ -30,12 +31,14 @@ namespace Game.Scripts.Installer
         [SerializeField] private GraphTooltipView graphTooltipView;
         [SerializeField] private GraphRenderer _graphRenderer;
         [SerializeField] private GraphLegendView _legendView;
+        [SerializeField] private VectorRenderer _vectorRenderer;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
             Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
+            Container.Bind<VectorRenderer>().FromInstance(_vectorRenderer).AsSingle();
             BindGraphTooltip();
             BindGraphView();
             BindProjectileView();

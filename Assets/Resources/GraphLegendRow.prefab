@@ -320,3 +320,4 @@ MonoBehaviour:
   _colorImage: {fileID: 6466872462223911785}
   _legendButton: {fileID: 8171758139576881835}
   _nameText: {fileID: 3572743703332057823}
+  _canvasGroup: {fileID: 5608780662614421613}

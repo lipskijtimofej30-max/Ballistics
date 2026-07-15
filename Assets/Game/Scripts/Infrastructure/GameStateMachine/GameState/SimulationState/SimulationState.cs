@@ -17,8 +17,9 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         [Inject(Id = "Live")] private readonly TrajectoryRenderer _trajectoryRenderer;
 
         [Inject]
-        public SimulationState(Simulator simulator, TelemetryPanelView telemetryPanelView, ToolbarView toolbarView,
-            VisualizationUseCase visualizationUseCase, ParameterCanvasInteractable parameterCanvasInteractable)
+        public SimulationState(Simulator simulator, TelemetryPanelView telemetryPanelView, 
+            ToolbarView toolbarView, VisualizationUseCase visualizationUseCase,
+            ParameterCanvasInteractable parameterCanvasInteractable)
         {
             _simulator = simulator;
             _telemetryPanelView = telemetryPanelView;

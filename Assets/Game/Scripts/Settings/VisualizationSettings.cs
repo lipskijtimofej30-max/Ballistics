@@ -1,5 +1,4 @@
-﻿using Game.Scripts.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Game.Scripts.Settings
 {

@@ -12,10 +12,12 @@ namespace Game.Scripts.Core
             _integrator = integrator;
         }
  
-        /// Возвращает true, если снаряд приземлился на этом шаге.
         public bool Step(ProjectileState projectile, SimulationRun run, float deltaTime)
         {
             var result = _integrator.Step(projectile, deltaTime);
+
+            projectile.Acceleration = result.Acceleration;
+            projectile.TotalForce = result.TotalForce;
  
             bool landed = projectile.Position.y <= 0f;
             if (landed)
