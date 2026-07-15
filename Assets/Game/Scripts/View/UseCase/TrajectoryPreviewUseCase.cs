@@ -16,7 +16,7 @@ namespace Game.Scripts.View.UseCase
         private readonly ProjectileFactory _projectileFactory;
         private readonly TrajectoryRenderer _trajectoryRenderer;
         private readonly Simulator _simulator;
-        private readonly VisualizationSettings _visualizationSettings;
+        private readonly TrajectoryVisualizationSettings _trajectoryVisualizationSettings;
         private readonly IntegratorSettings _integratorSettings;
 
         [Inject]
@@ -24,7 +24,7 @@ namespace Game.Scripts.View.UseCase
             FastForwardSimulator fastForwardSimulator,
             ProjectileFactory projectileFactory, 
             Simulator simulator,
-            VisualizationSettings visualizationSettings,
+            TrajectoryVisualizationSettings trajectoryVisualizationSettings,
             IntegratorSettings integratorSettings,
            [Inject(Id ="Preview")] TrajectoryRenderer trajectoryRenderer)
         {
@@ -32,7 +32,7 @@ namespace Game.Scripts.View.UseCase
             _fastForwardSimulator = fastForwardSimulator;
             _projectileFactory = projectileFactory;
             _simulator = simulator;
-            _visualizationSettings = visualizationSettings;
+            _trajectoryVisualizationSettings = trajectoryVisualizationSettings;
             _trajectoryRenderer = trajectoryRenderer;
             _integratorSettings = integratorSettings;
             
@@ -45,7 +45,7 @@ namespace Game.Scripts.View.UseCase
 
         private void Refresh()
         {
-            if(_simulator.CurrentBody == null || !_visualizationSettings.VisiblePreview) return;
+            if(_simulator.CurrentBody == null || !_trajectoryVisualizationSettings.VisiblePreview) return;
             var state = _projectileFactory.CreateState();
             var run = _fastForwardSimulator.Run(state, _integratorSettings.IntegratorMethod, _integratorSettings.IntegrationStep);
             _trajectoryRenderer.DrawFull(run.Points);

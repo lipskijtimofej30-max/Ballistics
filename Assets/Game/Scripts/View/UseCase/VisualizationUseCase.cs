@@ -21,7 +21,7 @@ namespace Game.Scripts.View.UseCase
             new ColorOption { Name = "Белый", Color = Color.white },
         };
         private readonly VisualizationView _view;
-        private readonly VisualizationSettings _settings;
+        private readonly TrajectoryVisualizationSettings _settings;
         private readonly SignalBus _signalBus;
         private readonly FloatParameterBinder _widthBinder;
         
@@ -32,7 +32,7 @@ namespace Game.Scripts.View.UseCase
 
         [Inject]
         public VisualizationUseCase(VisualizationView view,
-            VisualizationSettings settings,
+            TrajectoryVisualizationSettings settings,
             SignalBus signalBus,
             [Inject(Id = "Live")] TrajectoryRenderer liveRenderer,
             [Inject(Id = "Preview")] TrajectoryRenderer previewRenderer)

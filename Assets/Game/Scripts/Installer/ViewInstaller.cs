@@ -32,14 +32,15 @@ namespace Game.Scripts.Installer
         [SerializeField] private GraphRenderer _graphRenderer;
         [SerializeField] private GraphLegendView _legendView;
         [SerializeField] private VectorRenderer _vectorRenderer;
+        [SerializeField] private VectorVisualizationView _vectorView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
         override public void InstallBindings()
         {
             Container.Bind<ParameterCanvasInteractable>().FromInstance(parameterCanvasInteractable).AsSingle();
-            Container.Bind<VectorRenderer>().FromInstance(_vectorRenderer).AsSingle();
             BindGraphTooltip();
+            BindVectorView();
             BindGraphView();
             BindProjectileView();
             BindSimulationView();
@@ -56,6 +57,13 @@ namespace Game.Scripts.Installer
             BindExperimentView();
             BindTrajectoryRenderer();
             BindVisualization();
+        }
+
+        private void BindVectorView()
+        {
+            Container.Bind<VectorRenderer>().FromInstance(_vectorRenderer).AsSingle();
+            Container.Bind<VectorVisualizationView>().FromInstance(_vectorView).AsSingle();
+            Container.BindInterfacesAndSelfTo<VectorVisualizationUseCase>().AsSingle();
         }
 
         private void BindGraphTooltip()

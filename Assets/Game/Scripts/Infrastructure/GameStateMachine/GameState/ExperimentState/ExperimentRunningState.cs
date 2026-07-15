@@ -2,6 +2,7 @@
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Assets.Game.Scripts.Settings;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
 using Game.Scripts.Settings;
 using Game.Scripts.UX;
@@ -25,13 +26,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly TelemetryPanelView _telemetryPanelView;
         private readonly ResultsPanelView _resultsPanelView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
+        private readonly VectorRenderer _vectorRenderer;
         private readonly ILogger _logger;
 
         [Inject]
         public ExperimentRunningState(ExperimentParameterDataBase parameters, ExperimentPlaybackController experimentController,
             ExperimentPlaybackSequencer sequencer, ToolbarView toolbarView, ExperimentSession session, ExperimentRunner experimentRunner, 
             ExperimentSettings experimentSettings, TrajectoryPool pool, TelemetryPanelView telemetryPanelView, ResultsPanelView resultsPanelView,
-            ParameterCanvasInteractable parameterCanvasInteractable, ILogger logger)
+            ParameterCanvasInteractable parameterCanvasInteractable, VectorRenderer vectorRenderer, ILogger logger)
         {
             _parameters = parameters;
             _experimentController = experimentController;
@@ -44,12 +46,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _telemetryPanelView = telemetryPanelView;
             _resultsPanelView = resultsPanelView;
             _parameterCanvasInteractable = parameterCanvasInteractable;
+            _vectorRenderer = vectorRenderer;
             _logger = logger;
         }
         
         public void Enter()
         {
             _toolbarView.LaboratoryButton.interactable = false;
+            _vectorRenderer.ClearAll();
             _parameterCanvasInteractable.Toggle(false);
             _telemetryPanelView.Show();
             _resultsPanelView.Hide();
@@ -88,7 +92,22 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
            if (_experimentController.IsPlaying)
            {
                int currentIndex = _experimentController.CurrentRunIndex;
-               _telemetryPanelView.SetExperimentPoint(currentIndex, _experimentController.CurrentPoint);
+               var currentPoint = _experimentController.CurrentPoint;
+               
+               _telemetryPanelView.SetExperimentPoint(currentIndex, currentPoint);
+
+               float projectileSize = _session.ExperimentRunResults[0].Preset.Size;
+               
+               _vectorRenderer.UpdateVectors(
+                   currentPoint.Position,
+                   currentPoint.Velocity,
+                   currentPoint.Acceleration,
+                   currentPoint.TotalForce,
+                   projectileSize);
+           }
+           else
+           {
+               _vectorRenderer.ClearAll();
            }
         }
 

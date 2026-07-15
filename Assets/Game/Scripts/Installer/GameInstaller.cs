@@ -93,10 +93,11 @@ public class GameInstaller : MonoInstaller
         Container.Bind<EnvironmentSettings>().AsSingle().NonLazy();
         Container.Bind<ProjectileSettings>().AsSingle().NonLazy();
         Container.Bind<SimulationSettings>().AsSingle().NonLazy();
-        Container.Bind<VisualizationSettings>().AsSingle().NonLazy();
+        Container.Bind<TrajectoryVisualizationSettings>().AsSingle().NonLazy();
         Container.Bind<IntegratorSettings>().AsSingle().NonLazy();
         Container.Bind<ExperimentSettings>().AsSingle().NonLazy();
         Container.Bind<GraphSettings>().AsSingle().NonLazy();
+        Container.Bind<VectorVisualizationSettings>().AsSingle().NonLazy();
     }
 
     private void BindForce()
