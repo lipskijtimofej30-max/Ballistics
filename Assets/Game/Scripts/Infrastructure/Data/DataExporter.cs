@@ -4,7 +4,6 @@ using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Game.Scripts.Settings;
 using SFB;
-using UnityEngine;
 using Zenject;
 using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
 

@@ -9,6 +9,7 @@ using Zenject;
 using Assets.Game.Scripts.Core.Graphics;
 using System.Collections.Generic;
 using System;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.Infrastructure.Logger;
 
 namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
@@ -25,6 +26,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly GraphView _graphView;
         private readonly GraphLegendView _legendView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
+        private readonly VectorRenderer _vectorRenderer;
         private readonly ILogger _logger;
 
         [Inject]
@@ -32,7 +34,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             TrajectoryPool pool, ExperimentTableView tableView, ExperimentParameterDataBase parameters,
             DataExporter exporter, GraphController graphController,
             ParameterCanvasInteractable parameterCanvasInteractable,
-            ILogger logger, GraphView graphGraphView, GraphLegendView legendView)
+            ILogger logger, GraphView graphGraphView, VectorRenderer vectorRenderer, GraphLegendView legendView)
         {
             _sequencer = sequencer;
             _session = session;
@@ -44,6 +46,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _logger = logger;
             _graphView = graphGraphView;
+            _vectorRenderer = vectorRenderer;
             _legendView = legendView;
         }
         public void Enter()
@@ -80,6 +83,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _pool.ClearAll();
             _session.ClearAll();
             _graphView.ClearAll();
+            _vectorRenderer.ClearAll();
             _legendView.Hide();
         }
 

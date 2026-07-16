@@ -68,13 +68,11 @@ namespace Assets.Game.Scripts.Core.Experiment
         {
             foreach (var result in _session.ExperimentRunResults)
             {
-                float height = result.Preset.InitialHeight;
+                float height = result.InitialState.Position.y;
                 float angle = result.Preset.LaunchAngle;
                 float radius = result.Preset.Size;
-
-                Vector3 startPos = new (0f, height, 0f);
                 
-                _launchStand.SetParameters(height, angle, radius, startPos);
+                _launchStand.UpdateExperimentStand(height, radius, angle);
                 
                 var renderer = _trajectoryPool.Rent();
                 renderer.SetVisible(true);

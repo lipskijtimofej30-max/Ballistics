@@ -23,13 +23,22 @@ namespace Game.Scripts.View.UseCase
                 _view.ScaleParameter, 0.1f, 2f, "F2",
                 () => _settings.ScaleLength, x => _settings.ScaleLength = x, () => { });
             
-            _view.VelocityToggle.onValueChanged.AddListener(x => _settings.IsActiveVelocity = x);
+            _view.VelocityToggle.onValueChanged.AddListener(OnVelocityChanged);
             _view.AccelerationToggle.onValueChanged.AddListener(x => _settings.IsActiveAcceleration = x);
             _view.ForceToggle.onValueChanged.AddListener(x => _settings.IsActiveTotalForce = x);
+            _view.ProjectionVelocityToggle.onValueChanged.AddListener(x => _settings.IsActiveProjectionVelocity = x);
             
             _view.VelocityToggle.SetIsOnWithoutNotify(_settings.IsActiveVelocity);
             _view.AccelerationToggle.SetIsOnWithoutNotify(_settings.IsActiveAcceleration);
             _view.ForceToggle.SetIsOnWithoutNotify(_settings.IsActiveTotalForce);
+            _view.ProjectionVelocityToggle.SetIsOnWithoutNotify(_settings.IsActiveProjectionVelocity);
+        }
+
+        private void OnVelocityChanged(bool active)
+        {
+            _settings.IsActiveVelocity = active;
+            foreach (var canvasGroup in _view.ProjectionVelocityInteractable)
+                canvasGroup.interactable = active;
         }
 
         public void Dispose()

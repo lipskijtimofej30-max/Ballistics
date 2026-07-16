@@ -3,6 +3,7 @@ using System;
 using Game.Scripts.Settings;
 using UnityEngine;
 using Zenject;
+using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
 
 namespace Assets.Game.Scripts.View.View
 {
@@ -18,15 +19,19 @@ namespace Assets.Game.Scripts.View.View
         }
     
         [SerializeField] private VectorSetup _velocitySetup;
+        [SerializeField] private VectorSetup _velocityXSetup;
+        [SerializeField] private VectorSetup _velocityYSetup;
         [SerializeField] private VectorSetup _accelerationSetup;
         [SerializeField] private VectorSetup _totalForceSetup;
         
         private VectorVisualizationSettings _settings;
+        private ILogger _logger;
 
         [Inject]
-        private void Construct(VectorVisualizationSettings visualizationSettings)
+        private void Construct(VectorVisualizationSettings visualizationSettings, ILogger logger)
         {
             _settings = visualizationSettings;
+            _logger = logger;
             ClearAll();
         }
 
@@ -35,15 +40,19 @@ namespace Assets.Game.Scripts.View.View
             UpdateVectors(state.Position, state.Velocity, state.Acceleration, state.TotalForce, state.Size);
         }
 
-        // Добавляем новый универсальный метод
         public void UpdateVectors(Vector3 position, Vector3 velocity, Vector3 acceleration, Vector3 netForce, float projectileSize)
         {
             if (_settings == null) return; 
 
-            // Передаем также ScaleLength, если вы добавили его в настройки
             UpdateArrow(_velocitySetup, velocity, position, projectileSize, _settings.IsActiveVelocity);
             UpdateArrow(_accelerationSetup, acceleration, position, projectileSize, _settings.IsActiveAcceleration);
             UpdateArrow(_totalForceSetup, netForce, position, projectileSize, _settings.IsActiveTotalForce);
+            
+            Vector3 velocityX = new Vector3(velocity.x, 0f, 0f);
+            Vector3 velocityY = new Vector3(0f, velocity.y, 0f);
+            
+            UpdateArrow(_velocityXSetup, velocityX, position, projectileSize, _settings.IsActiveVelocity && _settings.IsActiveProjectionVelocity);
+            UpdateArrow(_velocityYSetup, velocityY, position, projectileSize, _settings.IsActiveVelocity && _settings.IsActiveProjectionVelocity);
         }
 
         private void UpdateArrow(VectorSetup setup, Vector3 vectorValue, Vector3 centerPosition, float projectileSize, bool isVisible)
@@ -73,9 +82,11 @@ namespace Assets.Game.Scripts.View.View
 
         public void ClearAll()
         {
-            if(_velocitySetup != null) _velocitySetup.ArrowSprite.gameObject.SetActive(false);
-            if (_accelerationSetup != null) _accelerationSetup.ArrowSprite.gameObject.SetActive(false);
-            if (_totalForceSetup != null) _totalForceSetup.ArrowSprite.gameObject.SetActive(false);
+            if (_velocitySetup?.ArrowSprite) _velocitySetup.ArrowSprite.gameObject.SetActive(false);
+            if (_velocityXSetup?.ArrowSprite) _velocityXSetup.ArrowSprite.gameObject.SetActive(false);
+            if (_velocityYSetup?.ArrowSprite) _velocityYSetup.ArrowSprite.gameObject.SetActive(false);
+            if (_accelerationSetup?.ArrowSprite) _accelerationSetup.ArrowSprite.gameObject.SetActive(false);
+            if (_totalForceSetup?.ArrowSprite) _totalForceSetup.ArrowSprite.gameObject.SetActive(false);
         }
     }
 }

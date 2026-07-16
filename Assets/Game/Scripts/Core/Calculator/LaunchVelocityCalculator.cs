@@ -1,4 +1,3 @@
-using Assets.Game.Scripts.Settings;
 using UnityEngine;
 
 namespace Game.Scripts.Core

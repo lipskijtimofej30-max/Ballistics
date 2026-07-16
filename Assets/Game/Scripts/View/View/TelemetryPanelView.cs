@@ -34,6 +34,32 @@ namespace Game.Scripts.View.View
                 $"Ускорение: {point.Acceleration.magnitude:F2} м/с^2\n\n" +
                 $"Сила: {point.TotalForce.magnitude:F2} H";
         }
+        public void SetPointForPause(SimulationPoint point)
+        {
+            _pointText.text = 
+                $"Высота: {point.Position.y:F3} м\n\n" +
+                $"Дальность: {point.Position.x:F3} м\n\n" +
+                $"Скорость:\n\n" +
+                $"\b Модуль: {point.Velocity.magnitude:F3} м/c\n\n" +
+                $"\b Проекция X: {point.Velocity.x:F3}м/c\n\n" +
+                $"\b Проекция Y: {point.Velocity.y:F3}м/c\n\n" +
+                $"Ускорение: {point.Acceleration.magnitude:F3} м/с^2\n\n" +
+                $"Сила: {point.TotalForce.magnitude:F3} H";
+        }
+        
+        public void SetPointForExperimentPause(int index, SimulationPoint point)
+        {
+            _pointText.text = 
+                $"Эксперимент №{index}\n\n" +
+                $"Высота: {point.Position.y:F3} м\n\n" +
+                $"Дальность: {point.Position.x:F3} м\n\n" +
+                $"Скорость:\n\n" +
+                $"\b Модуль: {point.Velocity.magnitude:F3} м/c\n\n" +
+                $"\b Проекция X: {point.Velocity.x:F3}м/c\n\n" +
+                $"\b Проекция Y: {point.Velocity.y:F3}м/c\n\n" +
+                $"Ускорение: {point.Acceleration.magnitude:F3} м/с^2\n\n" +
+                $"Сила: {point.TotalForce.magnitude:F3} H";
+        }
 
         public void SetExperimentPoint(int index, SimulationPoint point)
         {

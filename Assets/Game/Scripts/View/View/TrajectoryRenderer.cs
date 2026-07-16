@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.Infrastructure;
 using UnityEngine;
-using Zenject;
 
 namespace Game.Scripts.View.View
 {
@@ -10,12 +9,7 @@ namespace Game.Scripts.View.View
     {
         private const int LiveMaxPoints = 3500;
         private const int PreviewTargetPoints = 1000;
-
-        private static Color[] Palette = 
-        {
-            Color.blue, Color.cyan, Color.green, Color.magenta, Color.red, Color.yellow, new Color(1f,0.5f, 0f, 1f)
-        };
-   
+        
         [SerializeField] private LineRenderer _lineRenderer;
         
         private List<Vector3> _liveBuffer = new();
@@ -101,7 +95,7 @@ namespace Game.Scripts.View.View
 
         public void SetColor(int index)
         {
-            var color = Palette[index % Palette.Length];
+            var color = ExperimentPalette.Palette[index % ExperimentPalette.Palette.Length];
             _lineRenderer.startColor = color;
             _lineRenderer.endColor = color;
         }

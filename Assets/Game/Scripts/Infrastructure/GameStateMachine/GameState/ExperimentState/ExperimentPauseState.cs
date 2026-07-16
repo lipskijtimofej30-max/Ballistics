@@ -1,5 +1,4 @@
 ﻿using Game.Scripts.Infrastructure.GameStateMachine;
-using System;
 using Assets.Game.Scripts.Core.Experiment;
 using Game.Scripts.View.View;
 using Zenject;
@@ -20,6 +19,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         
         public void Enter()
         {
+            _telemetryPanelView.SetPointForExperimentPause(_playbackController.CurrentRunIndex, _playbackController.CurrentPoint);
             _telemetryPanelView.Show();
             _playbackController.Pause();
         }

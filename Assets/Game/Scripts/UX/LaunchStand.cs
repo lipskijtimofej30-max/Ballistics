@@ -36,8 +36,8 @@ namespace Assets.Game.Scripts.UX
             _simulationSettings = simulationSettings;
             _simulator = simulator;
             _signalBus = signalBus;
-            _logger = logger;
-
+            _logger = logger;    
+            
             _signalBus.Subscribe<ProjectileSpawnedSignal>(UpdateStand);
             _signalBus.Subscribe<SimulationSettingsChangedSignal>(UpdateStand);
         }
@@ -57,6 +57,12 @@ namespace Assets.Game.Scripts.UX
             Vector3 basePosition = _simulator.CurrentState.Position;
 
             SetParameters(launchHeight, launchAngle, projectileRadius, basePosition);
+        }
+
+        public void UpdateExperimentStand(float height, float radius, float launchAngle)
+        {
+            Vector3 pos = new Vector3(0f, height, 0f);
+            SetParameters(height, launchAngle, radius, pos);
         }
 
         public void SetParameters(float launchHeight, float launchAngle, float projectileRadius, Vector3 basePosition)
@@ -79,8 +85,8 @@ namespace Assets.Game.Scripts.UX
 
             _pole.DOLocalMoveY(poleHeight + _baseHeight, _animationDuration);
 
-            _platform.DOLocalMoveY(launchHeight - projectileRadius * 0.5f - _platformHeight * 1f, _animationDuration);
-            _platform.DOLocalRotate(new Vector3(0f, 0f, launchAngle), _animationDuration);
+            _platform.DOLocalMoveY(launchHeight - projectileRadius * 0.5f - _platformHeight * 2f, _animationDuration);
+            _platform.DOLocalRotate(new Vector3(0f, 0f, Mathf.Clamp(launchAngle * 0.5f, 0f, 45f)), _animationDuration);
         }
 
         private void OnDestroy()

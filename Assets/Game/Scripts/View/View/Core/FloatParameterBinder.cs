@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using Assets.Game.Scripts.Infrastructure.Signals;
 using UnityEngine;
-using Zenject;
 
 namespace Game.Scripts.Core
 {
@@ -78,16 +76,23 @@ namespace Game.Scripts.Core
             _onChanged?.Invoke();
         }
         
-        public void UpdateValue(float newMin, float newMax, string newUnit)
+        public void UpdateBounds(float newMin, float newMax, string newUnit, float? newValueToApply = null)
         {
-            _view.Slider.minValue = newMin;
-            _view.Slider.maxValue = newMax;
             _min = newMin;
             _max = newMax;
-            
             _unit = newUnit;
-            
-            Apply(_getter());
+        
+            _view.Slider.minValue = newMin;
+            _view.Slider.maxValue = newMax;
+        
+            if (newValueToApply.HasValue)
+            {
+                Apply(Mathf.Clamp(newValueToApply.Value, _min, _max));
+            }
+            else
+            {
+                Apply(Mathf.Clamp(_getter(), _min, _max));
+            }
         }
 
         public void Dispose()

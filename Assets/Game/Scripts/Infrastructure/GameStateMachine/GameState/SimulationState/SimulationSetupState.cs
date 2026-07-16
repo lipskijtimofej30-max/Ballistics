@@ -1,4 +1,5 @@
 using Assets.Game.Scripts.UX;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
 using Game.Scripts.Settings;
 using Game.Scripts.View.UseCase;
@@ -14,23 +15,26 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly ToolbarView _toolbarView;
         private readonly VisualizationUseCase _visualizationUseCase;
         private readonly ModeControllerView _modeControllerView;
+        private readonly VectorRenderer _vectorRenderer;
         [Inject(Id ="Live")] private readonly TrajectoryRenderer _liveTrajectoryRenderer;
 
         [Inject]
         public SimulationSetupState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, 
-            VisualizationUseCase visualizationUseCase, ModeControllerView modeControllerView)
+            VisualizationUseCase visualizationUseCase, ModeControllerView modeControllerView, VectorRenderer vectorRenderer)
         {
             _simulator = simulator;
             _setupPanelView = setupPanelView;
             _toolbarView = toolbarView;
             _visualizationUseCase = visualizationUseCase;
             _modeControllerView = modeControllerView;
+            _vectorRenderer = vectorRenderer;
         }
         public void Enter()
         {
             _modeControllerView.HideObjectsForExperiment();
             _modeControllerView.ShowObjectsForSimulation();
             
+            _vectorRenderer.ClearAll();
             _simulator.ClearProjectile();
             _setupPanelView.Show();
             _liveTrajectoryRenderer.SetVisible(false);

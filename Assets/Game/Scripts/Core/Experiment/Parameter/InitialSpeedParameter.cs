@@ -16,7 +16,7 @@ namespace Assets.Game.Scripts.Core.Experiment.Parameter
 
         public void SetValue(float value) => _simulationSettings.InitialSpeed = value;
         
-        public float MinRangeValue { get; } = 1f;
+        public float MinRangeValue { get; } = 0f;
         public float MaxRangeValue { get; } = 50f;
     }
 }

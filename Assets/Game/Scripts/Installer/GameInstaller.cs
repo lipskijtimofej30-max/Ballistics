@@ -130,6 +130,7 @@ public class GameInstaller : MonoInstaller
     {
         Container.Bind<IExperimentParameter>().To<InitialSpeedParameter>().AsSingle();
         Container.Bind<IExperimentParameter>().To<LaunchAngleParameter>().AsSingle();
+        Container.Bind<IExperimentParameter>().To<HeightExperimentParameter>().AsSingle();
     }
 
     private void BindSignal()

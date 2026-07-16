@@ -1,4 +1,5 @@
 using Assets.Game.Scripts.Core.Graphics;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.UX;
@@ -18,6 +19,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly GraphController _graphController;
         private readonly GraphView _graphView;
+        private readonly VectorRenderer _vectorRenderer;
         
         private SimulationSummary _summary;
 
@@ -31,7 +33,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             ToolbarView toolbarView,
             ParameterCanvasInteractable parameterCanvasInteractable,
             GraphController graphController,
-            GraphView graphView)
+            GraphView graphView,
+            VectorRenderer vectorRenderer)
         {
             _simulator = simulator;
             _printer = printer;
@@ -42,6 +45,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _graphController = graphController;
             _graphView = graphView;
+            _vectorRenderer = vectorRenderer;
         }
         
         public void Enter()
@@ -74,6 +78,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _resultsPanel.Hide();
             _graphView.ClearAll();
             _graphController.ClearRun();
+            _vectorRenderer.ClearAll();
         }
         
         private void OnSaveCsvRequested()

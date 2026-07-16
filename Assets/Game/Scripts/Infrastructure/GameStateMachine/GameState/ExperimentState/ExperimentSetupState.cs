@@ -1,6 +1,7 @@
 ﻿using Game.Scripts.Infrastructure.GameStateMachine;
 using System;
 using Assets.Game.Scripts.Core.Experiment;
+using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
 using Game.Scripts.View.View;
 using Zenject;
@@ -15,10 +16,16 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly ExperimentPlaybackSequencer _sequencer;
         private readonly TrajectoryPool _pool;
         private readonly ExperimentSession _session;
+        private readonly VectorRenderer _vectorRenderer;
 
         [Inject]
-        public ExperimentSetupState(ModeControllerView modeControllerView, ToolbarView toolbarView,
-            [Inject(Id = "Preview")] TrajectoryRenderer trajectoryRenderer, ExperimentPlaybackSequencer sequencer, TrajectoryPool pool, ExperimentSession session)
+        public ExperimentSetupState(ModeControllerView modeControllerView, 
+            ToolbarView toolbarView,
+            [Inject(Id = "Preview")] TrajectoryRenderer trajectoryRenderer,
+            ExperimentPlaybackSequencer sequencer, 
+            TrajectoryPool pool,
+            ExperimentSession session, 
+            VectorRenderer vectorRenderer)
         {
             _modeControllerView = modeControllerView;
             _toolbarView = toolbarView;
@@ -26,9 +33,11 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _sequencer = sequencer;
             _pool = pool;
             _session = session;
+            _vectorRenderer = vectorRenderer;
         }
         public void Enter()
         {
+            _vectorRenderer.ClearAll();
             _sequencer.StopSequence();
             _pool.ClearAll();
             _session.ClearAll();

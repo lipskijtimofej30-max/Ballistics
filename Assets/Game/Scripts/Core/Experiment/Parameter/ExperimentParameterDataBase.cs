@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Assets.Game.Scripts.Settings;
-using Game.Scripts.Core;
 using Zenject;
 
 namespace Assets.Game.Scripts.Core.Experiment.Parameter

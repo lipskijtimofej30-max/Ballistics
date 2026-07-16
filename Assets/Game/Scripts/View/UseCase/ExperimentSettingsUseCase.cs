@@ -49,13 +49,17 @@ namespace Game.Scripts.View.UseCase
             _settings.SelectedParameterIndex = index;
             var selected = _parameters.Parameters[index];
 
-            // Обновляем границы min/max
-            _minBinder.UpdateValue(selected.MinRangeValue, selected.MaxRangeValue, selected.Unit);
-            _maxBinder.UpdateValue(selected.MinRangeValue, selected.MaxRangeValue, selected.Unit);
-
-            // Сбрасываем значения на границы, чтобы не остались старые некорректные
-            _settings.MinValue = selected.MinRangeValue;
-            _settings.MaxValue = selected.MaxRangeValue;
+            _minBinder.UpdateBounds(
+                selected.MinRangeValue, 
+                selected.MaxRangeValue, 
+                selected.Unit, 
+                selected.MinRangeValue);
+            
+            _maxBinder.UpdateBounds(
+                selected.MinRangeValue, 
+                selected.MaxRangeValue, 
+                selected.Unit, 
+                selected.MaxRangeValue);
         }
         
         public void Dispose()
