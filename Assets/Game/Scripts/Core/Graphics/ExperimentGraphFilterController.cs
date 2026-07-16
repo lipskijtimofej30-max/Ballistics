@@ -25,6 +25,8 @@ namespace Assets.Game.Scripts.Core.Graphics
             _graphController = graphController;
             _parameters = parameters;
             _view = view;
+            
+            _view.AcceptRequested += UpdateGraph;
         }
 
         public void Initialize()
@@ -32,13 +34,12 @@ namespace Assets.Game.Scripts.Core.Graphics
             var results = _session.ExperimentRunResults;
             
             _activeRunIds.Clear();
-            foreach (var result in results)
-                _activeRunIds.Add(result.RunId);
 
             if (results.Count > 6)
             {
                 string unit = _parameters.GetCurrentParameter().Unit;
-                _view.BuildList(results, unit);
+                string parameterName = _parameters.GetCurrentParameter().DisplayName;
+                _view.BuildList(results, unit, parameterName);
                 _view.ToggleChanged += OnToggleChanged;
                 _view.Show();
             }
@@ -46,15 +47,12 @@ namespace Assets.Game.Scripts.Core.Graphics
             {
                 _view.Hide();
             }
-            UpdateGraph();
         }
 
         private void OnToggleChanged(int runId, bool isActive)
         {
             if(isActive) _activeRunIds.Add(runId);
             else _activeRunIds.Remove(runId);
-
-            UpdateGraph();
         }
 
         private void UpdateGraph()
@@ -67,11 +65,13 @@ namespace Assets.Game.Scripts.Core.Graphics
             _graphController.ClearRuns();
             
             _graphController.SetupMultiData(filterRuns);
+            _view.Hide();
         }
 
         public void Dispose()
         {
             _view.ToggleChanged -= OnToggleChanged;
+            _view.AcceptRequested -= UpdateGraph;
             _view.Clear();
             _view.Hide();
         }
