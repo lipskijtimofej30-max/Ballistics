@@ -23,6 +23,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly DataExporter _exporter;
         private readonly TrajectoryPool _pool;
         private readonly GraphController _graphController;
+        private readonly ExperimentGraphFilterController _graphFilterController;
         private readonly GraphView _graphView;
         private readonly GraphLegendView _legendView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
@@ -34,7 +35,8 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             TrajectoryPool pool, ExperimentTableView tableView, ExperimentParameterDataBase parameters,
             DataExporter exporter, GraphController graphController,
             ParameterCanvasInteractable parameterCanvasInteractable,
-            ILogger logger, GraphView graphGraphView, VectorRenderer vectorRenderer, GraphLegendView legendView)
+            ILogger logger, GraphView graphGraphView, ExperimentGraphFilterController graphFilterController,
+            VectorRenderer vectorRenderer, GraphLegendView legendView)
         {
             _sequencer = sequencer;
             _session = session;
@@ -45,6 +47,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _graphController = graphController;
             _parameterCanvasInteractable = parameterCanvasInteractable;
             _logger = logger;
+            _graphFilterController = graphFilterController;
             _graphView = graphGraphView;
             _vectorRenderer = vectorRenderer;
             _legendView = legendView;
@@ -57,7 +60,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
                 foreach (var result in _session.ExperimentRunResults)
                     runs.Add(result.Run);
 
-                _graphController.SetupMultiData(runs);
+                _graphFilterController.Initialize();
                 _legendView.Show();
             }
             catch(Exception e)
@@ -77,6 +80,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         public void Exit()
         {
             _tableView.SaveCsvRequested -= OnSaveCsvRequested;
+            _graphFilterController.Dispose();
             _graphController.ClearRuns();
             _tableView.Hide();
             _sequencer.StopSequence();

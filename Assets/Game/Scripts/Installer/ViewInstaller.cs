@@ -33,6 +33,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private GraphLegendView _legendView;
         [SerializeField] private VectorRenderer _vectorRenderer;
         [SerializeField] private VectorVisualizationView _vectorView;
+        [SerializeField] private ExperimentGraphFilterView experimentGraphFilterView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -46,6 +47,7 @@ namespace Game.Scripts.Installer
             BindSimulationView();
             BindEnvironmentView();
             BindIntegratorView();
+            Container.Bind<ExperimentGraphFilterView>().FromInstance(experimentGraphFilterView).AsSingle();
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
             BindToolbarView();

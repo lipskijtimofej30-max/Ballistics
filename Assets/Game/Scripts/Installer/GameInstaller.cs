@@ -47,6 +47,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<TrajectoryPool>().AsSingle().WithArguments(_prefab);
         Container.Bind<ExperimentPlaybackController>().AsSingle();
         Container.Bind<ExperimentPlaybackSequencer>().FromInstance(_sequencer).AsSingle();
+        Container.Bind<ExperimentGraphFilterController>().AsSingle();
         Container.Bind<LaunchStand>().FromInstance(_launchStand).AsSingle();
         Container.BindInterfacesAndSelfTo<GraphTooltipController>().AsSingle();
         Container.BindInterfacesAndSelfTo<GraphInteractionsController>().AsSingle().NonLazy();
