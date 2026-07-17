@@ -8,8 +8,9 @@ namespace Assets.Game.Scripts.Core.Graphics
             {
                 GraphType.Trajectory => "Траектория y(x)",
                 GraphType.SpeedTime => "Скорость v(t)",
-                GraphType.XTime => "Дальность x(t)",
-                GraphType.AccelerationTime => "Ускорение a(t)"
+                GraphType.RangeTime => "Дальность x(t)",
+                GraphType.AccelerationTime => "Ускорение a(t)",
+                GraphType.HeightTime => "Высота y(t)"
             };
         }
     }

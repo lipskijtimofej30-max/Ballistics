@@ -6,5 +6,8 @@
         public float MaxSpeed;
         public float Range;
         public float FlightTime;
+        public float TimeForMaxHeight;
+        public float TotalPath;
+        public float Displacement;
     }
 }

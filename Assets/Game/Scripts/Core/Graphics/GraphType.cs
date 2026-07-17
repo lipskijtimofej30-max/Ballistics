@@ -4,7 +4,8 @@ namespace Assets.Game.Scripts.Core.Graphics
     {
         Trajectory = 0,
         SpeedTime = 1,
-        XTime = 2,
-        AccelerationTime = 3
+        RangeTime = 2,
+        HeightTime = 3,
+        AccelerationTime = 4,
     }
 }

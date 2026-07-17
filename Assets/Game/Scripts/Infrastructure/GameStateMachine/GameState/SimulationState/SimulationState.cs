@@ -42,14 +42,14 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
                 _simulator.Resume();
             
             _telemetryPanelView.Show();
-            _telemetryPanelView.SetPoint(new SimulationPoint());
+            _telemetryPanelView.SetSimulationPoint(new SimulationPoint());
         }
 
         public void Tick()
         {
             var run = _simulator.CurrentRun;
             if (run == null || run.Points.Count == 0) return;
-            _telemetryPanelView.SetPoint(run.Points[^1]);
+            _telemetryPanelView.SetSimulationPoint(run.Points[^1]);
         }
 
         public void Exit()

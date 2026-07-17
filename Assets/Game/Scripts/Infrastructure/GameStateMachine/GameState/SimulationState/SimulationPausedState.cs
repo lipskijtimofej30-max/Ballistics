@@ -19,7 +19,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         }
         public void Enter()
         {
-            _telemetryPanelView.SetPointForPause(_simulator.CurrentRun.Points[^1]);
+            _telemetryPanelView.SetPointForSimulationPause(_simulator.CurrentRun.Points[^1]);
             _telemetryPanelView.Show();
         }
 

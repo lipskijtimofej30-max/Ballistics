@@ -11,8 +11,9 @@ namespace Assets.Game.Scripts.Core.Graphics
             {
                 GraphType.Trajectory => new TrajectoryGraphDataSource(run),
                 GraphType.SpeedTime => new SpeedTImeGraphDataSource(run),
-                GraphType.XTime => new RangeTimeGraphDataSource(run),
+                GraphType.RangeTime => new RangeTimeGraphDataSource(run),
                 GraphType.AccelerationTime => new AccelerationTimeGraphDataSource(run),
+                GraphType.HeightTime => new HeightTimeGraphData(run),
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Неизвестный тип графика")
             };
         }

@@ -83,7 +83,7 @@ public class GameInstaller : MonoInstaller
 
     private void BindCalculator()
     {
-        Container.Bind<LaunchVelocityCalculator>().AsSingle();
+        Container.Bind<VelocityCalculator>().AsSingle();
         Container.Bind<MassCalculator>().AsSingle();
         Container.Bind<ForceCalculator>().AsSingle().NonLazy();
         Container.Bind<CrossSectionalAreaCalculator>().AsSingle();

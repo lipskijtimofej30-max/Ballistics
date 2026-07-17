@@ -60,7 +60,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _printer.Print(run.Points);
             
             _summary = _analyzer.Analyze(run.Points);
-            _resultsPanel.SetSummary(_summary);
+            _resultsPanel.SetSimulationSummary(_summary);
             _resultsPanel.Show();
             _graphController.SetupSingleData(run);
             

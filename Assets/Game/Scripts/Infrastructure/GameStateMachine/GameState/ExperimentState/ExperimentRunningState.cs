@@ -131,7 +131,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         {
             _telemetryPanelView.Hide();
             _resultsPanelView.Show();
-            _resultsPanelView.SetExperimentSummary(result);
+            _resultsPanelView.SetExperimentSummary(result, _parameters.GetCurrentParameter());
         }
     }
 }

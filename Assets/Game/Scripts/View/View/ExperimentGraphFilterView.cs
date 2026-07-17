@@ -22,6 +22,7 @@ namespace Game.Scripts.View.View
         private readonly List<FilterToggleItem> _items = new();
         private GraphSettings _graphSettings;
         private Color _infoTextBaseColor;
+        private Color _exceptionColor;
         
         public event Action<int, bool> ToggleChanged;
         public event Action AcceptRequested;
@@ -34,6 +35,7 @@ namespace Game.Scripts.View.View
 
         private void Start()
         {
+            _exceptionColor = new Color(1f, 0.3529412f,0.3529412f, 1f);
             Hide();
             _infoTextBaseColor = _infoText.color;
             _hideButton.onClick.AddListener(Hide);
@@ -47,7 +49,7 @@ namespace Game.Scripts.View.View
         {
             _infoText.text = $"Выбрано {index} из {_graphSettings.MaxLineCount} экспериментов";
             if (index > _graphSettings.MaxLineCount)
-                _infoText.color = new Color(1, 0, 0, 0.1f * index);
+                _infoText.color = _exceptionColor;
             else
                 _infoText.color = _infoTextBaseColor;
             _acceptButton.interactable = index <= _graphSettings.MaxLineCount;
@@ -62,8 +64,8 @@ namespace Game.Scripts.View.View
                 
                 int id = result.RunId;
 
-                item.Label.text = $"Эксперимент {id}:\n" +
-                                  $"{parameterName} {result.ParameterValue} {unit}";
+                item.Label.text = $"<line-height=120%><size=115%>Эксперимент {id}:</size>\n" +
+                                  $"<size=90%>{parameterName} {result.ParameterValue} {unit}</size></line-height>";
                 item.Toggle.SetIsOnWithoutNotify(false);
                 
                 item.Toggle.onValueChanged.AddListener(isOn => ToggleChanged?.Invoke(id, isOn));

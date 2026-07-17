@@ -12,13 +12,13 @@ namespace Game.Scripts.Core
         
         private ProjectileSettings _projectileSettings;
         private SimulationSettings _simulationSettings;
-        private LaunchVelocityCalculator _velocityCalculator;
+        private VelocityCalculator _velocityCalculator;
         private MassCalculator _massCalculator;
         private CrossSectionalAreaCalculator _crossSectionalAreaCalculator;
 
         [Inject]
         private void Construct(ProjectileSettings gameSettings, SimulationSettings simulationSettings,
-            LaunchVelocityCalculator velocityCalculator, MassCalculator massCalculator, CrossSectionalAreaCalculator areaCalculator)
+            VelocityCalculator velocityCalculator, MassCalculator massCalculator, CrossSectionalAreaCalculator areaCalculator)
         {
             _projectileSettings = gameSettings;
             _velocityCalculator = velocityCalculator;

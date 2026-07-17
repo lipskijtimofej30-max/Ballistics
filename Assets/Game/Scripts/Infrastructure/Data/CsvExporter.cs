@@ -125,10 +125,13 @@ namespace Game.Scripts.Core.Simulation
 
             // --- Максимумы — чистая производная от точек (SimulationAnalyzer) ---
             builder.AppendLine("=== Результаты полёта ===");
+            builder.AppendLine($"Время полёта (с);{summary.FlightTime.ToString("F2", ruCulture)} с");
+            builder.AppendLine($"Дальность (м);{summary.Range.ToString("F2", ruCulture)} м");
+            builder.AppendLine($"Путь (м);{summary.TotalPath.ToString("F2", ruCulture)} м");
+            builder.AppendLine($"Перемещение (м);{summary.Displacement.ToString("F2", ruCulture)} м");
             builder.AppendLine($"Макс. высота (м);{summary.MaxHeight.ToString("F3", ruCulture)} м");
+            builder.AppendLine($"Время до вершины (с);{summary.TimeForMaxHeight.ToString("F2", ruCulture)} с");
             builder.AppendLine($"Макс. скорость (м/с);{summary.MaxSpeed.ToString("F3", ruCulture)} м/с");
-            builder.AppendLine($"Дальность (м);{summary.Range.ToString("F3", ruCulture)} м");
-            builder.AppendLine($"Время полёта (с);{summary.FlightTime.ToString("F3", ruCulture)} с");
             builder.AppendLine();
 
             builder.AppendLine(

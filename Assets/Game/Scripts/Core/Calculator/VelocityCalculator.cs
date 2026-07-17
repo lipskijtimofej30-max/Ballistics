@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Scripts.Core
 {
-    public class LaunchVelocityCalculator
+    public class VelocityCalculator
     {
         public Vector3 GetVelocity(float initialSpeed, float launchAngle)
         {
@@ -12,6 +12,11 @@ namespace Game.Scripts.Core
                 initialSpeed * Mathf.Sin(angle),
                 0f);
             return velocity;
+        }
+
+        public float GetAngleForVelocity(Vector3 velocity)
+        {
+            return Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
         }
     }
 }
