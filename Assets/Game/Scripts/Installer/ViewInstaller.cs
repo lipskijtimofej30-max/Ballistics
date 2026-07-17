@@ -34,6 +34,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private VectorRenderer _vectorRenderer;
         [SerializeField] private VectorVisualizationView _vectorView;
         [SerializeField] private ExperimentGraphFilterView experimentGraphFilterView;
+        [SerializeField] private FilterPanelHandler _filterPanelHandler;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -51,6 +52,7 @@ namespace Game.Scripts.Installer
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
             BindToolbarView();
+            Container.Bind<FilterPanelHandler>().FromInstance(_filterPanelHandler).AsSingle();
             Container.Bind<GraphLegendView>().FromInstance(_legendView).AsSingle();
             Container.Bind<ModeControllerView>().FromInstance(modeControllerView).AsSingle();
             Container.Bind<SetupPanelView>().FromInstance(setupPanelView).AsSingle();

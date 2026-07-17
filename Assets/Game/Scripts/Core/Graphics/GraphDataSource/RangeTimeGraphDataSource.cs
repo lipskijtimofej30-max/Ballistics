@@ -7,8 +7,8 @@ namespace Assets.Game.Scripts.Core.Graphics
     public class RangeTimeGraphDataSource : IGraphDataSource
     {
         public bool IsVisible { get; set; } =  true;
-        public string XAxisLabel { get; } = "Время, с";
-        public string YAxisLabel { get; } = "X, м";
+        public string XAxisLabel { get; } = "Время (с)";
+        public string YAxisLabel { get; } = "Дальность (м)";
         public string DisplayName { get; } = "Дальность от времени";
         public Vector2 MinBound { get; }
         public Vector2 MaxBound { get; }

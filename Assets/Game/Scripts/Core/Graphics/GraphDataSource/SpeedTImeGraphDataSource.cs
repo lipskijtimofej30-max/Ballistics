@@ -7,8 +7,8 @@ namespace Assets.Game.Scripts.Core.Graphics
     public class SpeedTImeGraphDataSource : IGraphDataSource
     {
         public bool IsVisible { get; set; } = true;
-        public string XAxisLabel { get; } = "Время, с";
-        public string YAxisLabel { get; } = "Скорость, м/с";
+        public string XAxisLabel { get; } = "Время (с)";
+        public string YAxisLabel { get; } = "Скорость (м/с)";
         public string DisplayName { get; } = "Скорость от времени";
         public Vector2 MinBound { get; }
         public Vector2 MaxBound { get; }

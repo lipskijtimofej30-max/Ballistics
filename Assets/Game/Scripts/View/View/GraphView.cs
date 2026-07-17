@@ -14,19 +14,7 @@ namespace Game.Scripts.View.View
         [SerializeField] private GraphRenderer _renderer;
         [SerializeField] private TMP_Text _titleText;
         [Header("Container")]
-        [SerializeField] private GameObject _warningContainer;
         [SerializeField] private GameObject _graphContainer;
-        
-        private void Start()
-        {    
-            ToggleContainer(false);
-        }
-
-        public void ToggleContainer(bool toggle)
-        {
-            _graphContainer.SetActive(!toggle);
-            _warningContainer.SetActive(toggle);
-        }
 
         public void RenderGraph(IGraphDataSource dataSource, string title)
         {

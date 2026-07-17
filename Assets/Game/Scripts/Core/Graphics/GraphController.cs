@@ -18,6 +18,8 @@ namespace Assets.Game.Scripts.Core.Graphics
         private SimulationRun _currentRun;
 
         private bool _isMultiMode;
+        
+        public bool HasRuns => _runsForExperiment != null && _runsForExperiment.Count > 0;
 
         [Inject]
         public GraphController(GraphLegendView legendView, GraphView view, GraphDataSourceFactory factory, GraphUseCase useCase)

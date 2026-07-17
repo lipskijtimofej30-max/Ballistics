@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Assets.Game.Scripts.Core.Experiment;
 using UnityEngine;
 
 namespace Assets.Game.Scripts.Core.Graphics
@@ -7,6 +9,16 @@ namespace Assets.Game.Scripts.Core.Graphics
     public class ExperimentTooltipStrategy : ITooltipStrategy
     {
         private readonly StringBuilder _sb = new StringBuilder(128);
+        private readonly ExperimentSession _session;
+        private readonly ExperimentGraphFilterController _filterController;
+
+        private readonly Dictionary<IGraphDataSource, int> _runIdCache = new();
+
+        public ExperimentTooltipStrategy(ExperimentSession session, ExperimentGraphFilterController filterController)
+        {
+            _session = session;
+            _filterController = filterController;
+        }
 
         public bool TryGetTooltipData(
             Vector2 normalizedMousePos,
@@ -20,6 +32,9 @@ namespace Assets.Game.Scripts.Core.Graphics
             dotNormalizedPos = Vector2.zero;
 
             if (sources == null || sources.Count == 0) return false;
+
+            if (!IsCacheValid(sources))
+                RebuildCache(sources);
 
             _sb.Clear();
 
@@ -40,8 +55,9 @@ namespace Assets.Game.Scripts.Core.Graphics
 
             for (int i = 0; i < sources.Count; i++)
             {
+                var source = sources[i];
                 if (!sources[i].IsVisible) continue;
-                
+
                 var points = sources[i].GetPoints();
                 if (points == null || points.Count == 0) continue;
 
@@ -64,8 +80,9 @@ namespace Assets.Game.Scripts.Core.Graphics
                     closestSnappedY = closestPoint.y;
                 }
 
-                // Форматируем строку без аллокаций памяти
-                _sb.Append("Эксперимент ").Append(i + 1).Append(": ").Append(closestPoint.y.ToString("F2"))
+                int runId = _runIdCache.TryGetValue(source, out int cashedId) ? cashedId : (i + 1);
+
+                _sb.Append("Эксперимент ").Append(runId).Append(": ").Append(closestPoint.y.ToString("F2"))
                     .AppendLine();
             }
 
@@ -77,6 +94,33 @@ namespace Assets.Game.Scripts.Core.Graphics
             );
 
             return true;
+        }
+
+        private bool IsCacheValid(IReadOnlyList<IGraphDataSource> sources)
+        {
+            if (_runIdCache.Count != sources.Count) return false;
+
+            for (int i = 0; i < sources.Count; i++)
+            {
+                if (!_runIdCache.ContainsKey(sources[i])) return false;
+            }
+
+            return true;
+        }
+
+        private void RebuildCache(IReadOnlyList<IGraphDataSource> sources)
+        {
+            _runIdCache.Clear();
+            if (_session == null) return;
+
+            var activeResults = _session.ExperimentRunResults
+                .Where(r => _filterController.ActiveRunIds.Contains(r.RunId))
+                .ToList();
+
+            for (int i = 0; i < sources.Count && i < activeResults.Count; i++)
+            {
+                _runIdCache[sources[i]] = activeResults[i].RunId;
+            }
         }
     }
 }

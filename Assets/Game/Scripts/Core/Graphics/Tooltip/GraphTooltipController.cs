@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.View.View;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace Assets.Game.Scripts.Core.Graphics
         private readonly GraphTooltipView _view;
         private readonly IGraphInfoProvider _infoProvider;
         private readonly ModeController _modeController;
+        private readonly ExperimentSession _session;
+        private readonly ExperimentGraphFilterController _filterController;
         private readonly ILogger _logger;
 
         private readonly Dictionary<AppMode, ITooltipStrategy> _strategies;
@@ -24,16 +27,20 @@ namespace Assets.Game.Scripts.Core.Graphics
             GraphTooltipView view,
             IGraphInfoProvider infoProvider,
             ModeController modeController,
-            ILogger logger)
+            ILogger logger,
+            ExperimentSession session,
+            ExperimentGraphFilterController filterController)
         {
             _view = view;
             _infoProvider = infoProvider;
             _modeController = modeController;
             _logger = logger;
+            _session = session;
+            _filterController = filterController;
 
             _strategies = new Dictionary<AppMode, ITooltipStrategy>
             {
-                { AppMode.Experiment, new ExperimentTooltipStrategy() },
+                { AppMode.Experiment, new ExperimentTooltipStrategy(_session,  _filterController) },
                 { AppMode.Laboratory, new LaboratoryTooltipStrategy(hoverThreshold: 0.05f) }
             };
 

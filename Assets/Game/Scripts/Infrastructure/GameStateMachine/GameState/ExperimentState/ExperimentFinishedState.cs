@@ -28,6 +28,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly GraphLegendView _legendView;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
         private readonly VectorRenderer _vectorRenderer;
+        private readonly FilterPanelHandler _filterPanelHandler;
         private readonly ILogger _logger;
 
         [Inject]
@@ -36,7 +37,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             DataExporter exporter, GraphController graphController,
             ParameterCanvasInteractable parameterCanvasInteractable,
             ILogger logger, GraphView graphGraphView, ExperimentGraphFilterController graphFilterController,
-            VectorRenderer vectorRenderer, GraphLegendView legendView)
+            VectorRenderer vectorRenderer, GraphLegendView legendView, FilterPanelHandler filterPanelHandler)
         {
             _sequencer = sequencer;
             _session = session;
@@ -51,16 +52,14 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _graphView = graphGraphView;
             _vectorRenderer = vectorRenderer;
             _legendView = legendView;
+            _filterPanelHandler = filterPanelHandler;
         }
         public void Enter()
         {
             try
             {
-                List<SimulationRun> runs = new();
-                foreach (var result in _session.ExperimentRunResults)
-                    runs.Add(result.Run);
-
                 _graphFilterController.Initialize();
+                _filterPanelHandler.SetInteractable(true);
                 _legendView.Show();
             }
             catch(Exception e)
@@ -80,6 +79,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         public void Exit()
         {
             _tableView.SaveCsvRequested -= OnSaveCsvRequested;
+            _filterPanelHandler.SetInteractable(false);
             _graphFilterController.Dispose();
             _graphController.ClearRuns();
             _tableView.Hide();

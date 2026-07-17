@@ -7,8 +7,8 @@ namespace Assets.Game.Scripts.Core.Graphics
     public class TrajectoryGraphDataSource : IGraphDataSource
     {
         public bool IsVisible { get; set; } = true;
-        public string XAxisLabel { get; } = "Дальность, м";
-        public string YAxisLabel { get; } = "Высота, м";
+        public string XAxisLabel { get; } = "Дальность (м)";
+        public string YAxisLabel { get; } = "Высота (м)";
         public string DisplayName { get; } = "Траектория полёта";
         public Vector2 MinBound { get; }
         public Vector2 MaxBound { get; }

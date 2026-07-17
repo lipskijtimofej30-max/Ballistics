@@ -16,6 +16,7 @@ namespace Assets.Game.Scripts.Core.Graphics
         private readonly ExperimentGraphFilterView _view;
         
         private readonly HashSet<int> _activeRunIds = new();
+        public IReadOnlyCollection<int> ActiveRunIds => _activeRunIds;
 
         [Inject]
         public ExperimentGraphFilterController(ExperimentSession session, GraphController graphController,
@@ -26,7 +27,6 @@ namespace Assets.Game.Scripts.Core.Graphics
             _parameters = parameters;
             _view = view;
             
-            _view.AcceptRequested += UpdateGraph;
         }
 
         public void Initialize()
@@ -41,18 +41,33 @@ namespace Assets.Game.Scripts.Core.Graphics
                 string parameterName = _parameters.GetCurrentParameter().DisplayName;
                 _view.BuildList(results, unit, parameterName);
                 _view.ToggleChanged += OnToggleChanged;
+                _view.AcceptRequested += OnAcceptRequested;
+                _view.SetInfoText(_activeRunIds.Count);
                 _view.Show();
-            }
+            }  
             else
             {
+                foreach (var result in results)
+                {
+                    _activeRunIds.Add(result.RunId);
+                }
                 _view.Hide();
             }
+            UpdateGraph();
         }
 
         private void OnToggleChanged(int runId, bool isActive)
         {
             if(isActive) _activeRunIds.Add(runId);
             else _activeRunIds.Remove(runId);
+            
+            _view.SetInfoText(_activeRunIds.Count);
+        }
+
+        private void OnAcceptRequested()
+        {
+            UpdateGraph();
+            _view.Hide();
         }
 
         private void UpdateGraph()
@@ -65,13 +80,12 @@ namespace Assets.Game.Scripts.Core.Graphics
             _graphController.ClearRuns();
             
             _graphController.SetupMultiData(filterRuns);
-            _view.Hide();
         }
 
         public void Dispose()
         {
             _view.ToggleChanged -= OnToggleChanged;
-            _view.AcceptRequested -= UpdateGraph;
+            _view.AcceptRequested -= OnAcceptRequested;
             _view.Clear();
             _view.Hide();
         }

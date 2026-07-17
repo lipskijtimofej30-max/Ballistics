@@ -24,7 +24,7 @@ namespace Assets.Game.Scripts.Core.Experiment.Parameter
                     _settings.InitialPosition.z);
         }
 
-        public float MinRangeValue { get; } = 0f;
+        public float MinRangeValue { get; } = 1f;
         public float MaxRangeValue { get; } = 15f;
     }
 }

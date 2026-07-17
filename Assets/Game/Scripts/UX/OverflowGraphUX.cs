@@ -8,13 +8,11 @@ namespace Assets.Game.Scripts.UX
 {
     public class OverflowGraphUX : IInitializable, IDisposable
     {
-        private readonly GraphView _graphView;
         private readonly GraphTooltipController _tooltipController;
         private readonly SignalBus _signalBus;
 
-        public OverflowGraphUX(GraphView graphView, GraphTooltipController tooltipController, SignalBus signalBus)
+        public OverflowGraphUX(GraphTooltipController tooltipController, SignalBus signalBus)
         {
-            _graphView = graphView;
             _tooltipController = tooltipController;
             _signalBus = signalBus;
         }
@@ -26,7 +24,6 @@ namespace Assets.Game.Scripts.UX
 
         private void OnOverflow(OverflowLineSignal signal)
         { 
-            _graphView.ToggleContainer(signal.IsOverflow);
             _tooltipController.Enabled = !signal.IsOverflow;
         } 
         public void Dispose()
