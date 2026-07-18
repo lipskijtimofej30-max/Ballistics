@@ -13,6 +13,7 @@ namespace Game.Scripts.UX
         private readonly Simulator _simulator;
 
         public bool IsDirty { get; private set; }
+        public bool IsNewDirty { get; private set; }
 
         [Inject]
         public SetupDirtyTracker(SignalBus signalBus, Simulator simulator)
@@ -27,27 +28,38 @@ namespace Game.Scripts.UX
             _signalBus.Subscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
             _signalBus.Subscribe<IntegratorSettingsChangedSignal>(MarkDirty);
+            
+            _signalBus.Subscribe<ProjectileSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.Subscribe<SimulationSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.Subscribe<EnvironmentSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.Subscribe<IntegratorSettingsChangedSignal>(MarkNewDirty);
 
             _signalBus.Subscribe<CleanSetupRequestedSignal>(MarkClean);
+            _signalBus.Subscribe<CleanSetupRequestedSignal>(MarkNewClean);
         }
 
         private void MarkDirty()
         {
-            // Если симуляции нет или уже статус грязный - ничего не делаем
             if (_simulator.CurrentBody == null || IsDirty) return;
-
             IsDirty = true;
-
-            // Просто отправляем сигнал, ToolbarView сам обновит свои кнопки!
-            _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: true));
+            _signalBus.Fire(new SetupDirtyStatusChangedSignal(true));
+        }
+        private void MarkNewDirty()
+        {
+            if (_simulator.PreviousBody == null || IsNewDirty) return;
+            IsNewDirty = true;
+            _signalBus.Fire(new NewSetupDirtyStatusChangedSignal(true));
         }
 
         public void MarkClean()
         {
             IsDirty = false;
-
-            // Просто отправляем сигнал
-            _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: false));
+            _signalBus.Fire(new SetupDirtyStatusChangedSignal(false));
+        }
+        public void MarkNewClean()
+        {
+            IsNewDirty = false;
+            _signalBus.Fire(new NewSetupDirtyStatusChangedSignal(false));
         }
 
         public void Dispose()
@@ -56,7 +68,14 @@ namespace Game.Scripts.UX
             _signalBus.TryUnsubscribe<SimulationSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<EnvironmentSettingsChangedSignal>(MarkDirty);
             _signalBus.TryUnsubscribe<IntegratorSettingsChangedSignal>(MarkDirty);
+            
+            _signalBus.TryUnsubscribe<ProjectileSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.TryUnsubscribe<SimulationSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.TryUnsubscribe<EnvironmentSettingsChangedSignal>(MarkNewDirty);
+            _signalBus.TryUnsubscribe<IntegratorSettingsChangedSignal>(MarkNewDirty);
+            
             _signalBus.TryUnsubscribe<CleanSetupRequestedSignal>(MarkClean);
+            _signalBus.TryUnsubscribe<CleanSetupRequestedSignal>(MarkNewClean);
         }
     }
 }

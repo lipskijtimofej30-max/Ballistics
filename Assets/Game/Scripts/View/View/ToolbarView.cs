@@ -3,6 +3,7 @@ using Assets.Game.Scripts.Infrastructure.Signals;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.GameStateMachine;
+using Game.Scripts.Infrastructure.Signals;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,8 +21,9 @@ namespace Game.Scripts.View.View
         [SerializeField] private Button _laboratoryButton;
         [SerializeField] private Button _experimentButton;
 
-        [Header("Label Buttons")] [SerializeField]
-        private TMP_Text _createButtonLabel;
+        [Header("Label Buttons")] 
+        [SerializeField] private TMP_Text _createButtonLabel;
+        [SerializeField] private TMP_Text _newCreateButtonLabel;
 
         private SignalBus _signalBus;
         private Simulator _simulator;
@@ -46,6 +48,7 @@ namespace Game.Scripts.View.View
         private void Start()
         {
             _signalBus.Subscribe<SetupDirtyStatusChangedSignal>(OnDirtyStatusChanged);
+            _signalBus.Subscribe<NewSetupDirtyStatusChangedSignal>(OnNewDirtyStatusChanged);
 
             _createButton.onClick.AddListener(() =>
             {
@@ -127,9 +130,25 @@ namespace Game.Scripts.View.View
             }
         }
 
+        private void OnNewDirtyStatusChanged(NewSetupDirtyStatusChangedSignal signal)
+        {
+            if (signal.IsNewDirty)
+            {
+                _newCreateButton.interactable = true;
+                _newCreateButtonLabel.text = $"<size=80%>Обновить новый запуск</size>";
+                _startButton.interactable = false;
+            }
+            else
+            {
+                _newCreateButtonLabel.text = "+ Новый запуск";
+                _startButton.interactable = true;
+            }
+        }
+
         private void OnDestroy()
         {
             _signalBus?.TryUnsubscribe<SetupDirtyStatusChangedSignal>(OnDirtyStatusChanged);
+            _signalBus?.TryUnsubscribe<NewSetupDirtyStatusChangedSignal>(OnNewDirtyStatusChanged);
 
             _pauseButton.onClick?.RemoveAllListeners();
             _createButton.onClick?.RemoveAllListeners();

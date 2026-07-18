@@ -27,6 +27,7 @@ namespace Game.Scripts.Core
         public SimulationRun PreviousRun { get; private set; }
 
         public ProjectileBody CurrentBody => _projectileManager.CurrentBody;
+        public ProjectileBody PreviousBody => _projectileManager.PreviousBody;
         public ProjectileState CurrentState => _projectileManager.CurrentState;
         public ProjectileState PreviousState { get; private set; }
         public bool HasActiveRun => CurrentRun != null;

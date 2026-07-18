@@ -6126,7 +6126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf62b76f2bc2475db3f1c4f210389537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <IsActive>k__BackingField: 0
 --- !u!4 &363340619
 Transform:
   m_ObjectHideFlags: 0
@@ -31733,6 +31732,7 @@ MonoBehaviour:
   _laboratoryButton: {fileID: 957811640}
   _experimentButton: {fileID: 1422485020}
   _createButtonLabel: {fileID: 1340543617}
+  _newCreateButtonLabel: {fileID: 643755491}
 --- !u!1 &1726196642
 GameObject:
   m_ObjectHideFlags: 0

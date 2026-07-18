@@ -100,8 +100,7 @@ namespace Game.Scripts.Core.Simulation
             var ruCulture = CultureInfo.GetCultureInfo("ru-RU");
             //builder.AppendLine("sep=;");
 
-            // --- Параметры снаряда (заморожены на момент запуска, не live) ---
-            builder.AppendLine($"{DateTime.Now.ToString("F3", ruCulture)}");
+            builder.AppendLine($"Дата: {DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()}");
             builder.AppendLine("=== Параметры снаряда ===");
             builder.AppendLine("Параметр;Значение");
             builder.AppendLine($"Форма;{projectile.ShapeType}");
@@ -110,14 +109,13 @@ namespace Game.Scripts.Core.Simulation
             builder.AppendLine($"Масса (кг);{projectile.Mass.ToString("F3", ruCulture)} кг");
             builder.AppendLine();
 
-            // --- Начальные условия — берём из ПЕРВОЙ точки, а не из настроек ---
             if (points.Count > 0)
             {
                 var initial = points[0];
                 float initialSpeed = initial.Velocity.magnitude;
                 float initialAngle = Mathf.Atan2(initial.Velocity.y, initial.Velocity.x) * Mathf.Rad2Deg;
 
-                builder.AppendLine("=== Начальные условия (по факту, на старте прогона) ===");
+                builder.AppendLine("=== Начальные условия ===");
                 builder.AppendLine("Параметр;Значение");
                 builder.AppendLine($"Начальная скорость (м/с);{initialSpeed.ToString("F3", ruCulture)} м/с");
                 builder.AppendLine($"Угол запуска (град);{initialAngle.ToString("F3", ruCulture)} °");

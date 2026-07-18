@@ -58,7 +58,7 @@ namespace Game.Scripts.View.View
                 _currentText += 
                     $"{comparison.DisplayName}:\n" +
                     $"\t{comparison.PreviousValue:F2} -> {comparison.CurrentValue:F2} {comparison.Unit}\n" +
-                    $"\t(Δ = {comparison.GetDifference():+0.00;-#.00} {comparison.Unit})\n\n";
+                    $"\t(Δ = {comparison.GetDifference():+0.00;-#0.00} {comparison.Unit})\n\n";
             }
             _summaryText.text = _currentText;
         }

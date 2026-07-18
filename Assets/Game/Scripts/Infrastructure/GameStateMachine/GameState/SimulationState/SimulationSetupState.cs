@@ -39,7 +39,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _toolbarView.StartButton.interactable = false;
             _toolbarView.PauseButton.interactable = false;
             _toolbarView.StopButton.interactable = false;
-            _toolbarView.NewCreateButton.interactable = false;
+            _toolbarView.NewCreateButton.interactable = _simulator.PreviousBody != null;
         }
 
         public void Tick()

@@ -24,19 +24,16 @@ namespace Assets.Game.Scripts.UX
         private SimulationSettings _simulationSettings;
         private Simulator _simulator;
         private SignalBus _signalBus;
-        private ILogger _logger;
 
         [Inject]
         private void Construct(
             SimulationSettings simulationSettings,
             Simulator simulator,
-            SignalBus signalBus,
-            ILogger logger)
+            SignalBus signalBus)
         {
             _simulationSettings = simulationSettings;
             _simulator = simulator;
             _signalBus = signalBus;
-            _logger = logger;    
             
             _signalBus.Subscribe<ProjectileSpawnedSignal>(UpdateStand);
             _signalBus.Subscribe<SimulationSettingsChangedSignal>(UpdateStand);

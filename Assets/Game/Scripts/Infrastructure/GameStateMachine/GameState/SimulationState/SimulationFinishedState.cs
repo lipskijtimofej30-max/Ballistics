@@ -54,7 +54,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             _toolbarView.CreateButton.interactable = true;
             _toolbarView.PauseButton.interactable = false;
-            _toolbarView.NewCreateButton.interactable = true;
+            _toolbarView.NewCreateButton.interactable = _simulator.CurrentRun != null;
             _parameterCanvasInteractable.Toggle(true);
             
             var previousRun = _simulator.PreviousRun;

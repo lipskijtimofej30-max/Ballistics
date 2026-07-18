@@ -154,5 +154,6 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<ChangeAppModeSignal>().OptionalSubscriber();
         Container.DeclareSignal<OverflowLineSignal>().OptionalSubscriber();
         Container.DeclareSignal<GraphSettingsChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<NewSetupDirtyStatusChangedSignal>().OptionalSubscriber();
     }
 }
