@@ -61,5 +61,20 @@ namespace Game.Scripts.Core.Simulation
                 Displacement = displacement
             };
         }
+
+        public IReadOnlyList<SimulationComparisons> Compares(SimulationSummary previousSummary, SimulationSummary currentSummary)
+        {
+            List<SimulationComparisons> comparisonsList = new ()
+            {
+                new SimulationComparisons("Время полёта", "с", previousSummary.FlightTime, currentSummary.FlightTime),
+                new SimulationComparisons("Дальность", "м", previousSummary.Range, currentSummary.Range),
+                new SimulationComparisons("Путь", "м", previousSummary.TotalPath, currentSummary.TotalPath),
+                new SimulationComparisons("Перемещение", "м", previousSummary.Displacement, currentSummary.Displacement),
+                new SimulationComparisons("Макс. Высота", "м", previousSummary.MaxHeight, currentSummary.MaxHeight),
+                new SimulationComparisons("Время до вершины", "с", previousSummary.TimeForMaxHeight, currentSummary.TimeForMaxHeight),
+                new SimulationComparisons("Макс. скорость", "м/с", previousSummary.MaxSpeed, currentSummary.MaxSpeed)
+            };
+            return comparisonsList.AsReadOnly();
+        }
     }
 }

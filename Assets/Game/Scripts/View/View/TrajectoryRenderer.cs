@@ -54,7 +54,8 @@ namespace Game.Scripts.View.View
             int newSize = startIndex + _liveBuffer.Count;
             _lineRenderer.positionCount = newSize;
 
-            _lineRenderer.SetPositions(_liveBuffer.ToArray());
+            for (int i = 0; i < _liveBuffer.Count; i++)
+                _lineRenderer.SetPosition(startIndex + i, _liveBuffer[i]);
             _liveBuffer.Clear();
         }
 
@@ -72,7 +73,8 @@ namespace Game.Scripts.View.View
                 existing[newCount++] = existing[i];
 
             _lineRenderer.positionCount = newCount;
-            _lineRenderer.SetPositions(existing); 
+            for(int i = 0; i < newCount; i++)
+                _lineRenderer.SetPosition(i, existing[i]);
             _liveStride *= 2; 
         }
 

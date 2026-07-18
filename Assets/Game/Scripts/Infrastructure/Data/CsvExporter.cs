@@ -61,6 +61,7 @@ namespace Game.Scripts.Core.Simulation
             var ruCulture = CultureInfo.GetCultureInfo("ru-RU");
 
             //builder.AppendLine("sep=;");
+            builder.AppendLine($"{DateTime.Now.ToString("F3", ruCulture)}");
             builder.AppendLine("=== Базовые значения ===");
             builder.AppendLine("Параметр;Значение");
             builder.AppendLine($"Форма; {preset.ShapeType}");
@@ -100,6 +101,7 @@ namespace Game.Scripts.Core.Simulation
             //builder.AppendLine("sep=;");
 
             // --- Параметры снаряда (заморожены на момент запуска, не live) ---
+            builder.AppendLine($"{DateTime.Now.ToString("F3", ruCulture)}");
             builder.AppendLine("=== Параметры снаряда ===");
             builder.AppendLine("Параметр;Значение");
             builder.AppendLine($"Форма;{projectile.ShapeType}");

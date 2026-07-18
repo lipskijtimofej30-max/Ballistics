@@ -32,7 +32,6 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _modeControllerView.ShowObjectsForSimulation();
             
             _vectorRenderer.ClearAll();
-            //_simulator.ClearProjectile();
             _setupPanelView.Show();
             _visualizationUseCase.SetPreviewAllowed(true);
             

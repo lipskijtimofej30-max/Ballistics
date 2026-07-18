@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Graphics;
 using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
@@ -21,7 +22,8 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly GraphView _graphView;
         private readonly VectorRenderer _vectorRenderer;
         
-        private SimulationSummary _summary;
+        private SimulationSummary _currentSummary;
+        private SimulationSummary _previousSummary;
 
         [Inject]
         public SimulationFinishedState(
@@ -55,23 +57,29 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _toolbarView.NewCreateButton.interactable = true;
             _parameterCanvasInteractable.Toggle(true);
             
-            var run = _simulator.CurrentRun;
-            if (run == null) return;
+            var previousRun = _simulator.PreviousRun;
+            var currentRun = _simulator.CurrentRun;
             
-            _printer.Print(run.Points);
+            if(currentRun == null) return;
             
-            _summary = _analyzer.Analyze(run.Points);
-            _resultsPanel.SetSimulationSummary(_summary);
+            _currentSummary = _analyzer.Analyze(currentRun.Points);
+            if (previousRun != null)
+            {
+                _previousSummary = _analyzer.Analyze(previousRun.Points);
+                _resultsPanel.SetSimulationComparisons(_analyzer.Compares(_previousSummary,  _currentSummary));
+            }
+            else
+                _resultsPanel.SetSimulationSummary(_currentSummary);
+            
             _resultsPanel.Show();
-            _graphController.SetupSingleData(run);
+            _graphController.SetupSingleData(currentRun);
             
+            _printer.Print(currentRun.Points);
+
             _resultsPanel.SaveCsvRequested += OnSaveCsvRequested;
         }
 
-        public void Tick()
-        {
-            
-        }
+        public void Tick() { }
 
         public void Exit()
         {
@@ -86,7 +94,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             var run = _simulator.CurrentRun;
             if (run == null) return;
-            _exporter.ExportCsv(run.Points, _simulator.CurrentState, _summary);
+            _exporter.ExportCsv(run.Points, _simulator.CurrentState, _currentSummary);
         }
     }
 }

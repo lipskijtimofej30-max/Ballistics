@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Game.Scripts.Core;
@@ -27,7 +28,6 @@ namespace Game.Scripts.View.View
 
         public void Show()
         {
-            _titleText.text = "Результаты полета";
             _root.SetActive(true);
         }
         public void Hide() => _root.SetActive(false);
@@ -42,14 +42,30 @@ namespace Game.Scripts.View.View
         public void SetExperimentSummary(ExperimentRunResult result, IExperimentParameter parameter)
         {
             _saveCsvButton.gameObject.SetActive(false);
+            _titleText.text = "Сравнения результатов";
             _currentText = "";
             _currentText += $"Эсперимент №{result.RunId}\n\n" +
                             $"{parameter.DisplayName}: {result.ParameterValue} {parameter.Unit}\n\n";
             SetSummary(result.Summary);
         }
+
+        public void SetSimulationComparisons(IReadOnlyList<SimulationComparisons>  comparisons)
+        {
+            _saveCsvButton.gameObject.SetActive(false);
+            _currentText = "";
+            foreach (var comparison in comparisons)
+            {
+                _currentText += 
+                    $"{comparison.DisplayName}:\n" +
+                    $"\t{comparison.PreviousValue:F2} -> {comparison.CurrentValue:F2} {comparison.Unit}\n" +
+                    $"\t(Δ = {comparison.GetDifference():+0.00;-#.00} {comparison.Unit})\n\n";
+            }
+            _summaryText.text = _currentText;
+        }
         
         private void SetSummary(SimulationSummary summary)
         {
+            _titleText.text = "Результаты полета";
             _currentText +=
                 $"Время полёта: {summary.FlightTime:F2} с\n\n" +
                 $"Дальность: {summary.Range:F2} м\n\n" +

@@ -1,11 +1,7 @@
-using System;
-using Assets.Game.Scripts.View.View;
 using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
 using Game.Scripts.Infrastructure.GameStateMachine;
-using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
-using Game.Scripts.View.View;
 using UnityEngine;
 using Zenject;
 using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
@@ -28,9 +24,11 @@ namespace Game.Scripts.Core
 
         public bool IsActive { get; private set; }
         public SimulationRun CurrentRun { get; private set; }
+        public SimulationRun PreviousRun { get; private set; }
 
         public ProjectileBody CurrentBody => _projectileManager.CurrentBody;
         public ProjectileState CurrentState => _projectileManager.CurrentState;
+        public ProjectileState PreviousState { get; private set; }
         public bool HasActiveRun => CurrentRun != null;
 
         [Inject]
@@ -52,6 +50,17 @@ namespace Game.Scripts.Core
 
         public void Spawn(bool keepPrevious = false)
         {
+            if (keepPrevious)
+            {
+                PreviousRun = CurrentRun;
+                PreviousState = _projectileManager.CurrentState;
+            }
+            else
+            {
+                PreviousRun = null;
+                PreviousState = null;
+            }
+            
             _projectileManager.Spawn(keepPrevious);
             CurrentRun = null;
             IsActive = false;
