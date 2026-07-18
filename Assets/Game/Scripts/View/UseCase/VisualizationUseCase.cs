@@ -20,45 +20,39 @@ namespace Game.Scripts.View.UseCase
             new ColorOption { Name = "Жёлтый", Color = Color.yellow },
             new ColorOption { Name = "Белый", Color = Color.white },
         };
+
         private readonly VisualizationView _view;
         private readonly TrajectoryVisualizationSettings _settings;
         private readonly SignalBus _signalBus;
         private readonly FloatParameterBinder _widthBinder;
-        
-        private bool _previewAllowedByState = true;
 
-        private readonly TrajectoryRenderer _liveRenderer;
+        private bool _previewAllowedByState = true;
         private readonly TrajectoryRenderer _previewRenderer;
 
         [Inject]
         public VisualizationUseCase(VisualizationView view,
             TrajectoryVisualizationSettings settings,
             SignalBus signalBus,
-            [Inject(Id = "Live")] TrajectoryRenderer liveRenderer,
-            [Inject(Id = "Preview")] TrajectoryRenderer previewRenderer)
+            [Inject(Id = "Preview")] TrajectoryRenderer previewRenderer) // Удалили Live!
         {
             _view = view;
             _settings = settings;
             _signalBus = signalBus;
-            _liveRenderer = liveRenderer;
             _previewRenderer = previewRenderer;
 
             _widthBinder = new FloatParameterBinder(
-                view.WidthParameter,
-                0.1f,
-                1f,
-                "F2",
+                view.WidthParameter, 0.1f, 1f, "F2",
                 () => _settings.Width,
                 x => _settings.Width = x,
                 () => signalBus.Fire<VisualizationSettingsChangedSignal>()
             );
-            
+
             InitializeDropdown();
-            
-            _view.PreviewToggle.SetIsOnWithoutNotify(_settings.VisiblePreview); // синхронизация начального состояния
+
+            _view.PreviewToggle.SetIsOnWithoutNotify(_settings.VisiblePreview);
             _view.PreviewToggle.onValueChanged.AddListener(OnPreviewVisible);
             _view.ColorDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
-             
+
             signalBus.Subscribe<VisualizationSettingsChangedSignal>(SetTrajectorySettings);
             SetTrajectorySettings();
         }
@@ -101,10 +95,10 @@ namespace Game.Scripts.View.UseCase
 
         private void SetTrajectorySettings()
         {
-            _liveRenderer.SetSettings(_settings.Width, _settings.Color);
+            // Обновляем только превью. Реальные линии обновятся при спавне.
             _previewRenderer.SetSettings(_settings.Width, _settings.Color);
         }
-        
+
         public void Dispose()
         {
             _widthBinder.Dispose();
@@ -113,7 +107,7 @@ namespace Game.Scripts.View.UseCase
             _signalBus.TryUnsubscribe<VisualizationSettingsChangedSignal>(SetTrajectorySettings);
         }
     }
-    
+
     [Serializable]
     public struct ColorOption
     {

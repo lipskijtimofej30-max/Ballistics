@@ -1,7 +1,5 @@
-using Assets.Game.Scripts.UX;
 using Assets.Game.Scripts.View.View;
 using Game.Scripts.Core;
-using Game.Scripts.Settings;
 using Game.Scripts.View.UseCase;
 using Game.Scripts.View.View;
 using Zenject;
@@ -16,7 +14,6 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly VisualizationUseCase _visualizationUseCase;
         private readonly ModeControllerView _modeControllerView;
         private readonly VectorRenderer _vectorRenderer;
-        [Inject(Id ="Live")] private readonly TrajectoryRenderer _liveTrajectoryRenderer;
 
         [Inject]
         public SimulationSetupState(Simulator simulator, SetupPanelView setupPanelView, ToolbarView toolbarView, 
@@ -35,15 +32,15 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _modeControllerView.ShowObjectsForSimulation();
             
             _vectorRenderer.ClearAll();
-            _simulator.ClearProjectile();
+            //_simulator.ClearProjectile();
             _setupPanelView.Show();
-            _liveTrajectoryRenderer.SetVisible(false);
             _visualizationUseCase.SetPreviewAllowed(true);
             
             _toolbarView.CreateButton.interactable = true;
             _toolbarView.StartButton.interactable = false;
             _toolbarView.PauseButton.interactable = false;
             _toolbarView.StopButton.interactable = false;
+            _toolbarView.NewCreateButton.interactable = false;
         }
 
         public void Tick()

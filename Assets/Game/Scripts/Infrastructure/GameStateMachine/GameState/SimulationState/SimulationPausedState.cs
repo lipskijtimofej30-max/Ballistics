@@ -1,6 +1,4 @@
-
 using Game.Scripts.Core;
-using Game.Scripts.Infrastructure.Logger;
 using Game.Scripts.View.View;
 using Zenject;
 

@@ -14,6 +14,7 @@ namespace Game.Scripts.View.View
     {
         [Header("Buttons")] [SerializeField] private Button _pauseButton;
         [SerializeField] private Button _createButton;
+        [SerializeField] private Button _newCreateButton;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _stopButton;
         [SerializeField] private Button _laboratoryButton;
@@ -28,13 +29,12 @@ namespace Game.Scripts.View.View
 
         public Button PauseButton => _pauseButton;
         public Button CreateButton => _createButton;
+        public  Button NewCreateButton => _newCreateButton;
         public Button StartButton => _startButton;
         public Button StopButton => _stopButton;
         public Button LaboratoryButton => _laboratoryButton;
         public Button ExperimentButton => _experimentButton;
-
-        public TMP_Text CreateButtonLabel => _createButtonLabel;
-
+        
         [Inject]
         private void Construct(SignalBus signalBus, Simulator simulator, ModeController modeController)
         {
@@ -52,9 +52,16 @@ namespace Game.Scripts.View.View
                 if (_modeController.CurrentMode == AppMode.Laboratory)
                 {
                     _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.SetupSimulation));
-                    _simulator.Spawn();
+                    _simulator.Spawn(false);
                     _signalBus.Fire(new CleanSetupRequestedSignal());
                 }
+            });
+
+            _newCreateButton.onClick.AddListener(() =>
+            {
+                _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.SetupSimulation));
+                _simulator.Spawn(true);
+                _signalBus.Fire(new CleanSetupRequestedSignal());
             });
 
             _startButton.onClick.AddListener(() =>

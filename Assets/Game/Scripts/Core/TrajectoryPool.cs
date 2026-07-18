@@ -32,5 +32,13 @@ namespace Game.Scripts.Core
             
             _active.Clear();
         }
+        public void Release(TrajectoryRenderer instance)
+        {
+            if (instance != null && _active.Contains(instance))
+            {
+                _active.Remove(instance);
+                GameObject.Destroy(instance.gameObject);
+            }
+        }
     }
 }

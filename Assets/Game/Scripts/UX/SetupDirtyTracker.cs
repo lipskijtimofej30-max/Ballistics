@@ -3,7 +3,6 @@ using Assets.Game.Scripts.Infrastructure.Signals;
 using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.Signals;
-using Game.Scripts.View.View;
 using Zenject;
 
 namespace Game.Scripts.UX
@@ -11,16 +10,14 @@ namespace Game.Scripts.UX
     public class SetupDirtyTracker : IInitializable, IDisposable
     {
         private readonly SignalBus _signalBus;
-        private readonly ToolbarView _toolbarView;
-        private readonly Simulator  _simulator;
-        
+        private readonly Simulator _simulator;
+
         public bool IsDirty { get; private set; }
 
         [Inject]
-        public SetupDirtyTracker(SignalBus signalBus, ToolbarView toolbarView, Simulator simulator)
+        public SetupDirtyTracker(SignalBus signalBus, Simulator simulator)
         {
             _signalBus = signalBus;
-            _toolbarView = toolbarView;
             _simulator = simulator;
         }
 
@@ -36,19 +33,20 @@ namespace Game.Scripts.UX
 
         private void MarkDirty()
         {
-            if(_simulator.CurrentBody == null) return;
-            
+            // Если симуляции нет или уже статус грязный - ничего не делаем
+            if (_simulator.CurrentBody == null || IsDirty) return;
+
             IsDirty = true;
-            _toolbarView.CreateButtonLabel.text = "Обновить";
-            _toolbarView.StartButton.interactable = false;
+
+            // Просто отправляем сигнал, ToolbarView сам обновит свои кнопки!
             _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: true));
         }
 
         public void MarkClean()
         {
             IsDirty = false;
-            _toolbarView.CreateButtonLabel.text = "+ Создать";
-            _toolbarView.StartButton.interactable = true;
+
+            // Просто отправляем сигнал
             _signalBus.Fire(new SetupDirtyStatusChangedSignal(isDirty: false));
         }
 

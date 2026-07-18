@@ -14,7 +14,6 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         private readonly ToolbarView _toolbarView;
         private readonly VisualizationUseCase _visualizationUseCase;
         private readonly ParameterCanvasInteractable _parameterCanvasInteractable;
-        [Inject(Id = "Live")] private readonly TrajectoryRenderer _trajectoryRenderer;
 
         [Inject]
         public SimulationState(Simulator simulator, TelemetryPanelView telemetryPanelView, 
@@ -32,7 +31,6 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
         {
             _toolbarView.CreateButton.interactable = false;
             _toolbarView.ExperimentButton.interactable = false;
-            _trajectoryRenderer.SetVisible(true);
             _visualizationUseCase.SetPreviewAllowed(false);
             _parameterCanvasInteractable.Toggle(false);
             
@@ -58,7 +56,6 @@ namespace Game.Scripts.Infrastructure.GameStateMachine.GameState
             _toolbarView.ExperimentButton.interactable = true;
             _simulator.Pause();
             _telemetryPanelView.Hide();   
-            _trajectoryRenderer.FlushBuffer();
         }
     }
 }

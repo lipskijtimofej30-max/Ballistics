@@ -1,4 +1,4 @@
-using System.IO;
+using System;
 using Assets.Game.Scripts.View.View;
 using DefaultNamespace;
 using Game.Scripts.Core.Simulation;
@@ -6,7 +6,6 @@ using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.Signals;
 using Game.Scripts.Settings;
 using Game.Scripts.View.View;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
@@ -15,53 +14,47 @@ namespace Game.Scripts.Core
 {
     public class Simulator : MonoBehaviour
     {
-        private const int MaxStepsPerFrame = 200; // защита от "спирали смерти"
+        private const int MaxStepsPerFrame = 200;
 
         private IPhysicsIntegrator _integrator;
         private IntegratorFactory _integratorFactory;
-        private ProjectileFactory _projectileFactory;
         private IntegratorSettings _integratorSettings;
         private SignalBus _signalBus;
         private ILogger _logger;
         private SimulationStepper _stepper;
-        private VectorRenderer _vectorRenderer;
-        [Inject(Id = "Live")] private TrajectoryRenderer _trajectoryRenderer;
 
-        public ProjectileBody CurrentBody { get; private set; }
-        public ProjectileState CurrentState { get; private set; }
+        private ProjectileManager _projectileManager;
+        private SimulationVisualizer _visualizer;
+
+        public bool IsActive { get; private set; }
         public SimulationRun CurrentRun { get; private set; }
 
-        [field: SerializeField] public bool IsActive { get; private set; } = false;
-
+        public ProjectileBody CurrentBody => _projectileManager.CurrentBody;
+        public ProjectileState CurrentState => _projectileManager.CurrentState;
         public bool HasActiveRun => CurrentRun != null;
 
-        private float _accumulator;
-
         [Inject]
-        private void Construct(IntegratorFactory integratorFactory, ProjectileFactory projectileFactory,
-            IntegratorSettings integratorSettings, SignalBus signalBus, ILogger logger, VectorRenderer vectorRenderer)
+        private void Construct(
+            IntegratorFactory integratorFactory,
+            IntegratorSettings integratorSettings,
+            SignalBus signalBus,
+            ILogger logger,
+            ProjectileManager projectileManager,
+            SimulationVisualizer visualizer)
         {
             _integratorFactory = integratorFactory;
-            _projectileFactory = projectileFactory;
             _integratorSettings = integratorSettings;
             _signalBus = signalBus;
             _logger = logger;
-            _vectorRenderer = vectorRenderer;
+            _projectileManager = projectileManager;
+            _visualizer = visualizer;
         }
 
-        public void Spawn()
+        public void Spawn(bool keepPrevious = false)
         {
-            if (CurrentBody != null)
-                Destroy(CurrentBody.gameObject);
-
-            CurrentBody = _projectileFactory.CreateBody();
-            CurrentState = _projectileFactory.CreateState();
-            CurrentBody.SyncTransform(CurrentState.Position);
+            _projectileManager.Spawn(keepPrevious);
             CurrentRun = null;
             IsActive = false;
-            _trajectoryRenderer.Clear();
-
-            _signalBus.Fire(new ProjectileSpawnedSignal());
         }
 
         public void Begin()
@@ -69,17 +62,14 @@ namespace Game.Scripts.Core
             _integrator = _integratorFactory.Create(_integratorSettings.IntegratorMethod);
             _stepper = new SimulationStepper(_integrator);
             CurrentRun = new SimulationRun();
-            
             CurrentRun.AddPoint(CurrentState.Position, CurrentState.Velocity, Vector3.zero, Vector3.zero, 0f);
             IsActive = true;
         }
 
         public void ClearProjectile()
         {
-            if (CurrentBody != null)
-                Destroy(CurrentBody.gameObject);
-
-            CurrentBody = null;
+            _projectileManager.ClearAll();
+            _visualizer.ClearAll();
             CurrentRun = null;
         }
 
@@ -91,7 +81,7 @@ namespace Game.Scripts.Core
             if (!IsActive || CurrentBody == null || CurrentRun == null || CurrentState == null) return;
 
             float realDt = Time.fixedDeltaTime;
-            float modelDt = realDt * _integratorSettings.TimeScale; // сколько модельного времени нужно смоделировать
+            float modelDt = realDt * _integratorSettings.TimeScale;
             float physicsStep = _integratorSettings.IntegrationStep;
 
             bool landed = false;
@@ -113,8 +103,7 @@ namespace Game.Scripts.Core
                 _logger.Log($"Steps {steps}");
 
             CurrentBody.SyncTransform(CurrentState.Position);
-            _trajectoryRenderer.AppendPoint(CurrentState.Position);
-            _vectorRenderer.UpdateVectors(CurrentState);
+            _visualizer.UpdateVisuals(CurrentState);
 
             if (landed)
                 OnProjectileLanded();
@@ -122,7 +111,9 @@ namespace Game.Scripts.Core
 
         private void OnProjectileLanded()
         {
+            if (_projectileManager.CurrentBody == null) return;
             IsActive = false;
+            _visualizer.FlushCurrentTrajectory();
             _signalBus.Fire(new ChangeStateSignal<SimulationStateType>(SimulationStateType.FinishedSimulation));
         }
     }

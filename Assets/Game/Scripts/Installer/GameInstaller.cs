@@ -64,7 +64,9 @@ public class GameInstaller : MonoInstaller
 
     private void BindSimulator()
     {
-        Container.Bind<Simulator>().FromInstance(_simulator).AsSingle().NonLazy();
+        Container.Bind<ProjectileManager>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<SimulationVisualizer>().AsSingle().NonLazy();
+        Container.Bind<Simulator>().FromInstance(_simulator).AsSingle();
         Container.Bind<FastForwardSimulator>().AsSingle();
     }
 
