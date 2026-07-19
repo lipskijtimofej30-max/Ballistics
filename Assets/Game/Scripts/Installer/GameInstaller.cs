@@ -11,6 +11,7 @@ using DefaultNamespace;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Force;
 using Game.Scripts.Core.Simulation;
+using Game.Scripts.Core.Tooltip;
 using Game.Scripts.Infrastructure.GameStateMachine;
 using Game.Scripts.Infrastructure.GameStateMachine.GameState;
 using Game.Scripts.Infrastructure.Signals;
@@ -51,6 +52,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<LaunchStand>().FromInstance(_launchStand).AsSingle();
         Container.BindInterfacesAndSelfTo<GraphTooltipController>().AsSingle();
         Container.BindInterfacesAndSelfTo<GraphInteractionsController>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<TooltipController>().AsSingle().NonLazy();
         BindSimulationStateMachine();
         BindExperimentStateMachine();
         Container.BindInterfacesAndSelfTo<ModeController>().AsSingle();
@@ -155,5 +157,7 @@ public class GameInstaller : MonoInstaller
         Container.DeclareSignal<OverflowLineSignal>().OptionalSubscriber();
         Container.DeclareSignal<GraphSettingsChangedSignal>().OptionalSubscriber();
         Container.DeclareSignal<NewSetupDirtyStatusChangedSignal>().OptionalSubscriber();
+        Container.DeclareSignal<ShowTooltipSignal>().OptionalSubscriber();
+        Container.DeclareSignal<HideTooltipSignal>().OptionalSubscriber();
     }
 }

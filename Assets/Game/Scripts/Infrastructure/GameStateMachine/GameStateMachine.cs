@@ -11,9 +11,7 @@ namespace Game.Scripts.Infrastructure.GameStateMachine
         private IGameState _currentGameState;
         private T _currentGameStateId;
         private bool _hasStarted = false;
-
-        public T CurrentGameStateType => _currentGameStateId;        
-
+        
         public void RegisterState(T id, IGameState gameState)
         {
             _states[id] = gameState;

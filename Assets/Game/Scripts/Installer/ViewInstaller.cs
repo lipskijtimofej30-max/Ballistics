@@ -3,6 +3,7 @@ using Assets.Game.Scripts.UX;
 using Assets.Game.Scripts.View;
 using Assets.Game.Scripts.View.UseCase;
 using Assets.Game.Scripts.View.View;
+using Game.Scripts.Core.Tooltip;
 using Game.Scripts.UX;
 using Game.Scripts.View;
 using Game.Scripts.View.UseCase;
@@ -35,6 +36,7 @@ namespace Game.Scripts.Installer
         [SerializeField] private VectorVisualizationView _vectorView;
         [SerializeField] private ExperimentGraphFilterView experimentGraphFilterView;
         [SerializeField] private FilterPanelHandler _filterPanelHandler;
+        [SerializeField] private TooltipView _tooltipView;
         [Header("Trajectory Renderer")]
         [SerializeField] private TrajectoryRenderer _previewTrajectoryRenderer;
         [SerializeField] private TrajectoryRenderer _liveTrajectoryRenderer;
@@ -51,6 +53,7 @@ namespace Game.Scripts.Installer
             Container.Bind<ExperimentGraphFilterView>().FromInstance(experimentGraphFilterView).AsSingle();
             Container.BindInterfacesAndSelfTo<SetupDirtyTracker>().AsSingle();
             Container.Bind<ExperimentTableView>().FromInstance(experimentTableView).AsSingle();
+            Container.Bind<ITooltipView>().To<TooltipView>().FromInstance(_tooltipView).AsSingle();
             BindToolbarView();
             Container.Bind<FilterPanelHandler>().FromInstance(_filterPanelHandler).AsSingle();
             Container.Bind<GraphLegendView>().FromInstance(_legendView).AsSingle();

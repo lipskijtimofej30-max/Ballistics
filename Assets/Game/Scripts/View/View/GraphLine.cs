@@ -6,42 +6,61 @@ namespace Game.Scripts.View.View
     [RequireComponent(typeof(LineRenderer))]
     public class GraphLine : MonoBehaviour
     {
+        private const int MaxPoints = 2000;
+
         private LineRenderer _lineRenderer;
-        private IReadOnlyList<Vector2> _points;
+        private IReadOnlyList<Vector2> _optimizedPoints; // точки, которые реально рисуем
         private Vector3[] _positionsCache = new Vector3[100];
 
         public void Initialize(IReadOnlyList<Vector2> points, Color color)
         {
             _lineRenderer = GetComponent<LineRenderer>();
             _lineRenderer.useWorldSpace = false;
-        
+
             _lineRenderer.startColor = color;
             _lineRenderer.endColor = color;
-        
-            _points = points;
+
+            _optimizedPoints = OptimizePoints(points, MaxPoints);
         }
 
         public void Draw(Vector2 dataMin, Vector2 dataMax, Vector2 graphSize)
         {
-            if (_points == null || _points.Count == 0)
+            var drawPoints = _optimizedPoints;
+            if (drawPoints == null || drawPoints.Count == 0)
             {
                 _lineRenderer.positionCount = 0;
                 return;
             }
-            
-            if (_points.Count > _positionsCache.Length)
-                _positionsCache = new Vector3[_points.Count * 2];
 
-            for (int i = 0; i < _points.Count; i++)
+            if (drawPoints.Count > _positionsCache.Length)
+                _positionsCache = new Vector3[drawPoints.Count];
+
+            for (int i = 0; i < drawPoints.Count; i++)
             {
-                float nx = Mathf.InverseLerp(dataMin.x, dataMax.x, _points[i].x);
-                float ny = Mathf.InverseLerp(dataMin.y, dataMax.y, _points[i].y);
-            
+                float nx = Mathf.InverseLerp(dataMin.x, dataMax.x, drawPoints[i].x);
+                float ny = Mathf.InverseLerp(dataMin.y, dataMax.y, drawPoints[i].y);
                 _positionsCache[i] = new Vector3(nx * graphSize.x, ny * graphSize.y, 0f);
             }
-        
-            _lineRenderer.positionCount = _points.Count;
+
+            _lineRenderer.positionCount = drawPoints.Count;
             _lineRenderer.SetPositions(_positionsCache);
+        }
+
+        /// <summary>
+        /// Если точек слишком много, оставляем каждую N-ю, чтобы уложиться в maxAllowed.
+        /// </summary>
+        private IReadOnlyList<Vector2> OptimizePoints(IReadOnlyList<Vector2> points, int maxAllowed)
+        {
+            if (points == null || points.Count <= maxAllowed)
+                return points;
+
+            int step = Mathf.CeilToInt((float)points.Count / maxAllowed);
+            var result = new List<Vector2>(maxAllowed);
+
+            for (int i = 0; i < points.Count; i += step)
+                result.Add(points[i]);
+
+            return result;
         }
     }
 }

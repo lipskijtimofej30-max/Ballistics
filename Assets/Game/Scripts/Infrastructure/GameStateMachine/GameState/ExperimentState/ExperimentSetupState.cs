@@ -17,6 +17,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
         private readonly TrajectoryPool _pool;
         private readonly ExperimentSession _session;
         private readonly VectorRenderer _vectorRenderer;
+        private readonly Simulator _simulator;
 
         [Inject]
         public ExperimentSetupState(ModeControllerView modeControllerView, 
@@ -25,7 +26,8 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             ExperimentPlaybackSequencer sequencer, 
             TrajectoryPool pool,
             ExperimentSession session, 
-            VectorRenderer vectorRenderer)
+            VectorRenderer vectorRenderer,
+            Simulator simulator)
         {
             _modeControllerView = modeControllerView;
             _toolbarView = toolbarView;
@@ -34,6 +36,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _pool = pool;
             _session = session;
             _vectorRenderer = vectorRenderer;
+            _simulator = simulator;
         }
         public void Enter()
         {
@@ -42,6 +45,7 @@ namespace Assets.Game.Scripts.Infrastructure.GameStateMachine.ExperimentState
             _pool.ClearAll();
             _session.ClearAll();
             _trajectoryRenderer.Clear();
+            _simulator.ClearProjectile();
             
             _modeControllerView.HideObjectsForSimulation();
             _modeControllerView.ShowObjectsForExperiment();

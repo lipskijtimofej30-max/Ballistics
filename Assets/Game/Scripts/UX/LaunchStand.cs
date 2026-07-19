@@ -5,7 +5,6 @@ using Game.Scripts.Core;
 using Game.Scripts.Infrastructure.Signals;
 using UnityEngine;
 using Zenject;
-using ILogger = Game.Scripts.Infrastructure.Logger.ILogger;
 
 namespace Assets.Game.Scripts.UX
 {
