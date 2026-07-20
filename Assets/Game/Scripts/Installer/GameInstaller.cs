@@ -32,6 +32,7 @@ public class GameInstaller : MonoInstaller
         BindSettings();
         BindSignal();
         Container.Bind<Game.Scripts.Infrastructure.Logger.ILogger>().To<Game.Scripts.Infrastructure.Logger.Logger>().AsSingle().NonLazy();
+        Container.Bind<OpenRouterService>().AsSingle();
         BindCalculator();
         Container.Bind<ExperimentSession>().AsSingle().NonLazy();
         Container.Bind<GraphDataSourceFactory>().AsSingle();

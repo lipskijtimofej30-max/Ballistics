@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assets.Game.Scripts.Core.Experiment;
 using Assets.Game.Scripts.Core.Experiment.Parameter;
 using Game.Scripts.Settings;
@@ -13,12 +14,14 @@ namespace Game.Scripts.Core.Simulation
     {
         private readonly ILogger _logger;
         private readonly CsvExporter _csvExporter;
+        private readonly OpenRouterService _openRouterService;
 
         [Inject]
-        public DataExporter(ILogger logger, CsvExporter csvExporter)
+        public DataExporter(ILogger logger, CsvExporter csvExporter, OpenRouterService openRouterService)
         {
             _logger = logger;
             _csvExporter = csvExporter;
+            _openRouterService = openRouterService;
         }
         
         public void ExportCsv(IReadOnlyList<SimulationPoint> points, ProjectileState projectile, SimulationSummary summary)
@@ -30,7 +33,12 @@ namespace Game.Scripts.Core.Simulation
  
             if (IsCanceledAndFormatPath(ref path, "csv")) return;
 
-            _csvExporter.ExportSimulation(path, points, projectile, summary);
+            _ = _openRouterService.SendPromptAsync("Зайка. как дела, сладенький мой")
+                .ContinueWith((Task<string> t) =>
+                {
+                    if (t.IsFaulted)
+                        _logger.LogError(t.Exception?.ToString() ?? "OpenRouter request failed");
+                }, TaskScheduler.Default);
         }
         
         private bool IsCanceledAndFormatPath(ref string path, string extension)
